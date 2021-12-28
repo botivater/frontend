@@ -16,6 +16,7 @@
               lg:space-x-reverse lg:space-x-20
               justify-center
               items-center
+              py-4
             "
           >
             <div class="flex flex-col text-center sm:text-left items-center">
@@ -30,20 +31,18 @@
         </div>
       </div>
     </div>
-    <Footer></Footer>
+    <FooterBlock></FooterBlock>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
-import Footer from '@/components/Footer.vue';
+import FooterBlock from '@/components/FooterBlock.vue';
 
 export default defineComponent({
-  name: 'Home',
+  name: 'HomePage',
   components: {
-    // HelloWorld,
-    Footer,
+    FooterBlock,
   },
 });
 </script>
