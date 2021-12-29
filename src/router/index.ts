@@ -18,7 +18,12 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/admin/dashboard',
     name: 'Dashboard',
-    component: () => import(/* webpackChunkName: "dashboardPage" */ '../views/DashboardPage.vue'),
+    component: () => import(/* webpackChunkName: "admin/dashboardPage" */ '../views/admin/DashboardPage.vue'),
+  },
+  {
+    path: '/admin/speak',
+    name: 'Speak',
+    component: () => import(/* webpackChunkName: "admin/speakPage" */ '../views/admin/SpeakPage.vue'),
   },
 ];
 

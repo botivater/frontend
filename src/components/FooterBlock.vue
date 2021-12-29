@@ -1,13 +1,17 @@
 <template>
-  <div class="bg-gray-800 text-white">
+  <div class="bg-gray-700 text-white">
     <div class="container mx-auto">
       <div class="max-w-6xl mx-auto p-4">
-        <div class="grid grid-cols-2 gap-3">
+        <div class="flex justify-between">
           <div>
-            <p class="font-semibold text-left">Mira on Web</p>
+            <p class="font-semibold text-xs md:text-sm text-left">
+              Mira on Web &mdash; Made with &hearts; by Jonas Claes
+            </p>
           </div>
           <div>
-            <p class="text-right">&copy; Copyright {{ "2021" }} - Jonas Claes</p>
+            <p class="font-semibold text-xs md:text-sm text-right">
+              &copy; Copyright {{ '2021' }}
+            </p>
           </div>
         </div>
       </div>

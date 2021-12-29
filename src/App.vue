@@ -9,7 +9,7 @@
           <div class="flex items-center h-full space-x-2">
             <span class="font-semibold">Mira on Web</span>
           </div>
-          <div class="hidden sm:flex space-x-3 items-center">
+          <div class="flex space-x-3 items-center">
             <router-link
               v-for="navbarLink in navbarLinks"
               :key="navbarLink.name"
