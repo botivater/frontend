@@ -5,7 +5,9 @@
         <div class="flex justify-between">
           <div>
             <p class="font-semibold text-xs md:text-sm text-left">
-              Mira on Web &mdash; Made with &hearts; by Jonas Claes
+              Mira on Web &mdash; Made with
+              <font-awesome-icon :icon="['fa', 'heart']" class="text-red-500" />
+              by Jonas Claes
             </p>
           </div>
           <div>

@@ -6,7 +6,7 @@
       bg-black bg-opacity-75
       h-full
       w-full
-      z-10
+      z-20
       flex
       justify-center
       items-center

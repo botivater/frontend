@@ -15,6 +15,7 @@
       <SideBar></SideBar>
       <div class="relative flex flex-col w-full h-screen justify-between">
         <LoadingFull :loaded="loaded" />
+        <ToastList />
         <div class="container mx-auto overflow-y-auto">
           <div class="max-w-6xl mx-auto p-4">
             <div class="mb-2">
@@ -46,7 +47,7 @@
                       "
                     />
                     <datalist id="guildDatalist">
-                      <option v-for="guild in getGuilds()" :key="guild.id">
+                      <option v-for="guild in guilds" :key="guild.id">
                         {{ guild.name }}
                       </option>
                     </datalist>
@@ -76,7 +77,7 @@
                     />
                     <datalist id="guildChannelDatalist">
                       <option
-                        v-for="guildChannel in getGuildChannelsText()"
+                        v-for="guildChannel in channels"
                         :key="guildChannel.id"
                       >
                         {{ guildChannel.name }}
@@ -97,7 +98,16 @@
               <div class="mt-3">
                 <button
                   type="submit"
-                  class="bg-blue-600 px-8 py-2 rounded-md shadow-md"
+                  class="
+                    bg-blue-600
+                    px-8
+                    py-2
+                    rounded-md
+                    shadow-md
+                    disabled:bg-gray-600
+                  "
+                  :disabled="sendingMessage"
+                  :class="{ 'animate-pulse': sendingMessage }"
                 >
                   Speak!
                 </button>
@@ -113,20 +123,23 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { mapActions, mapGetters } from 'vuex';
 import SideBar from '@/components/SideBar.vue';
 import FooterBlock from '@/components/FooterBlock.vue';
 import TextInput from '@/components/forms/TextInput.vue';
 import LoadingFull from '@/components/LoadingFull.vue';
+import DiscordData, { GuildChannels, Guilds } from '@/services/DiscordData';
+import MiraData from '@/services/MiraData';
+import ToastList from '@/components/ToastList.vue';
+import { showToast } from '@/common';
 
-type Guild = {
-  id: string;
-  name: string;
-};
-
-type Channel = {
-  id: string;
-  name: string;
+type Data = {
+  loaded: boolean;
+  sendingMessage: boolean;
+  guilds: Guilds;
+  channels: GuildChannels;
+  guildName: string;
+  channelName: string;
+  speakText: string;
 };
 
 export default defineComponent({
@@ -136,35 +149,59 @@ export default defineComponent({
     FooterBlock,
     TextInput,
     LoadingFull,
+    ToastList,
   },
-  data() {
+  data(): Data {
     return {
       loaded: false,
+      sendingMessage: false,
+      guilds: [],
+      channels: [],
       guildName: '',
       channelName: '',
       speakText: '',
     };
   },
   async created() {
-    await this.fetchAllGuilds();
+    await this.retrieveGuilds();
 
     this.loaded = true;
   },
   methods: {
-    ...mapActions(['fetchAllGuilds', 'fetchGuildChannelsText']),
+    async retrieveGuilds() {
+      try {
+        this.guilds = await DiscordData.getAllGuilds();
+        this.loaded = true;
+      } catch (e) {
+        if (e instanceof Error) {
+          showToast({
+            name: 'Error!',
+            description: e.message,
+            time: 5000,
+            color: 'red',
+          });
+        }
+      }
+    },
+
     async loadChannels() {
       try {
         this.loaded = false;
 
-        const guilds: Guild[] = this.getGuilds();
-        const guild = guilds.find((elem) => elem.name === this.guildName);
+        const guild = this.guilds.find((elem) => elem.name === this.guildName);
 
         if (!guild) throw new Error('Guild not found.');
 
-        await this.fetchGuildChannelsText(guild.id);
+        this.channels = await DiscordData.getAllGuildTextChannels(guild.id);
       } catch (e) {
-        // eslint-disable-next-line no-alert
-        alert(e);
+        if (e instanceof Error) {
+          showToast({
+            name: 'Error!',
+            description: e.message,
+            time: 5000,
+            color: 'red',
+          });
+        }
       } finally {
         this.loaded = true;
       }
@@ -172,37 +209,34 @@ export default defineComponent({
     async speak(event: Event) {
       event.preventDefault();
       try {
-        const channels: Channel[] = this.getGuildChannelsText();
+        this.sendingMessage = true;
+        const { channels } = this;
         const channel = channels.find((elem) => elem.name === this.channelName);
 
         if (!channel) throw new Error('Channel not found.');
 
-        const apiUrl = 'http://192.168.178.66:3000/api/mira/speak';
-        const opts = {
-          method: 'POST',
-          body: JSON.stringify({
-            channelId: channel.id,
-            message: this.speakText,
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        };
+        await MiraData.speak(channel.id, this.speakText);
 
-        const response = await fetch(apiUrl, opts).then((res) => res.json());
-
-        console.log(response);
-
-        // eslint-disable-next-line no-alert
-        alert('Mira has spoken!');
+        showToast({
+          name: 'Success!',
+          description: 'Mira has sent the message.',
+          time: 3000,
+          color: 'green',
+        });
       } catch (e) {
-        // eslint-disable-next-line no-alert
-        alert(e);
+        if (e instanceof Error) {
+          showToast({
+            name: 'Error!',
+            description: e.message,
+            time: 5000,
+            color: 'red',
+          });
+        }
+      } finally {
+        this.sendingMessage = false;
       }
     },
   },
-  computed: {
-    ...mapGetters(['getGuilds', 'getGuildChannelsText']),
-  },
+  computed: {},
 });
 </script>
