@@ -100,7 +100,6 @@ export default defineComponent({
   methods: {
     toggleSidebar() {
       store.commit('toggleSidebar');
-      console.log(this.getSidebar());
     },
   },
   computed: {
