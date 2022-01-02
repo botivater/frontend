@@ -1,11 +1,13 @@
 import { Configuration, Session, V0alpha2Api } from '@ory/kratos-client';
 
+const apiEndpoint = process.env.VUE_APP_KRATOS_URL;
+
 export const ORY_URLS = {
-  LOGIN: '/.ory/self-service/login/browser',
+  LOGIN: `${apiEndpoint}/self-service/login/browser`,
 };
 
 export const ory = new V0alpha2Api(new Configuration({
-  basePath: process.env.VUE_APP_KRATOS_URL,
+  basePath: apiEndpoint,
   baseOptions: {
     withCredentials: false,
     timeout: 5000,
