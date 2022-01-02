@@ -9,7 +9,7 @@ export const ORY_URLS = {
 export const ory = new V0alpha2Api(new Configuration({
   basePath: apiEndpoint,
   baseOptions: {
-    withCredentials: false,
+    withCredentials: true,
     timeout: 5000,
   },
 }));
