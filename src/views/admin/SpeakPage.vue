@@ -1,24 +1,5 @@
 <template>
-  <div>
-    <div
-      class="
-        min-h-screen
-        h-full
-        w-full
-        flex
-        text-white
-        bg-gray-700
-        overflow-y-hidden
-        relative
-      "
-    >
-      <SideBar></SideBar>
-      <div class="relative flex flex-col w-full h-screen justify-between">
-        <LoadingFull :loaded="loaded" />
-        <ToastList />
-        <div class="container mx-auto overflow-y-auto">
-          <div class="max-w-6xl mx-auto p-4">
-            <div class="mb-2">
+  <div class="mb-2">
               <h1 class="text-2xl font-semibold">Speak</h1>
               <p class="text-gray-400">Let Mira say something in Discord</p>
             </div>
@@ -113,23 +94,13 @@
                 </button>
               </div>
             </form>
-          </div>
-        </div>
-        <FooterBlock />
-      </div>
-    </div>
-  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import SideBar from '@/components/SideBar.vue';
-import FooterBlock from '@/components/FooterBlock.vue';
 import TextInput from '@/components/forms/TextInput.vue';
-import LoadingFull from '@/components/LoadingFull.vue';
 import DiscordData, { GuildChannels, Guilds } from '@/services/DiscordData';
 import MiraData from '@/services/MiraData';
-import ToastList from '@/components/ToastList.vue';
 import { showToast } from '@/common';
 
 type Data = {
@@ -145,11 +116,7 @@ type Data = {
 export default defineComponent({
   name: 'SpeakPage',
   components: {
-    SideBar,
-    FooterBlock,
     TextInput,
-    LoadingFull,
-    ToastList,
   },
   data(): Data {
     return {

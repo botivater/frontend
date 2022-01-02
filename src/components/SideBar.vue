@@ -42,24 +42,42 @@
       >
     </div>
     <div class="flex flex-col space-y-1">
-      <router-link
-        v-for="navbarLink in bottomLinks"
-        :key="navbarLink.name"
-        :to="navbarLink.path"
-        class="bg-gray-900 transition-colors duration-200 py-2 px-4"
-        :class="{
-          'bg-blue-800': navbarLink.path === $route.path,
-          'h-16 flex justify-center items-center p-0': getSidebar(),
-        }"
-        ><font-awesome-icon :icon="navbarLink.icon" /><span
-          class="ml-2"
+      <template v-for="navbarLink in bottomLinks" :key="navbarLink.name">
+        <router-link
+          v-if="!navbarLink.external"
+          :to="navbarLink.path"
+          class="bg-gray-900 transition-colors duration-200 py-2 px-4"
           :class="{
-            'font-semibold': navbarLink.path === $route.path,
-            hidden: getSidebar(),
+            'bg-blue-800': navbarLink.path === $route.path,
+            'h-16 flex justify-center items-center p-0': getSidebar(),
           }"
-          >{{ navbarLink.name }}</span
-        ></router-link
-      >
+          ><font-awesome-icon :icon="navbarLink.icon" /><span
+            class="ml-2"
+            :class="{
+              'font-semibold': navbarLink.path === $route.path,
+              hidden: getSidebar(),
+            }"
+            >{{ navbarLink.name }}</span
+          ></router-link
+        >
+        <a
+          v-if="navbarLink.external"
+          :href="navbarLink.path"
+          class="bg-gray-900 transition-colors duration-200 py-2 px-4"
+          :class="{
+            'bg-blue-800': navbarLink.path === $route.path,
+            'h-16 flex justify-center items-center p-0': getSidebar(),
+          }"
+          ><font-awesome-icon :icon="navbarLink.icon" /><span
+            class="ml-2"
+            :class="{
+              'font-semibold': navbarLink.path === $route.path,
+              hidden: getSidebar(),
+            }"
+            >{{ navbarLink.name }}</span
+          ></a
+        >
+      </template>
     </div>
   </div>
 </template>
@@ -68,20 +86,39 @@
 import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 import store from '@/store';
+import { getSession, ory } from '@/auth/ory';
+
+type LinkItem = {
+  name: string;
+  path: string;
+  icon: string[];
+  external: boolean;
+};
+
+type LinkList = LinkItem[];
+
+type Data = {
+  topLinks: LinkList;
+  bottomLinks: LinkList;
+
+  logoutUrl: string | undefined;
+};
 
 export default defineComponent({
   name: 'SideBar',
-  setup() {
+  data(): Data {
     const topLinks = [
       {
         name: 'Dashboard',
         path: '/admin/dashboard',
         icon: ['fa', 'tachometer-alt'],
+        external: false,
       },
       {
         name: 'Speak',
         path: '/admin/speak',
         icon: ['fa', 'headset'],
+        external: false,
       },
     ];
     const bottomLinks = [
@@ -89,17 +126,46 @@ export default defineComponent({
         name: 'Home',
         path: '/',
         icon: ['fa', 'home'],
+        external: false,
+      },
+      {
+        name: 'Debug',
+        path: '/admin/debug',
+        icon: ['fa', 'eye'],
+        external: false,
       },
     ];
 
     return {
       topLinks,
       bottomLinks,
+      logoutUrl: undefined,
     };
+  },
+  async created() {
+    await this.getLogoutUrl();
   },
   methods: {
     toggleSidebar() {
       store.commit('toggleSidebar');
+    },
+    async getLogoutUrl() {
+      try {
+        const session = await getSession();
+        if (!session) return;
+
+        const responseLogoutUrl = await ory.createSelfServiceLogoutFlowUrlForBrowsers();
+        this.logoutUrl = responseLogoutUrl.data.logout_url;
+
+        this.bottomLinks.push({
+          name: 'Logout',
+          path: this.logoutUrl,
+          icon: ['fa', 'sign-out-alt'],
+          external: true,
+        });
+      } catch (e) {
+        console.error(e);
+      }
     },
   },
   computed: {

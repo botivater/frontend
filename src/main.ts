@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
-  faBars, faHeadset, faHeart, faHome, faTachometerAlt,
+  faBars, faEye, faHeadset, faHeart, faHome, faSignOutAlt, faTachometerAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import App from './App.vue';
@@ -11,7 +11,7 @@ import store from './store';
 
 import './assets/tailwind.css';
 
-library.add(faHome, faTachometerAlt, faHeadset, faBars, faHeart);
+library.add(faHome, faTachometerAlt, faHeadset, faBars, faHeart, faSignOutAlt, faEye);
 
 createApp(App).use(store).use(router).component('font-awesome-icon', FontAwesomeIcon)
   .mount('#app');

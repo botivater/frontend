@@ -1,48 +1,24 @@
 <template>
-  <div>
-    <div
-      class="
-        min-h-screen
-        h-full
-        w-full
-        flex
-        text-white
-        bg-gray-700
-        overflow-y-hidden
-        relative
-      "
-    >
-      <SideBar></SideBar>
-      <ToastList />
-      <div class="flex flex-col w-full h-screen justify-between">
-        <div class="container mx-auto overflow-y-auto">
-          <div class="max-w-6xl mx-auto p-4">
-            <div class="mb-2">
-              <h1 class="text-2xl font-semibold">Dashboard</h1>
-              <p class="text-gray-400">How is Mira doing?</p>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <DashboardStatisticCard
-                name="Total guilds"
-                :value="totalGuilds"
-                :loaded="!guildsLoading"
-              />
-              <DashboardStatisticCard
-                name="Total channels"
-                :value="totalChannels"
-                :loaded="!channelsLoading"
-              />
-              <DashboardStatisticCard
-                name="Total members"
-                :value="totalMembers"
-                :loaded="!membersLoading"
-              />
-            </div>
-          </div>
-        </div>
-        <FooterBlock />
-      </div>
-    </div>
+  <div class="mb-2">
+    <h1 class="text-2xl font-semibold">Dashboard</h1>
+    <p class="text-gray-400">How is Mira doing?</p>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+    <DashboardStatisticCard
+      name="Total guilds"
+      :value="totalGuilds"
+      :loaded="!guildsLoading"
+    />
+    <DashboardStatisticCard
+      name="Total channels"
+      :value="totalChannels"
+      :loaded="!channelsLoading"
+    />
+    <DashboardStatisticCard
+      name="Total members"
+      :value="totalMembers"
+      :loaded="!membersLoading"
+    />
   </div>
 </template>
 
@@ -51,12 +27,9 @@
 /* eslint-disable no-restricted-syntax */
 
 import { defineComponent } from 'vue';
-import SideBar from '@/components/SideBar.vue';
 import DashboardStatisticCard from '@/components/DashboardStatisticCard.vue';
-import FooterBlock from '@/components/FooterBlock.vue';
 import DiscordData, { Guilds } from '@/services/DiscordData';
 import { showToast } from '@/common';
-import ToastList from '@/components/ToastList.vue';
 
 type Data = {
   guildsLoading: boolean;
@@ -70,10 +43,7 @@ type Data = {
 export default defineComponent({
   name: 'DashboardPage',
   components: {
-    SideBar,
     DashboardStatisticCard,
-    FooterBlock,
-    ToastList,
   },
   data(): Data {
     return {

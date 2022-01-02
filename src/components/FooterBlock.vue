@@ -12,7 +12,7 @@
           </div>
           <div>
             <p class="font-semibold text-xs md:text-sm text-right">
-              &copy; Copyright {{ '2021' }}
+              &copy; Copyright {{ year }}
             </p>
           </div>
         </div>
@@ -26,5 +26,13 @@ import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'FooterBlock',
+  setup() {
+    const date = new Date();
+    const year = date.getFullYear();
+
+    return {
+      year,
+    };
+  },
 });
 </script>
