@@ -86,7 +86,6 @@
 import { defineComponent } from 'vue';
 import { mapGetters } from 'vuex';
 import store from '@/store';
-import { getSession, ory } from '@/auth/ory';
 
 type LinkItem = {
   name: string;
@@ -143,30 +142,24 @@ export default defineComponent({
     };
   },
   async created() {
-    await this.getLogoutUrl();
+    // await this.getLogoutUrl();
   },
   methods: {
     toggleSidebar() {
       store.commit('toggleSidebar');
     },
-    async getLogoutUrl() {
-      try {
-        const session = await getSession();
-        if (!session) return;
-
-        const responseLogoutUrl = await ory.createSelfServiceLogoutFlowUrlForBrowsers();
-        this.logoutUrl = responseLogoutUrl.data.logout_url;
-
-        this.bottomLinks.push({
-          name: 'Logout',
-          path: this.logoutUrl,
-          icon: ['fa', 'sign-out-alt'],
-          external: true,
-        });
-      } catch (e) {
-        console.error(e);
-      }
-    },
+    // async getLogoutUrl() {
+    //   try {
+    //     this.bottomLinks.push({
+    //       name: 'Logout',
+    //       path: this.logoutUrl,
+    //       icon: ['fa', 'sign-out-alt'],
+    //       external: true,
+    //     });
+    //   } catch (e) {
+    //     console.error(e);
+    //   }
+    // },
   },
   computed: {
     ...mapGetters(['getSidebar']),

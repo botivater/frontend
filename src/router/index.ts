@@ -2,7 +2,7 @@
 import {
   createRouter, createWebHistory, RouteRecordRaw, RouteLocationNormalized,
 } from 'vue-router';
-import { isAuthenticated as oryIsAuthenticated, ORY_URLS } from '@/auth/ory';
+import { isAuthenticated as oryIsAuthenticated } from '@/auth';
 import HomePage from '../views/HomePage.vue';
 
 const isAuthenticated = async (
@@ -12,7 +12,7 @@ const isAuthenticated = async (
   const authenticated = await oryIsAuthenticated();
   if (authenticated) return true;
 
-  window.location.href = ORY_URLS.LOGIN;
+  // window.location.href = ORY_URLS.LOGIN;
   return false;
 };
 

@@ -48,7 +48,7 @@ import {
   defineComponent, onMounted, ref,
 } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { isAuthenticated, ORY_URLS } from './auth/ory';
+import { isAuthenticated } from './auth/index';
 import BackendLayout from './components/BackendLayout.vue';
 
 export default defineComponent({
@@ -76,12 +76,12 @@ export default defineComponent({
           external: false,
         });
       } else {
-        navbarLinks.value.push({
-          name: 'Login',
-          path: ORY_URLS.LOGIN,
-          button: true,
-          external: true,
-        });
+        // navbarLinks.value.push({
+        //   name: 'Login',
+        //   path: ORY_URLS.LOGIN,
+        //   button: true,
+        //   external: true,
+        // });
       }
     });
 

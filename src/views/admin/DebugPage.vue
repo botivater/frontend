@@ -15,11 +15,9 @@
 /* eslint-disable no-restricted-syntax */
 
 import { defineComponent } from 'vue';
-import { Session } from '@ory/kratos-client';
-import { getSession } from '@/auth/ory';
 
 type Data = {
-  session: Session | undefined;
+  session: undefined;
 };
 
 export default defineComponent({
@@ -30,18 +28,6 @@ export default defineComponent({
     return {
       session: undefined,
     };
-  },
-  async created() {
-    this.getSession();
-  },
-  methods: {
-    async getSession() {
-      try {
-        this.session = await getSession();
-      } catch (e) {
-        console.error(e);
-      }
-    },
   },
 });
 </script>
