@@ -12,13 +12,13 @@
       border-r border-gray-800
       overflow-y-auto
     "
-    :class="{ 'w-16': getSidebar() }"
+    :class="{ 'w-16': sidebar }"
   >
     <div class="flex flex-col space-y-1">
       <button
         @click="toggleSidebar"
         class="bg-gray-900 transition-colors duration-200 py-2 px-4"
-        :class="{ 'h-16 flex justify-center items-center p-0': getSidebar() }"
+        :class="{ 'h-16 flex justify-center items-center p-0': sidebar }"
       >
         <font-awesome-icon :icon="['fa', 'bars']" />
       </button>
@@ -29,13 +29,13 @@
         class="bg-gray-900 transition-colors duration-200 py-2 px-4"
         :class="{
           'bg-blue-800': navbarLink.path === $route.path,
-          'h-16 flex justify-center items-center p-0': getSidebar(),
+          'h-16 flex justify-center items-center p-0': sidebar,
         }"
         ><font-awesome-icon :icon="navbarLink.icon" /><span
           class="ml-2"
           :class="{
             'font-semibold': navbarLink.path === $route.path,
-            hidden: getSidebar(),
+            hidden: sidebar,
           }"
           >{{ navbarLink.name }}</span
         ></router-link
@@ -49,13 +49,16 @@
           class="bg-gray-900 transition-colors duration-200 py-2 px-4"
           :class="{
             'bg-blue-800': navbarLink.path === $route.path,
-            'h-16 flex justify-center items-center p-0': getSidebar(),
+            'h-16 flex justify-center items-center p-0': sidebar,
           }"
-          ><font-awesome-icon :icon="navbarLink.icon" /><span
+          ><font-awesome-icon
+            v-if="navbarLink.icon"
+            :icon="navbarLink.icon"
+          /><span
             class="ml-2"
             :class="{
               'font-semibold': navbarLink.path === $route.path,
-              hidden: getSidebar(),
+              hidden: sidebar,
             }"
             >{{ navbarLink.name }}</span
           ></router-link
@@ -63,16 +66,21 @@
         <a
           v-if="navbarLink.external"
           :href="navbarLink.path"
+          @click="navbarLink.action"
           class="bg-gray-900 transition-colors duration-200 py-2 px-4"
           :class="{
             'bg-blue-800': navbarLink.path === $route.path,
-            'h-16 flex justify-center items-center p-0': getSidebar(),
+            'h-16 flex justify-center items-center p-0': sidebar,
+            'cursor-pointer': navbarLink.action
           }"
-          ><font-awesome-icon :icon="navbarLink.icon" /><span
+          ><font-awesome-icon
+            v-if="navbarLink.icon"
+            :icon="navbarLink.icon"
+          /><span
             class="ml-2"
             :class="{
               'font-semibold': navbarLink.path === $route.path,
-              hidden: getSidebar(),
+              hidden: sidebar,
             }"
             >{{ navbarLink.name }}</span
           ></a
@@ -83,30 +91,29 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { mapGetters } from 'vuex';
-import store from '@/store';
-
-type LinkItem = {
-  name: string;
-  path: string;
-  icon: string[];
-  external: boolean;
-};
-
-type LinkList = LinkItem[];
-
-type Data = {
-  topLinks: LinkList;
-  bottomLinks: LinkList;
-
-  logoutUrl: string | undefined;
-};
+import {
+  computed, defineComponent, ref, Ref,
+} from 'vue';
+import { useStore } from 'vuex';
+import { LinkList } from '@/types/LinkList';
+import auth from '@/auth';
 
 export default defineComponent({
   name: 'SideBar',
-  data(): Data {
-    const topLinks = [
+  setup() {
+    const store = useStore();
+
+    const sidebar = computed(() => store.state.sidebar);
+
+    const toggleSidebar = () => {
+      store.commit('toggleSidebar');
+    };
+
+    const logout = async () => {
+      await auth.logout();
+    };
+
+    const topLinks: Ref<LinkList> = ref([
       {
         name: 'Dashboard',
         path: '/admin/dashboard',
@@ -119,8 +126,9 @@ export default defineComponent({
         icon: ['fa', 'headset'],
         external: false,
       },
-    ];
-    const bottomLinks = [
+    ]);
+
+    const bottomLinks: Ref<LinkList> = ref([
       {
         name: 'Home',
         path: '/',
@@ -133,36 +141,20 @@ export default defineComponent({
         icon: ['fa', 'eye'],
         external: false,
       },
-    ];
+      {
+        name: 'Logout',
+        action: logout,
+        icon: ['fa', 'sign-out-alt'],
+        external: true,
+      },
+    ]);
 
     return {
       topLinks,
       bottomLinks,
-      logoutUrl: undefined,
+      toggleSidebar,
+      sidebar,
     };
-  },
-  async created() {
-    // await this.getLogoutUrl();
-  },
-  methods: {
-    toggleSidebar() {
-      store.commit('toggleSidebar');
-    },
-    // async getLogoutUrl() {
-    //   try {
-    //     this.bottomLinks.push({
-    //       name: 'Logout',
-    //       path: this.logoutUrl,
-    //       icon: ['fa', 'sign-out-alt'],
-    //       external: true,
-    //     });
-    //   } catch (e) {
-    //     console.error(e);
-    //   }
-    // },
-  },
-  computed: {
-    ...mapGetters(['getSidebar']),
   },
 });
 </script>

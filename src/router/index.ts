@@ -1,19 +1,35 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {
-  createRouter, createWebHistory, RouteRecordRaw, RouteLocationNormalized,
+  createRouter,
+  createWebHistory,
+  RouteRecordRaw,
+  RouteLocationNormalized,
+  NavigationGuardNext,
+  RouteLocationRaw,
 } from 'vue-router';
-import { isAuthenticated as oryIsAuthenticated } from '@/auth';
+import store from '@/store';
 import HomePage from '../views/HomePage.vue';
+
+type NavigationGuardReturn =
+  | void
+  | Error
+  | RouteLocationRaw
+  | boolean
+  | NavigationGuardNext;
 
 const isAuthenticated = async (
   from: RouteLocationNormalized,
   to: RouteLocationNormalized,
-): Promise<boolean> => {
-  const authenticated = await oryIsAuthenticated();
-  if (authenticated) return true;
+  next: NavigationGuardNext,
+): Promise<void> => {
+  const { authenticated } = store.state;
 
-  // window.location.href = ORY_URLS.LOGIN;
-  return false;
+  if (authenticated) {
+    next();
+    return;
+  }
+
+  next('/');
 };
 
 const routes: Array<RouteRecordRaw> = [
@@ -21,6 +37,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     name: 'Home',
     component: HomePage,
+  },
+  {
+    path: '/auth',
+    name: 'Auth',
+    component: () => import(/* webpackChunkName: "auth" */ '../views/AuthPage.vue'),
   },
   {
     path: '/about',

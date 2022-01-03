@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createStore } from 'vuex';
+import auth from '@/auth';
 
 export type Toast = {
   name: string;
@@ -12,6 +13,7 @@ export type Toast = {
 export type Toasts = Toast[];
 
 export type State = {
+  authenticated: boolean;
   sidebar: boolean;
   toasts: Toasts;
 }
@@ -19,15 +21,20 @@ export type State = {
 export default createStore<State>({
   state(): State {
     return {
+      authenticated: false,
       sidebar: true,
       toasts: [],
     };
   },
   getters: {
+    getAuthenticated: (state) => () => state.authenticated,
     getSidebar: (state) => () => state.sidebar,
     getToasts: (state) => () => state.toasts,
   },
   mutations: {
+    setAuthenticated(state, value: boolean) {
+      state.authenticated = value;
+    },
     toggleSidebar(state) {
       state.sidebar = !state.sidebar;
     },
@@ -59,5 +66,11 @@ export default createStore<State>({
       }
     },
   },
-  actions: {},
+  actions: {
+    async fetchAuthenticated({ commit }) {
+      const authenticated = await auth.isAuthenticated();
+
+      commit('setAuthenticated', authenticated);
+    },
+  },
 });

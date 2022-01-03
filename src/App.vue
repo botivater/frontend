@@ -2,7 +2,7 @@
   <div class="min-h-screen h-full w-full flex flex-col scroll-smooth">
     <div
       class="bg-transparent text-white z-10 absolute top-0 w-full"
-      v-if="isFrontendPage()"
+      v-if="showNavBar()"
     >
       <div class="container mx-auto">
         <div class="max-w-6xl mx-auto flex justify-between p-4 items-center">
@@ -24,10 +24,12 @@
               <a
                 v-if="navbarLink.external"
                 :href="navbarLink.path"
+                @click="navbarLink.action"
                 :class="{
                   'font-semibold': isActive(navbarLink.name),
                   'py-2 px-4 bg-white text-black rounded-full':
                     navbarLink.button,
+                  'cursor-pointer': navbarLink.action,
                 }"
                 >{{ navbarLink.name }}</a
               >
@@ -38,25 +40,29 @@
     </div>
     <router-view v-if="isFrontendPage()" />
     <BackendLayout v-if="isAdminPage()">
-        <router-view />
+      <router-view />
     </BackendLayout>
   </div>
 </template>
 
 <script lang="ts">
 import {
-  defineComponent, onMounted, ref,
+  computed, defineComponent, onMounted, Ref, ref, watch,
 } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { isAuthenticated } from './auth/index';
+import { useRoute } from 'vue-router';
+import { useStore } from 'vuex';
+import auth from './auth/index';
 import BackendLayout from './components/BackendLayout.vue';
+import { LinkList } from './types/LinkList';
 
 export default defineComponent({
   setup() {
-    const router = useRouter();
     const route = useRoute();
+    const store = useStore();
 
-    const navbarLinks = ref([
+    const isAuthenticated = computed(() => store.state.authenticated);
+
+    const navbarLinks: Ref<LinkList> = ref([
       {
         name: 'Home',
         path: '/',
@@ -65,38 +71,67 @@ export default defineComponent({
       },
     ]);
 
-    onMounted(async () => {
-      const authenticated = await isAuthenticated();
+    const login = async () => {
+      await auth.login();
+    };
 
-      if (authenticated) {
-        navbarLinks.value.push({
-          name: 'Dashboard',
-          path: '/admin/dashboard',
-          button: true,
-          external: false,
-        });
-      } else {
-        // navbarLinks.value.push({
-        //   name: 'Login',
-        //   path: ORY_URLS.LOGIN,
-        //   button: true,
-        //   external: true,
-        // });
-      }
-    });
+    const logout = async () => {
+      await auth.logout();
+    };
 
     const isActive = (name: string): boolean => {
       const routeName = route.name || '';
       return routeName === name;
     };
 
-    const isFrontendPage = (routeName = route.name?.toString() || ''): boolean => ['Home'].includes(routeName);
+    const isFrontendPage = (
+      routeName = route.name?.toString() || '',
+    ): boolean => ['Home', 'Auth'].includes(routeName);
+
+    const showNavBar = (routeName = route.name?.toString() || ''): boolean => ['Home'].includes(routeName);
 
     const isAdminPage = (routeName = route.name?.toString() || ''): boolean => !isFrontendPage(routeName);
+
+    const handleNavBarLinks = () => {
+      navbarLinks.value = [
+        {
+          name: 'Home',
+          path: '/',
+          button: false,
+          external: false,
+        },
+      ];
+
+      if (isAuthenticated.value) {
+        navbarLinks.value.push({
+          name: 'Dashboard',
+          path: '/admin/dashboard',
+          button: true,
+          external: false,
+        });
+        navbarLinks.value.push({
+          name: 'Logout',
+          action: logout,
+          button: true,
+          external: true,
+        });
+      } else {
+        navbarLinks.value.push({
+          name: 'Login',
+          action: login,
+          button: true,
+          external: true,
+        });
+      }
+    };
+
+    onMounted(handleNavBarLinks);
+    watch(isAuthenticated, handleNavBarLinks);
 
     return {
       navbarLinks,
       isFrontendPage,
+      showNavBar,
       isAdminPage,
       isActive,
     };

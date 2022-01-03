@@ -4,9 +4,37 @@
     <p class="text-gray-400">"What's inside?"</p>
   </div>
   <div>
-    <h2>Session details</h2>
-    <pre v-if="session" class="bg-gray-800 p-4 rounded-lg shadow-inner">{{ session }}</pre>
-    <p v-else>No session found.</p>
+    <h2>Authentication session details</h2>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+      <div>
+        <p>Access token</p>
+        <pre
+          class="
+            bg-gray-800
+            p-4
+            rounded-lg
+            shadow-inner
+            break-all
+            whitespace-pre-wrap
+          "
+          >{{ token }}</pre
+        >
+      </div>
+      <div>
+        <p>User</p>
+        <pre
+          class="
+            bg-gray-800
+            p-4
+            rounded-lg
+            shadow-inner
+            break-all
+            whitespace-pre-wrap
+          "
+          >{{ user }}</pre
+        >
+      </div>
+    </div>
   </div>
 </template>
 
@@ -14,19 +42,28 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
 
-import { defineComponent } from 'vue';
-
-type Data = {
-  session: undefined;
-};
+import { User } from '@auth0/auth0-spa-js';
+import {
+  defineComponent, onMounted, ref, Ref,
+} from 'vue';
+import auth from '@/auth';
 
 export default defineComponent({
   name: 'DebugPage',
-  components: {
-  },
-  data(): Data {
+  components: {},
+  setup() {
+    const token: Ref<string | undefined> = ref(undefined);
+    const user: Ref<User | undefined> = ref(undefined);
+
+    onMounted(async () => {
+      const auth0 = await auth.getAuth0();
+      token.value = await auth0.getTokenSilently();
+      user.value = await auth0.getUser();
+    });
+
     return {
-      session: undefined,
+      token,
+      user,
     };
   },
 });
