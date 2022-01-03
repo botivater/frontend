@@ -60,8 +60,6 @@ export default defineComponent({
     const route = useRoute();
     const store = useStore();
 
-    // store.dispatch('fetchAuthenticated');
-
     const isAuthenticated = computed(() => store.state.authenticated);
 
     const navbarLinks: Ref<LinkList> = ref([

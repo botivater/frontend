@@ -14,6 +14,7 @@ export type Toasts = Toast[];
 
 export type State = {
   authenticated: boolean;
+  loading: boolean;
   sidebar: boolean;
   toasts: Toasts;
 }
@@ -22,18 +23,23 @@ export default createStore<State>({
   state(): State {
     return {
       authenticated: false,
+      loading: false,
       sidebar: true,
       toasts: [],
     };
   },
   getters: {
     getAuthenticated: (state) => () => state.authenticated,
+    getLoading: (state) => () => state.loading,
     getSidebar: (state) => () => state.sidebar,
     getToasts: (state) => () => state.toasts,
   },
   mutations: {
     setAuthenticated(state, value: boolean) {
       state.authenticated = value;
+    },
+    setLoading(state, value: boolean) {
+      state.loading = value;
     },
     toggleSidebar(state) {
       state.sidebar = !state.sidebar;

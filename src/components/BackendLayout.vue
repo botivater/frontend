@@ -14,7 +14,17 @@
     >
       <SideBar></SideBar>
       <ToastList />
-      <div class="flex flex-col w-full h-screen justify-between overflow-y-auto">
+      <div
+        class="
+          flex flex-col
+          w-full
+          h-screen
+          justify-between
+          overflow-y-auto
+          relative
+        "
+      >
+        <LoadingFull :loaded="!loading" />
         <div class="container mx-auto">
           <div class="max-w-6xl mx-auto p-4">
             <slot></slot>
@@ -27,10 +37,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
+import { useStore } from 'vuex';
 import SideBar from './SideBar.vue';
 import ToastList from './ToastList.vue';
 import FooterBlock from './FooterBlock.vue';
+import LoadingFull from './LoadingFull.vue';
 
 export default defineComponent({
   name: 'BackendLayout',
@@ -38,6 +50,16 @@ export default defineComponent({
     SideBar,
     ToastList,
     FooterBlock,
+    LoadingFull,
+  },
+  setup() {
+    const store = useStore();
+
+    const loading = computed(() => store.state.loading);
+
+    return {
+      loading,
+    };
   },
 });
 </script>
