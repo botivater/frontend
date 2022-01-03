@@ -76,4 +76,9 @@ const router = createRouter({
   routes,
 });
 
+router.beforeEach(async () => {
+  await store.dispatch('fetchAuthenticated');
+  return true;
+});
+
 export default router;

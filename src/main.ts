@@ -25,9 +25,5 @@ createApp(App)
   .use(() => {
     document.title = process.env.VUE_APP_NAME;
   })
-  .use(async () => {
-    await store.dispatch('fetchAuthenticated');
-    // console.log(store.getters.getAuthenticated());
-  })
   .component('font-awesome-icon', FontAwesomeIcon)
   .mount('#app');
