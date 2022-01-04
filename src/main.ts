@@ -8,6 +8,7 @@ import {
   faHome,
   faSignOutAlt,
   faTachometerAlt,
+  faTerminal,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import App from './App.vue';
@@ -17,7 +18,7 @@ import store from './store';
 
 import './assets/tailwind.css';
 
-library.add(faHome, faTachometerAlt, faHeadset, faBars, faHeart, faSignOutAlt, faEye);
+library.add(faHome, faTachometerAlt, faHeadset, faBars, faHeart, faSignOutAlt, faEye, faTerminal);
 
 createApp(App)
   .use(store)

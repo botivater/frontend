@@ -126,6 +126,12 @@ export default defineComponent({
         icon: ['fa', 'headset'],
         external: false,
       },
+      {
+        name: 'Commands',
+        path: '/admin/commands',
+        icon: ['fa', 'terminal'],
+        external: false,
+      },
     ]);
 
     const bottomLinks: Ref<LinkList> = ref([
