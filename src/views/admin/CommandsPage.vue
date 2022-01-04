@@ -41,9 +41,21 @@
           :key="list.name"
           class="bg-gray-800 rounded-md p-4"
         >
-          <p>Command:</p>
-          <p class="font-semibold">/{{ list.name }}</p>
-          <p>{{ list.description }}</p>
+          <div class="flex justify-between items-start">
+            <div>
+              <p>Command:</p>
+              <p class="font-semibold">/{{ list.name }}</p>
+              <p>{{ list.description }}</p>
+            </div>
+            <button
+              @click="deleteCommandList(list.id)"
+              class="bg-red-600 rounded-md shadow-md p-3 disabled:bg-gray-600"
+              :disabled="false"
+              :class="{ 'animate-pulse': false }"
+            >
+              <font-awesome-icon class="w-3 h-3s" :icon="['fa', 'trash']" />
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -68,8 +80,14 @@ export default defineComponent({
     const store = useStore();
     const router = useRouter();
 
+    store.commit('setLoading', true);
+
     const lists: Ref<CommandListEntities> = ref([]);
     const reloading: Ref<boolean> = ref(false);
+
+    const loadData = async () => {
+      lists.value = await CommandData.getAllCommandLists();
+    };
 
     const createCommandList = () => {
       router.push('/admin/commands/lists/create');
@@ -94,11 +112,39 @@ export default defineComponent({
       });
     };
 
-    store.commit('setLoading', true);
+    const deleteCommandList = async (id: number) => {
+      store.commit('setLoading', true);
+
+      showToast({
+        name: 'Deleting...',
+        description: 'Deleting the list...',
+      });
+
+      try {
+        await CommandData.deleteCommandList(id);
+        await loadData();
+
+        showToast({
+          name: 'Done!',
+          description: 'Deleted the list!',
+          color: 'green',
+        });
+      } catch (e) {
+        if (e instanceof Error) {
+          showToast({
+            name: e.name,
+            description: e.message,
+            time: 5000,
+            color: 'red',
+          });
+        }
+      } finally {
+        store.commit('setLoading', false);
+      }
+    };
 
     onMounted(async () => {
-      lists.value = await CommandData.getAllCommandLists();
-
+      loadData();
       store.commit('setLoading', false);
     });
 
@@ -107,6 +153,7 @@ export default defineComponent({
       reloading,
       reloadBot,
       createCommandList,
+      deleteCommandList,
     };
   },
 });

@@ -23,6 +23,14 @@ class CommandData {
     });
     return response.data.statusCode === 200;
   }
+
+  public async deleteCommandList(
+    id: number,
+  ): Promise<boolean> {
+    const api = await getAxiosWithToken();
+    const response = await api.delete(`/command/lists/${id}`);
+    return response.data.statusCode === 200;
+  }
 }
 
 export default new CommandData();
