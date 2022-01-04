@@ -39,23 +39,43 @@
         <div
           v-for="list in lists"
           :key="list.name"
-          class="bg-gray-800 rounded-md p-4"
+          class="bg-gray-800 rounded-md p-4 grid grid-cols-1 gap-3"
         >
-          <div class="flex justify-between items-start">
-            <div>
-              <p>Command:</p>
-              <p class="font-semibold">/{{ list.name }}</p>
-              <p>{{ list.description }}</p>
-            </div>
-            <button
-              @click="deleteCommandList(list.id)"
-              class="bg-red-600 rounded-md shadow-md p-3 disabled:bg-gray-600"
-              :disabled="false"
-              :class="{ 'animate-pulse': false }"
-            >
-              <font-awesome-icon class="w-3 h-3s" :icon="['fa', 'trash']" />
-            </button>
+          <div>
+            <p>Command:</p>
+            <p class="font-semibold">/{{ list.name }}</p>
+            <p>{{ list.description }}</p>
           </div>
+          <router-link
+            :to="`/admin/commands/lists/${list.id}/update`"
+            class="
+              bg-blue-600
+              rounded-md
+              shadow-md
+              p-3
+              disabled:bg-gray-600
+              flex
+              items-center
+              justify-center
+            "
+            :disabled="false"
+            :class="{ 'animate-pulse': false }"
+            ><font-awesome-icon
+              class="w-4 h-4 mx-1"
+              :icon="['fa', 'edit']"
+            />Edit
+          </router-link>
+          <button
+            @click="deleteCommandList(list.id)"
+            class="bg-red-600 rounded-md shadow-md p-3 disabled:bg-gray-600"
+            :disabled="false"
+            :class="{ 'animate-pulse': false }"
+          >
+            <font-awesome-icon
+              class="w-4 h-4 mx-1"
+              :icon="['fa', 'trash']"
+            />Delete
+          </button>
         </div>
       </div>
     </div>
@@ -74,7 +94,7 @@ import DiscordBotData from '@/services/DiscordBotData';
 import CommandData from '@/services/CommandData';
 
 export default defineComponent({
-  name: 'SpeakPage',
+  name: 'CommandsPage',
   components: {},
   setup() {
     const store = useStore();

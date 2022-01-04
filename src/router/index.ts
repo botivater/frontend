@@ -76,6 +76,12 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import(/* webpackChunkName: "admin/createCommandListPage" */ '../views/admin/CreateCommandListPage.vue'),
   },
   {
+    path: '/admin/commands/lists/:id/update',
+    name: 'Update command list',
+    beforeEnter: [isAuthenticated],
+    component: () => import(/* webpackChunkName: "admin/updateCommandListPage" */ '../views/admin/UpdateCommandListPage.vue'),
+  },
+  {
     path: '/admin/debug',
     name: 'Debug',
     beforeEnter: [isAuthenticated],

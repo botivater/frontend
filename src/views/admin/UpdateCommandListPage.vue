@@ -1,6 +1,6 @@
 <template>
   <div class="mb-2">
-    <h1 class="text-2xl font-semibold">Create command list</h1>
+    <h1 class="text-2xl font-semibold">Update command list</h1>
     <p class="text-gray-400">No habbel Espagnol!</p>
   </div>
   <form action="#" @submit="submitForm">
@@ -51,7 +51,7 @@
         :disabled="false"
         :class="{ 'animate-pulse': false }"
       >
-        Create
+        Update
       </button>
     </div>
   </form>
@@ -62,7 +62,7 @@ import {
   defineComponent, onMounted, ref, Ref, watch,
 } from 'vue';
 import { useStore } from 'vuex';
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import TextInput from '@/components/forms/TextInput.vue';
 import { showToast } from '@/common';
 import CommandData from '@/services/CommandData';
@@ -74,6 +74,7 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
+    const route = useRoute();
     const router = useRouter();
 
     const submitting: Ref<boolean> = ref(false);
@@ -85,6 +86,12 @@ export default defineComponent({
     store.commit('setLoading', true);
 
     onMounted(async () => {
+      const commandList = await CommandData.getCommandList(Number(route.params.id));
+
+      name.value = commandList.name;
+      description.value = commandList.description;
+      options.value = commandList.options.join(';');
+
       store.commit('setLoading', false);
     });
 
@@ -98,13 +105,14 @@ export default defineComponent({
     const submitForm = async (event: Event) => {
       event.preventDefault();
       showToast({
-        name: 'Creating...',
-        description: 'Creating the command list...',
+        name: 'Updating...',
+        description: 'Updating the command list...',
       });
       submitting.value = true;
 
       const opts = filterOptions();
-      const success = await CommandData.createCommandLists(
+      const success = await CommandData.updateCommandList(
+        Number(route.params.id),
         name.value,
         description.value,
         opts,
@@ -114,7 +122,7 @@ export default defineComponent({
 
       showToast({
         name: 'Done!',
-        description: 'Created the command list!',
+        description: 'Updated the command list!',
         color: 'green',
       });
 
