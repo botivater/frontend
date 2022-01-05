@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import {
   faBars,
+  faChartLine,
   faEdit,
   faEye,
   faHeadset,
@@ -31,6 +32,7 @@ library.add(
   faTerminal,
   faTrash,
   faEdit,
+  faChartLine,
 );
 
 createApp(App)

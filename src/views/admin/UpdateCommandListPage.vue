@@ -68,7 +68,7 @@ import { showToast } from '@/common';
 import CommandData from '@/services/CommandData';
 
 export default defineComponent({
-  name: 'SpeakPage',
+  name: 'UpdateCommandListPage',
   components: {
     TextInput,
   },

@@ -4,21 +4,43 @@
       <h1 class="text-2xl font-semibold">Commands</h1>
       <p class="text-gray-400">Smart stuff at the hand of a command!</p>
     </div>
-    <div>
-      <button
-        @click="reloadBot"
-        class="bg-blue-600 px-8 py-2 rounded-md shadow-md disabled:bg-gray-600"
-        :disabled="reloading"
-        :class="{ 'animate-pulse': reloading }"
-      >
-        Reload Discord Bot Commands
-      </button>
-    </div>
   </div>
-  <div class="grid grid-cols-1 gap-3 divide-x-2">
+  <div class="flex flex-col space-y-3">
+    <div>
+      <div class="mb-3">
+        <h2 class="text-xl font-semibold">General</h2>
+        <p class="text-gray-400">Buttons 'n more</p>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        <div>
+          <button
+            @click="reloadBot"
+            class="
+              bg-blue-600
+              px-8
+              py-2
+              rounded-md
+              shadow-md
+              w-full
+              disabled:bg-gray-600
+            "
+            :disabled="reloading"
+            :class="{ 'animate-pulse': reloading }"
+          >
+            Reload Discord Bot Commands
+          </button>
+          <small class="block text-gray-400"
+            >Press this button when you've made changes to the commands.</small
+          >
+        </div>
+      </div>
+    </div>
     <div>
       <div class="flex justify-between items-center mb-3">
-        <h2 class="text-xl font-semibold">Lists</h2>
+        <div>
+          <h2 class="text-xl font-semibold">Lists</h2>
+          <p class="text-gray-400">Commands that randomly pick an item from a list</p>
+        </div>
         <button
           @click="createCommandList"
           class="
@@ -43,39 +65,44 @@
         >
           <div>
             <p>Command:</p>
-            <p class="font-semibold">/{{ list.name }}</p>
+            <p>
+              <strong>/{{ list.name }}</strong>
+            </p>
             <p>{{ list.description }}</p>
+            <p>Total: {{ list.options.length }}</p>
           </div>
-          <router-link
-            :to="`/admin/commands/lists/${list.id}/update`"
-            class="
-              bg-blue-600
-              rounded-md
-              shadow-md
-              p-3
-              disabled:bg-gray-600
-              flex
-              items-center
-              justify-center
-            "
-            :disabled="false"
-            :class="{ 'animate-pulse': false }"
-            ><font-awesome-icon
-              class="w-4 h-4 mx-1"
-              :icon="['fa', 'edit']"
-            />Edit
-          </router-link>
-          <button
-            @click="deleteCommandList(list.id)"
-            class="bg-red-600 rounded-md shadow-md p-3 disabled:bg-gray-600"
-            :disabled="false"
-            :class="{ 'animate-pulse': false }"
-          >
-            <font-awesome-icon
-              class="w-4 h-4 mx-1"
-              :icon="['fa', 'trash']"
-            />Delete
-          </button>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <router-link
+              :to="`/admin/commands/lists/${list.id}/update`"
+              class="
+                bg-blue-600
+                rounded-md
+                shadow-md
+                p-3
+                disabled:bg-gray-600
+                flex
+                items-center
+                justify-center
+              "
+              :disabled="false"
+              :class="{ 'animate-pulse': false }"
+              ><font-awesome-icon
+                class="w-4 h-4 mx-1"
+                :icon="['fa', 'edit']"
+              />Edit
+            </router-link>
+            <button
+              @click="deleteCommandList(list.id)"
+              class="bg-red-600 rounded-md shadow-md p-3 disabled:bg-gray-600"
+              :disabled="false"
+              :class="{ 'animate-pulse': false }"
+            >
+              <font-awesome-icon
+                class="w-4 h-4 mx-1"
+                :icon="['fa', 'trash']"
+              />Delete
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -164,7 +191,7 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      loadData();
+      await loadData();
       store.commit('setLoading', false);
     });
 

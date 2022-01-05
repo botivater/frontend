@@ -82,6 +82,12 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import(/* webpackChunkName: "admin/updateCommandListPage" */ '../views/admin/UpdateCommandListPage.vue'),
   },
   {
+    path: '/admin/statistics',
+    name: 'Statistics',
+    beforeEnter: [isAuthenticated],
+    component: () => import(/* webpackChunkName: "admin/statisticsPage" */ '../views/admin/StatisticsPage.vue'),
+  },
+  {
     path: '/admin/debug',
     name: 'Debug',
     beforeEnter: [isAuthenticated],

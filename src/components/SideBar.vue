@@ -132,6 +132,12 @@ export default defineComponent({
         icon: ['fa', 'terminal'],
         external: false,
       },
+      {
+        name: 'Statistics',
+        path: '/admin/statistics',
+        icon: ['fa', 'chart-line'],
+        external: false,
+      },
     ]);
 
     const bottomLinks: Ref<LinkList> = ref([
