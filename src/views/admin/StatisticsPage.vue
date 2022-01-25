@@ -11,7 +11,15 @@
         <h2 class="text-xl font-semibold">General</h2>
         <p class="text-gray-400">Some general doodads</p>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"></div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        <div>
+          <DashboardStatisticCard
+            name="Total command usages"
+            :value="totalUsages"
+            :loaded="!loading"
+          />
+        </div>
+      </div>
     </div>
     <div>
       <div class="mb-3">
@@ -54,9 +62,14 @@ export default defineComponent({
 
     // Data
     const usages: Ref<CommandUsageStatistics> = ref([]);
+    const totalUsages: Ref<number> = ref(NaN);
 
     const loadData = async () => {
       usages.value = await CommandUsageData.getAllUsage();
+      totalUsages.value = 0;
+      usages.value.forEach((elem) => { totalUsages.value += elem.invocations; });
+
+      await new Promise((resolve) => { setTimeout(resolve, 500); });
     };
 
     onMounted(async () => {
@@ -66,6 +79,7 @@ export default defineComponent({
 
     return {
       usages,
+      totalUsages,
       loading,
     };
   },
