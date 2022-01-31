@@ -58,6 +58,12 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import(/* webpackChunkName: "admin/dashboardPage" */ '../views/admin/DashboardPage.vue'),
   },
   {
+    path: '/admin/statistics',
+    name: 'Statistics',
+    beforeEnter: [isAuthenticated],
+    component: () => import(/* webpackChunkName: "admin/statisticsPage" */ '../views/admin/StatisticsPage.vue'),
+  },
+  {
     path: '/admin/speak',
     name: 'Speak',
     beforeEnter: [isAuthenticated],
@@ -82,10 +88,10 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import(/* webpackChunkName: "admin/updateCommandListPage" */ '../views/admin/UpdateCommandListPage.vue'),
   },
   {
-    path: '/admin/statistics',
-    name: 'Statistics',
+    path: '/admin/flows',
+    name: 'Flows',
     beforeEnter: [isAuthenticated],
-    component: () => import(/* webpackChunkName: "admin/statisticsPage" */ '../views/admin/StatisticsPage.vue'),
+    component: () => import(/* webpackChunkName: "admin/flowsPage" */ '../views/admin/FlowsPage.vue'),
   },
   {
     path: '/admin/debug',

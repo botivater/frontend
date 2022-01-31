@@ -1,4 +1,5 @@
 /* eslint-disable class-methods-use-this */
+import { CommandFlowGroupEntities } from '@/types/api/CommandFlowGroupEntities';
 import { getAxiosWithToken } from './api';
 
 export type Guild = {
@@ -55,6 +56,12 @@ class DiscordData {
   public async getAllGuildMembers(guildId: string): Promise<GuildMembers> {
     const api = await getAxiosWithToken();
     const response = await api.get(`/discord/guilds/${guildId}/members`);
+    return response.data.data;
+  }
+
+  public async getAllReactionCollectors(): Promise<CommandFlowGroupEntities> {
+    const api = await getAxiosWithToken();
+    const response = await api.get('/discord/reactionCollectors');
     return response.data.data;
   }
 }

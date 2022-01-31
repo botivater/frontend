@@ -121,6 +121,12 @@ export default defineComponent({
         external: false,
       },
       {
+        name: 'Statistics',
+        path: '/admin/statistics',
+        icon: ['fa', 'chart-line'],
+        external: false,
+      },
+      {
         name: 'Speak',
         path: '/admin/speak',
         icon: ['fa', 'headset'],
@@ -133,9 +139,9 @@ export default defineComponent({
         external: false,
       },
       {
-        name: 'Statistics',
-        path: '/admin/statistics',
-        icon: ['fa', 'chart-line'],
+        name: 'Flows',
+        path: '/admin/flows',
+        icon: ['fa', 'robot'],
         external: false,
       },
     ]);

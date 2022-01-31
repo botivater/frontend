@@ -39,7 +39,7 @@
       </div>
     </div>
     <router-view v-if="isFrontendPage()" />
-    <BackendLayout v-if="isAdminPage()">
+    <BackendLayout v-if="isAuthenticated && isAdminPage()">
       <router-view />
     </BackendLayout>
   </div>
@@ -134,6 +134,7 @@ export default defineComponent({
       showNavBar,
       isAdminPage,
       isActive,
+      isAuthenticated,
     };
   },
   components: { BackendLayout },

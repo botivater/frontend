@@ -8,6 +8,7 @@ import {
   faHeadset,
   faHeart,
   faHome,
+  faRobot,
   faSignOutAlt,
   faTachometerAlt,
   faTerminal,
@@ -33,6 +34,7 @@ library.add(
   faTrash,
   faEdit,
   faChartLine,
+  faRobot,
 );
 
 createApp(App)
