@@ -43,9 +43,9 @@
             <p>{{ reactionFlowGroup.description }}</p>
             <p>Actions: {{ reactionFlowGroup.commandFlows.length }}</p>
           </div>
-          <!-- <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <router-link
-              :to="`/admin/commands/lists/${list.id}/update`"
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button
+              @click="updateCommandFlowGroup(reactionFlowGroup)"
               class="
                 bg-blue-600
                 rounded-md
@@ -58,13 +58,14 @@
               "
               :disabled="false"
               :class="{ 'animate-pulse': false }"
-              ><font-awesome-icon
+            >
+              <font-awesome-icon
                 class="w-4 h-4 mx-1"
                 :icon="['fa', 'edit']"
               />Edit
-            </router-link>
+            </button>
             <button
-              @click="deleteCommandList(list.id)"
+              @click="deleteCommandFlowGroup(reactionFlowGroup)"
               class="bg-red-600 rounded-md shadow-md p-3 disabled:bg-gray-600"
               :disabled="false"
               :class="{ 'animate-pulse': false }"
@@ -74,7 +75,7 @@
                 :icon="['fa', 'trash']"
               />Delete
             </button>
-          </div> -->
+          </div>
         </div>
       </div>
       <div v-if="reactionFlowGroups.length === 0">
@@ -122,12 +123,10 @@ import {
 } from 'vue';
 import { useStore } from 'vuex';
 // import { useRouter } from 'vue-router';
-// import { showToast } from '@/common';
-// import { CommandListEntities } from '@/types/api/CommandListEntities';
-// import DiscordBotData from '@/services/DiscordBotData';
-// import CommandData from '@/services/CommandData';
+import { showToast } from '@/common';
 import { CommandFlowGroupEntities } from '@/types/api/CommandFlowGroupEntities';
 import DiscordData from '@/services/DiscordData';
+import { CommandFlowGroupEntity } from '@/types/api/CommandFlowGroupEntity';
 
 export default defineComponent({
   name: 'FlowsPage',
@@ -139,64 +138,53 @@ export default defineComponent({
     store.commit('setLoading', true);
 
     const reactionFlowGroups: Ref<CommandFlowGroupEntities> = ref([]);
-    // const reloading: Ref<boolean> = ref(false);
 
     const loadData = async () => {
       reactionFlowGroups.value = await DiscordData.getAllReactionCollectors();
-      // lists.value = await CommandData.getAllCommandLists();
-      // commandFlows.value = [
-      //   {
-
-      //     id: 1,
-      //     name: 'BE/NL role',
-      //     description: 'Voeg de rol "Belg" en/of "Nederlander" toe afhankelijk van de emoji.',
-      //     commandFlowEntities: [],
-      //     type: 1,
-      //   },
-      //   {
-      //     id: 2,
-      //     name: 'Gender role',
-      //     description: 'Voeg de gender rol toe.',
-      //     commandFlowEntities: [],
-      //     type: 1,
-      //   },
-      // ];
     };
 
     // const createCommandList = () => {
     //   router.push('/admin/commands/lists/create');
     // };
 
-    // const deleteCommandList = async (id: number) => {
-    //   store.commit('setLoading', true);
+    const updateCommandFlowGroup = async (
+      commandFlowGroup: CommandFlowGroupEntity,
+    ) => {
+      // `/admin/commands/lists/${list.id}/update`
+    };
 
-    //   showToast({
-    //     name: 'Deleting...',
-    //     description: 'Deleting the list...',
-    //   });
+    const deleteCommandFlowGroup = async (
+      reactionFlowGroup: CommandFlowGroupEntity,
+    ) => {
+      store.commit('setLoading', true);
 
-    //   try {
-    //     await CommandData.deleteCommandList(id);
-    //     await loadData();
+      showToast({
+        name: 'Deleting...',
+        description: 'Deleting the list...',
+      });
 
-    //     showToast({
-    //       name: 'Done!',
-    //       description: 'Deleted the list!',
-    //       color: 'green',
-    //     });
-    //   } catch (e) {
-    //     if (e instanceof Error) {
-    //       showToast({
-    //         name: e.name,
-    //         description: e.message,
-    //         time: 5000,
-    //         color: 'red',
-    //       });
-    //     }
-    //   } finally {
-    //     store.commit('setLoading', false);
-    //   }
-    // };
+      try {
+        await CommandData.deleteCommandList(id);
+        await loadData();
+
+        showToast({
+          name: 'Done!',
+          description: 'Deleted the list!',
+          color: 'green',
+        });
+      } catch (e) {
+        if (e instanceof Error) {
+          showToast({
+            name: e.name,
+            description: e.message,
+            time: 5000,
+            color: 'red',
+          });
+        }
+      } finally {
+        store.commit('setLoading', false);
+      }
+    };
 
     onMounted(async () => {
       await loadData();
@@ -204,11 +192,10 @@ export default defineComponent({
     });
 
     return {
-      // reloading,
       reactionFlowGroups,
-      // reloadBot,
       // createCommandList,
-      // deleteCommandList,
+      updateCommandFlowGroup,
+      deleteCommandFlowGroup,
     };
   },
 });
