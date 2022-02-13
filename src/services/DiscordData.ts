@@ -1,24 +1,25 @@
 /* eslint-disable class-methods-use-this */
 import { CommandFlowGroupEntities } from '@/types/api/CommandFlowGroupEntities';
+import { CommandFlowGroupEntity } from '@/types/api/CommandFlowGroupEntity';
 import { getAxiosWithToken } from './api';
 
 export type Guild = {
   id: string;
   name: string;
-}
+};
 
 export type Guilds = Guild[];
 
 export type GuildChannel = {
   id: string;
   name: string;
-}
+};
 
 export type GuildChannels = GuildChannel[];
 
 export type GuildMember = {
   id: string;
-}
+};
 
 export type GuildMembers = GuildMember[];
 
@@ -63,6 +64,34 @@ class DiscordData {
     const api = await getAxiosWithToken();
     const response = await api.get('/discord/reactionCollectors');
     return response.data.data;
+  }
+
+  public async getReactionCollector(reactionCollectorId: number): Promise<CommandFlowGroupEntity> {
+    const api = await getAxiosWithToken();
+    const response = await api.get(`/discord/reactionCollectors/${reactionCollectorId}`);
+    return response.data.data;
+  }
+
+  public async createReactionCollector(
+    type: number,
+    guildId: string,
+    channelId: string,
+    name: string,
+    description: string,
+    messageText: string,
+    reactions: string[],
+  ): Promise<boolean> {
+    const api = await getAxiosWithToken();
+    const response = await api.post('/discord/reactionCollectors', {
+      type,
+      guildId,
+      channelId,
+      name,
+      description,
+      messageText,
+      reactions,
+    });
+    return response.data.statusCode === 200;
   }
 }
 

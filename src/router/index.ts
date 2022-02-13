@@ -91,7 +91,19 @@ const routes: Array<RouteRecordRaw> = [
     path: '/admin/flows',
     name: 'Flows',
     beforeEnter: [isAuthenticated],
-    component: () => import(/* webpackChunkName: "admin/flowsPage" */ '../views/admin/FlowsPage.vue'),
+    component: () => import(/* webpackChunkName: "admin/flows/FlowsPage" */ '../views/admin/flows/FlowsPage.vue'),
+  },
+  {
+    path: '/admin/flows/reactionFlows/create',
+    name: 'Create reaction flow',
+    beforeEnter: [isAuthenticated],
+    component: () => import(/* webpackChunkName: "admin/flows/reactionFlows/ReactionFlowCreatePage" */ '../views/admin/flows/reactionFlows/ReactionFlowCreatePage.vue'),
+  },
+  {
+    path: '/admin/flows/reactionFlows/:id/update',
+    name: 'Update reaction flow',
+    beforeEnter: [isAuthenticated],
+    component: () => import(/* webpackChunkName: "admin/flows/reactionFlows/ReactionFlowUpdatePage" */ '../views/admin/flows/reactionFlows/ReactionFlowUpdatePage.vue'),
   },
   {
     path: '/admin/debug',

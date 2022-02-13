@@ -14,8 +14,8 @@
             Perform actions when an emoticon is clicked.
           </p>
         </div>
-        <!-- <button
-          @click="createCommandList"
+        <button
+          @click="createCommandFlowGroup"
           class="
             bg-blue-600
             px-8
@@ -28,7 +28,7 @@
           :class="{ 'animate-pulse': false }"
         >
           New
-        </button> -->
+        </button>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
         <div
@@ -43,9 +43,9 @@
             <p>{{ reactionFlowGroup.description }}</p>
             <p>Actions: {{ reactionFlowGroup.commandFlows.length }}</p>
           </div>
-          <!-- <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <router-link
-              :to="`/admin/commands/lists/${list.id}/update`"
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button
+              @click="updateCommandFlowGroup(reactionFlowGroup)"
               class="
                 bg-blue-600
                 rounded-md
@@ -62,9 +62,9 @@
                 class="w-4 h-4 mx-1"
                 :icon="['fa', 'edit']"
               />Edit
-            </router-link>
+            </button>
             <button
-              @click="deleteCommandList(list.id)"
+              @click="deleteCommandFlowGroup(reactionFlowGroup)"
               class="bg-red-600 rounded-md shadow-md p-3 disabled:bg-gray-600"
               :disabled="false"
               :class="{ 'animate-pulse': false }"
@@ -74,7 +74,7 @@
                 :icon="['fa', 'trash']"
               />Delete
             </button>
-          </div> -->
+          </div>
         </div>
       </div>
       <div v-if="reactionFlowGroups.length === 0">
@@ -121,25 +121,22 @@ import {
   defineComponent, onMounted, ref, Ref,
 } from 'vue';
 import { useStore } from 'vuex';
-// import { useRouter } from 'vue-router';
-// import { showToast } from '@/common';
-// import { CommandListEntities } from '@/types/api/CommandListEntities';
-// import DiscordBotData from '@/services/DiscordBotData';
-// import CommandData from '@/services/CommandData';
+import { useRouter } from 'vue-router';
+import { showToast } from '@/common';
 import { CommandFlowGroupEntities } from '@/types/api/CommandFlowGroupEntities';
 import DiscordData from '@/services/DiscordData';
+import { CommandFlowGroupEntity } from '@/types/api/CommandFlowGroupEntity';
 
 export default defineComponent({
   name: 'FlowsPage',
   components: {},
   setup() {
     const store = useStore();
-    // const router = useRouter();
+    const router = useRouter();
 
     store.commit('setLoading', true);
 
     const reactionFlowGroups: Ref<CommandFlowGroupEntities> = ref([]);
-    // const reloading: Ref<boolean> = ref(false);
 
     const loadData = async () => {
       reactionFlowGroups.value = await DiscordData.getAllReactionCollectors();
@@ -163,40 +160,44 @@ export default defineComponent({
       // ];
     };
 
-    // const createCommandList = () => {
-    //   router.push('/admin/commands/lists/create');
-    // };
+    const createCommandFlowGroup = () => {
+      router.push('/admin/flows/reactionFlows/create');
+    };
 
-    // const deleteCommandList = async (id: number) => {
-    //   store.commit('setLoading', true);
+    const updateCommandFlowGroup = (commandFlowGroup: CommandFlowGroupEntity) => {
+      router.push(`/admin/flows/reactionFlows/${commandFlowGroup.id}/update`);
+    };
 
-    //   showToast({
-    //     name: 'Deleting...',
-    //     description: 'Deleting the list...',
-    //   });
+    const deleteCommandFlowGroup = async (commandFlowGroup: CommandFlowGroupEntity) => {
+      store.commit('setLoading', true);
 
-    //   try {
-    //     await CommandData.deleteCommandList(id);
-    //     await loadData();
+      showToast({
+        name: 'Deleting...',
+        description: `Deleting the command flow group: ${commandFlowGroup.name}`,
+      });
 
-    //     showToast({
-    //       name: 'Done!',
-    //       description: 'Deleted the list!',
-    //       color: 'green',
-    //     });
-    //   } catch (e) {
-    //     if (e instanceof Error) {
-    //       showToast({
-    //         name: e.name,
-    //         description: e.message,
-    //         time: 5000,
-    //         color: 'red',
-    //       });
-    //     }
-    //   } finally {
-    //     store.commit('setLoading', false);
-    //   }
-    // };
+      try {
+        // await CommandData.deleteCommandList(id);
+        await loadData();
+
+        showToast({
+          name: 'Done!',
+          description: 'Deleted the command flow group!',
+          color: 'green',
+        });
+      } catch (e) {
+        if (e instanceof Error) {
+          showToast({
+            name: e.name,
+            description: e.message,
+            time: 5000,
+            color: 'red',
+          });
+        }
+      } finally {
+        store.commit('setLoading', false);
+      }
+    };
 
     onMounted(async () => {
       await loadData();
@@ -204,11 +205,10 @@ export default defineComponent({
     });
 
     return {
-      // reloading,
       reactionFlowGroups,
-      // reloadBot,
-      // createCommandList,
-      // deleteCommandList,
+      createCommandFlowGroup,
+      updateCommandFlowGroup,
+      deleteCommandFlowGroup,
     };
   },
 });
