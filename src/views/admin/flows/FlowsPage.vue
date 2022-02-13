@@ -58,7 +58,8 @@
               "
               :disabled="false"
               :class="{ 'animate-pulse': false }"
-              ><font-awesome-icon
+            >
+              <font-awesome-icon
                 class="w-4 h-4 mx-1"
                 :icon="['fa', 'edit']"
               />Edit
@@ -140,24 +141,6 @@ export default defineComponent({
 
     const loadData = async () => {
       reactionFlowGroups.value = await DiscordData.getAllReactionCollectors();
-      // lists.value = await CommandData.getAllCommandLists();
-      // commandFlows.value = [
-      //   {
-
-      //     id: 1,
-      //     name: 'BE/NL role',
-      //     description: 'Voeg de rol "Belg" en/of "Nederlander" toe afhankelijk van de emoji.',
-      //     commandFlowEntities: [],
-      //     type: 1,
-      //   },
-      //   {
-      //     id: 2,
-      //     name: 'Gender role',
-      //     description: 'Voeg de gender rol toe.',
-      //     commandFlowEntities: [],
-      //     type: 1,
-      //   },
-      // ];
     };
 
     const createCommandFlowGroup = () => {
