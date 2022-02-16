@@ -43,7 +43,7 @@
             <p>{{ reactionFlowGroup.description }}</p>
             <p>Actions: {{ reactionFlowGroup.commandFlows.length }}</p>
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 items-end">
             <button
               @click="updateCommandFlowGroup(reactionFlowGroup)"
               class="
@@ -56,7 +56,7 @@
                 items-center
                 justify-center
               "
-              :disabled="false"
+              :disabled="true"
               :class="{ 'animate-pulse': false }"
             >
               <font-awesome-icon
@@ -148,7 +148,12 @@ export default defineComponent({
     };
 
     const updateCommandFlowGroup = (commandFlowGroup: CommandFlowGroupEntity) => {
-      router.push(`/admin/flows/reactionFlows/${commandFlowGroup.id}/update`);
+      // router.push(`/admin/flows/reactionFlows/${commandFlowGroup.id}/update`);
+      showToast({
+        name: 'Not implemented.',
+        description: 'This function is not implemented yet.',
+        color: 'red',
+      });
     };
 
     const deleteCommandFlowGroup = async (commandFlowGroup: CommandFlowGroupEntity) => {
@@ -160,7 +165,7 @@ export default defineComponent({
       });
 
       try {
-        // await CommandData.deleteCommandList(id);
+        await DiscordData.deleteReactionCollector(commandFlowGroup.id);
         await loadData();
 
         showToast({

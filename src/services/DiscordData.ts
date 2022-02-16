@@ -18,10 +18,21 @@ export type GuildChannel = {
 export type GuildChannels = GuildChannel[];
 
 export type GuildMember = {
-  id: string;
+  displayAvatarURL: string;
+  displayName: string;
+  nickname: string;
+  roles: string[];
+  userId: string;
 };
 
 export type GuildMembers = GuildMember[];
+
+export type Role = {
+  id: string;
+  name: string;
+}
+
+export type Roles = Role[];
 
 class DiscordData {
   public async getAllGuilds(): Promise<Guilds> {
@@ -60,6 +71,12 @@ class DiscordData {
     return response.data.data;
   }
 
+  public async getAllGuildRoles(guildId: string): Promise<Roles> {
+    const api = await getAxiosWithToken();
+    const response = await api.get(`/discord/guilds/${guildId}/roles`);
+    return response.data.data;
+  }
+
   public async getAllReactionCollectors(): Promise<CommandFlowGroupEntities> {
     const api = await getAxiosWithToken();
     const response = await api.get('/discord/reactionCollectors');
@@ -80,6 +97,7 @@ class DiscordData {
     description: string,
     messageText: string,
     reactions: string[],
+    commandFlows: unknown[],
   ): Promise<boolean> {
     const api = await getAxiosWithToken();
     const response = await api.post('/discord/reactionCollectors', {
@@ -90,7 +108,14 @@ class DiscordData {
       description,
       messageText,
       reactions,
+      commandFlows,
     });
+    return response.data.statusCode === 200;
+  }
+
+  public async deleteReactionCollector(reactionCollectorId: number): Promise<boolean> {
+    const api = await getAxiosWithToken();
+    const response = await api.delete(`/discord/reactionCollectors/${reactionCollectorId}`);
     return response.data.statusCode === 200;
   }
 }
