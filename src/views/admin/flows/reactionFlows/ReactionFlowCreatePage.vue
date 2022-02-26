@@ -138,27 +138,47 @@
         >
       </div>
     </div>
+
+    <!-- Actions -->
     <div class="mt-3 grid grid-cols-1 gap-3">
       <div class="flex justify-between items-center">
         <div>
           <h2 class="text-xl font-semibold">Actions</h2>
         </div>
-        <button
-          @click="addAction"
-          type="button"
-          class="
-            bg-blue-600
-            px-8
-            py-2
-            rounded-md
-            shadow-md
-            disabled:bg-gray-600
-          "
-          :disabled="false"
-          :class="{ 'animate-pulse': false }"
-        >
-          New
-        </button>
+        <div class="flex flex-row space-x-3">
+          <button
+            @click="addAction"
+            type="button"
+            class="
+              bg-blue-600
+              px-8
+              py-2
+              rounded-md
+              shadow-md
+              disabled:bg-gray-600
+            "
+            :disabled="false"
+            :class="{ 'animate-pulse': false }"
+          >
+            New
+          </button>
+          <button
+            @click="openAddRoleTemplate"
+            type="button"
+            class="
+              bg-blue-600
+              px-8
+              py-2
+              rounded-md
+              shadow-md
+              disabled:bg-gray-600
+            "
+            :disabled="false"
+            :class="{ 'animate-pulse': false }"
+          >
+            Quick add: role
+          </button>
+        </div>
       </div>
 
       <div
@@ -515,6 +535,93 @@
       </option>
     </datalist>
   </form>
+
+  <Teleport to="body">
+    <ModalComponent
+      :show="roleTemplateModalShow"
+      @close="roleTemplateModalShow = false"
+    >
+      <template #header>
+        <h3>Quick add: role</h3>
+      </template>
+      <template #body>
+        <form action="#" @submit="addRoleTemplate">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label :for="`roleId`">
+                <span class="block">Role:</span>
+                <input
+                  type="text"
+                  name="roleId"
+                  id="roleId"
+                  list="roleList"
+                  placeholder="Role name..."
+                  v-model="quickActionRoleData.roleId"
+                  class="
+                    rounded-md
+                    shadow-md
+                    border
+                    bg-white
+                    h-10
+                    p-2
+                    text-gray-800
+                    placeholder:text-gray-500
+                    w-full
+                  "
+                />
+              </label>
+              <small class="block">Select the role here.</small>
+            </div>
+            <div>
+              <label :for="`checkValue`">
+                <span class="block">Emoji:</span>
+                <input
+                  type="text"
+                  name="checkValue"
+                  id="checkValue"
+                  v-model="quickActionRoleData.checkValue"
+                  class="
+                    rounded-md
+                    shadow-md
+                    border
+                    bg-white
+                    h-10
+                    p-2
+                    text-gray-800
+                    placeholder:text-gray-500
+                    w-full
+                  "
+                />
+              </label>
+              <small class="block">Enter the value to check for here.</small>
+            </div>
+          </div>
+          <div class="float-right">
+            <button
+              type="button"
+              @click="closeAddRoleTemplate"
+              class="text-red-500 hover:bg-gray-300 px-2 py-1 rounded-md"
+            >
+              Close
+            </button>
+            <button
+              type="submit"
+              class="
+                text-green-500
+                hover:bg-gray-300
+                px-2
+                py-1
+                rounded-md
+                font-semibold
+              "
+            >
+              Create
+            </button>
+          </div>
+        </form>
+      </template>
+    </ModalComponent>
+  </Teleport>
 </template>
 
 <script lang="ts">
@@ -524,6 +631,7 @@ import {
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 import TextInput from '@/components/forms/TextInput.vue';
+import ModalComponent from '@/components/ModalComponent.vue';
 import { showToast } from '@/common';
 import DiscordData, {
   GuildChannels,
@@ -546,12 +654,6 @@ export type ReactionFlowCreateFormData = {
 };
 
 export type CommandFlowEntityCreateFormData = {
-  // onType: number;
-  // buildingBlockType: number;
-  // options: string;
-  // order: number;
-  // checkType: number;
-  // checkValue: string;
   onType: OnType;
   buildingBlockType: BuildingBlockType;
   options: {
@@ -568,10 +670,13 @@ export default defineComponent({
   name: 'ReactionFlowsCreatePage',
   components: {
     TextInput,
+    ModalComponent,
   },
   setup() {
     const store = useStore();
     const router = useRouter();
+
+    const roleTemplateModalShow = ref(false);
 
     const guilds: Ref<Guilds> = ref([]);
     const guildChannels: Ref<GuildChannels> = ref([]);
@@ -584,6 +689,11 @@ export default defineComponent({
       description: '',
       messageText: '',
       reactions: '',
+    });
+
+    const quickActionRoleData = ref({
+      roleId: '',
+      checkValue: '',
     });
 
     const actions: Ref<CommandFlowEntityCreateFormData[]> = ref([]);
@@ -689,6 +799,46 @@ export default defineComponent({
         buildingBlockType: BuildingBlockType.NONE,
         options: {},
       });
+    };
+
+    const resetAddRoleTemplate = () => {
+      quickActionRoleData.value.roleId = '';
+      quickActionRoleData.value.checkValue = '';
+    };
+
+    const openAddRoleTemplate = () => {
+      roleTemplateModalShow.value = true;
+    };
+
+    const closeAddRoleTemplate = () => {
+      roleTemplateModalShow.value = false;
+      resetAddRoleTemplate();
+    };
+
+    const addRoleTemplate = (event: Event) => {
+      event.preventDefault();
+
+      actions.value.push({
+        onType: OnType.REACTION_ADD,
+        buildingBlockType: BuildingBlockType.ADD_ROLE,
+        options: {
+          roleId: quickActionRoleData.value.roleId,
+        },
+        checkType: CheckType.REACTION_EMOJI,
+        checkValue: quickActionRoleData.value.checkValue,
+      });
+
+      actions.value.push({
+        onType: OnType.REACTION_REMOVE,
+        buildingBlockType: BuildingBlockType.REMOVE_ROLE,
+        options: {
+          roleId: quickActionRoleData.value.roleId,
+        },
+        checkType: CheckType.REACTION_EMOJI,
+        checkValue: quickActionRoleData.value.checkValue,
+      });
+
+      closeAddRoleTemplate();
     };
 
     const removeAction = (action: CommandFlowEntityCreateFormData) => {
@@ -820,6 +970,11 @@ export default defineComponent({
       formData,
       actions,
       addAction,
+      openAddRoleTemplate,
+      closeAddRoleTemplate,
+      roleTemplateModalShow,
+      quickActionRoleData,
+      addRoleTemplate,
       removeAction,
       loadGuildData,
       submitForm,
