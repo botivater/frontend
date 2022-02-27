@@ -912,11 +912,9 @@ export default defineComponent({
             action.buildingBlockType === BuildingBlockType.ADD_ROLE
             || action.buildingBlockType === BuildingBlockType.REMOVE_ROLE
           ) {
-            const role = guildRoles.value.find(
-              (elem) => elem.name === action.options.roleId,
-            );
+            const role = guildRoles.value.find((elem) => elem.name === action.options.roleId);
 
-            if (!role) throw new Error('Role not found');
+            if (!role) throw new Error(`Role not found: ${action.options.roleId}`);
             body.options.roleId = role.id;
           }
 
