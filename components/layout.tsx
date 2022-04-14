@@ -4,12 +4,10 @@ import Header from './header';
 
 
 type Props = {
-    user: any;
-    loading: boolean;
 }
 
 
-const Layout: React.FC<Props> = ({ children, user, loading }) => {
+const Layout: React.FC<Props> = ({ children }) => {
     const date = new Date();
 
     return (
@@ -19,7 +17,7 @@ const Layout: React.FC<Props> = ({ children, user, loading }) => {
             </Head>
 
             <div className='min-h-screen flex flex-col'>
-                <Header user={user} loading={loading} />
+                <Header />
 
                 <main className='bg-gray-800 text-white py-4 grow flex'>
                     <div className='container mx-auto grow'>{children}</div>

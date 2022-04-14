@@ -1,16 +1,14 @@
+import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import InformationCard from '../components/cards/InformationCard'
 import Layout from '../components/layout'
-import { useFetchUser } from '../lib/user'
-
 
 const Dashboard: NextPage = () => {
-  const router = useRouter();
-  const { user, loading } = useFetchUser({ required: true });
+  const { isLoading, user } = useAuth0()
 
   const [shortStatistics, setShortStatistics] = useState([
     {
@@ -47,17 +45,17 @@ const Dashboard: NextPage = () => {
   ]);
 
   return (
-    <Layout user={user} loading={loading}>
+    <Layout>
       <>
         <Head>
           <title>Dashboard</title>
         </Head>
-        {loading &&
+        {isLoading &&
           <div className='flex items-center justify-center h-full'>
             <h1>Loading...</h1>
           </div>
         }
-        {!loading && user &&
+        {!isLoading && user &&
           <div className='max-w-6xl mx-auto px-4 flex flex-col gap-4'>
             <div>
               <h1 className='text-3xl font-bold'>Dashboard</h1>
@@ -66,20 +64,13 @@ const Dashboard: NextPage = () => {
             <h2 className='text-2xl font-bold'>Statistics</h2>
             <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4'>
               {shortStatistics.map(shortStatistic =>
-                <div className='bg-gradient-to-br from-pink-500 to-purple-700 rounded-md shadow-md p-4'>
-                  <div className='pb-2'>
-                    <h1 className='font-bold text-lg'>{shortStatistic.title}</h1>
-                  </div>
-                  <div>
-                    <p>{shortStatistic.value}</p>
-                  </div>
-                </div>
+                <InformationCard loading={false} title={shortStatistic.title} value={shortStatistic.value} key={shortStatistic.title} />
               )}
             </div>
             <h2 className='text-2xl font-bold'>Quick links</h2>
             <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4'>
               {quickLinks.map(quickLink =>
-                <Link href={quickLink.href}>
+                <Link href={quickLink.href} key={quickLink.text}>
                   <a className='bg-blue-500 hover:bg-blue-700 rounded-md shadow-md p-4 transition-all duration-300'>
                     <h1 className='font-bold text-lg'>{quickLink.text}</h1>
                   </a>
@@ -93,4 +84,4 @@ const Dashboard: NextPage = () => {
   )
 }
 
-export default Dashboard
+export default withAuthenticationRequired(Dashboard);

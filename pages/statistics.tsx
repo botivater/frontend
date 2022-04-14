@@ -1,117 +1,66 @@
+import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import useSWR from 'swr'
+import InformationCard from '../components/cards/InformationCard'
 import Layout from '../components/layout'
-import { useFetchUser } from '../lib/user'
+import { useToken } from '../hooks/use-token'
+import fetchWithToken from '../lib/fetchWithToken'
 
 
-const Dashboard: NextPage = () => {
-  const router = useRouter();
-  const { user, loading } = useFetchUser({ required: true });
+type CommandInvocation = {
+  commandName: string;
+  invocations: number;
+}
 
-  const [generalStatistics, setGeneralStatistics] = useState([
-    {
-      title: "Total command usages",
-      value: 4331
-    },
-  ]);
+type CommandInvocationResponse = {
+  status: string;
+  statusCode: number;
+  data: CommandInvocation[];
+}
 
-  const [commandStatistics, setCommandStatistics] = useState([
-    {
-      title: "selfcare",
-      value: 535
-    },
-    {
-      title: "stats",
-      value: 7
-    },
-    {
-      title: "waardenkjeaan",
-      value: 231
-    },
-    {
-      title: "snoepje",
-      value: 537
-    },
-    {
-      title: "vindeenvriendje",
-      value: 380
-    },
-    {
-      title: "affirmatie",
-      value: 249
-    },
-    {
-      title: "waarzegger",
-      value: 1864
-    },
-    {
-      title: "dev",
-      value: 4
-    },
-    {
-      title: "ping",
-      value: 405
-    },
-    {
-      title: "toneindicator",
-      value: 9
-    },
-    {
-      title: "verjaardag-instellen",
-      value: 52
-    },
-    {
-      title: "report",
-      value: 11
-    },
-    {
-      title: "help",
-      value: 12
-    },
-    {
-      title: "aaien",
-      value: 34
-    },
-  ]);
+
+const sortByInvocationsAsc = (a: CommandInvocation, b: CommandInvocation) => {
+  return a.invocations - b.invocations;
+}
+
+const sortByInvocationsDesc = (a: CommandInvocation, b: CommandInvocation) => {
+  return b.invocations - a.invocations;
+}
+
+const Statistics: NextPage = () => {
+  const { isLoading, user } = useAuth0();
+  const token = useToken();
+  const { error, data: commandStatistics } = useSWR<CommandInvocationResponse>([`${process.env.NEXT_PUBLIC_API_ENDPOINT}/command/usage`, token], fetchWithToken);
 
   return (
-    <Layout user={user} loading={loading}>
+    <Layout>
       <>
         <Head>
           <title>Statistics</title>
         </Head>
-        {loading &&
+        {isLoading &&
           <div className='flex items-center justify-center h-full'>
             <h1>Loading...</h1>
           </div>
         }
-        {!loading && user &&
+        {!isLoading && user &&
           <div className='max-w-6xl mx-auto px-4 flex flex-col gap-4'>
             <div>
               <h1 className='text-3xl font-bold'>Statistics</h1>
               <p className='text-white text-opacity-30'>Insight into usage of the bot.</p>
             </div>
             <h2 className='text-2xl font-bold'>General</h2>
-            <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4'>
-              {generalStatistics.map(generalStatistic =>
-                <div className='bg-gradient-to-br from-pink-500 to-purple-700 rounded-md shadow-md p-4 flex flex-row justify-between items-center'>
-
-                  <h1 className='font-bold text-lg'>{generalStatistic.title}</h1>
-                  <p><strong>{generalStatistic.value}</strong> times</p>
-
-                </div>
-              )}
+            <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4'>
+              <InformationCard loading={!commandStatistics} title={"Total command usages"} value={commandStatistics?.data && commandStatistics.data.reduce((accumulator, commandStatistic) => accumulator += commandStatistic.invocations, 0)} suffix={"times"} />
             </div>
             <h2 className='text-2xl font-bold'>Commands</h2>
-            <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4'>
-              {commandStatistics.map(commandStatistic =>
-                <div className='bg-gradient-to-br from-pink-500 to-purple-700 rounded-md shadow-md p-4 flex flex-row justify-between items-center'>
-                  <h1 className='font-bold text-lg'>/{commandStatistic.title}</h1>
-                  <p><strong>{commandStatistic.value}</strong> times</p>
-                </div>
+            <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4'>
+              {commandStatistics?.data && commandStatistics.data.sort(sortByInvocationsDesc).map(commandStatistic =>
+                <InformationCard loading={false} title={`/${commandStatistic.commandName}`} value={commandStatistic.invocations} suffix={"times"} key={commandStatistic.commandName} />
               )}
             </div>
           </div>
@@ -121,4 +70,4 @@ const Dashboard: NextPage = () => {
   )
 }
 
-export default Dashboard
+export default withAuthenticationRequired(Statistics);
