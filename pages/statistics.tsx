@@ -7,33 +7,14 @@ import useSWR from 'swr'
 import InformationCard from '../components/cards/InformationCard'
 import Layout from '../components/layout'
 import { useToken } from '../hooks/use-token'
+import { CommandInvocationEndpoint, CommandInvocationResponse, sortByInvocationsDesc } from '../lib/api/CommandUsageData'
 import fetchWithToken from '../lib/fetchWithToken'
 
-
-type CommandInvocation = {
-  commandName: string;
-  invocations: number;
-}
-
-type CommandInvocationResponse = {
-  status: string;
-  statusCode: number;
-  data: CommandInvocation[];
-}
-
-
-const sortByInvocationsAsc = (a: CommandInvocation, b: CommandInvocation) => {
-  return a.invocations - b.invocations;
-}
-
-const sortByInvocationsDesc = (a: CommandInvocation, b: CommandInvocation) => {
-  return b.invocations - a.invocations;
-}
 
 const Statistics: NextPage = () => {
   const { isLoading, user } = useAuth0();
   const token = useToken();
-  const { error, data: commandStatistics } = useSWR<CommandInvocationResponse>([`${process.env.NEXT_PUBLIC_API_ENDPOINT}/command/usage`, token], fetchWithToken);
+  const { error, data: commandStatistics } = useSWR<CommandInvocationResponse>([CommandInvocationEndpoint, token], fetchWithToken);
 
   return (
     <Layout>
