@@ -3,18 +3,39 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CommandListCard from '../../components/cards/CommandListCard'
 import InformationCard from '../../components/cards/InformationCard'
 import Layout from '../../components/layout'
+import { useToken } from '../../hooks/use-token'
 import CommandList from '../../lib/api/CommandList'
+import DiscordBot from '../../lib/api/DiscordBot'
 
 const CommandListsPage: NextPage = () => {
   const { isLoading, user } = useAuth0()
+  const token = useToken();
 
   const { error: allCommandListsError, data: allCommandListsData, isLoading: allCommandListsIsLoading } = CommandList.useAllCommandLists();
-
   if (allCommandListsError) console.error(allCommandListsError);
+
+  const [isReloading, setReloading] = useState(false);
+
+  const reloadCommands = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    setReloading(true);
+
+    try {
+      const result = await DiscordBot.reloadCommands(token);
+
+      setReloading(false);
+
+      if (result) alert("Discord Bot reload complete!");
+      else alert("An error occurred while reloading the Discord Bot.");
+    } catch (err) {
+      setReloading(false);
+      console.error(err);
+    }
+  }
 
   return (
     <Layout>
@@ -36,7 +57,7 @@ const CommandListsPage: NextPage = () => {
             <h2 className='text-2xl font-bold'>General</h2>
             <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'>
               <div>
-                <button className='bg-blue-600 hover:bg-blue-700 rounded-md shadow-md py-2 px-4 transition-all duration-300 w-full'>Push changes</button>
+                <button className='bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 rounded-md shadow-md py-2 px-4 transition-all duration-300 w-full' disabled={isReloading} onClick={(e) => reloadCommands(e)}>Push changes</button>
                 <small className='text-white text-opacity-30 block'>Press this button when you have made changes to the commands.</small>
               </div>
               <div>

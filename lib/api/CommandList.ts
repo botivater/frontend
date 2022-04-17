@@ -98,8 +98,6 @@ const deleteCommandList = async (token: string, id: number) => {
     return response.status === 200;
 }
 
-// TODO: Implement create, update, delete.
-
 const exports = {
     useAllCommandLists,
     useCommandList,
