@@ -4,14 +4,14 @@ import Head from 'next/head'
 import Link from 'next/link'
 import InformationCard from '../components/cards/InformationCard'
 import Layout from '../components/layout'
-import { useToken } from '../hooks/use-token'
 import CommandUsage from '../lib/api/CommandUsage'
 
 
 const Statistics: NextPage = () => {
   const { isLoading, user } = useAuth0();
-  const token = useToken();
-  const { error: usageError, usage, isLoading: isUsageLoading } = CommandUsage.useCommandUsage(token);
+  const { error: usageError, data: usageData, isLoading: isUsageLoading } = CommandUsage.useCommandUsage();
+
+  if (usageError) console.error(usageError);
 
   return (
     <Layout>
@@ -32,11 +32,14 @@ const Statistics: NextPage = () => {
             </div>
             <h2 className='text-2xl font-bold'>General</h2>
             <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4'>
-              <InformationCard loading={isUsageLoading} title={"Total command usages"} value={!isUsageLoading && !usageError && usage && usage.data?.reduce((accumulator, commandStatistic) => accumulator += commandStatistic.invocations, 0)} suffix={"times"} />
+              <InformationCard loading={isUsageLoading || usageError} title={"Total command usages"} value={!isUsageLoading && usageData?.reduce((accumulator, commandStatistic) => accumulator += commandStatistic.invocations, 0)} suffix={"times"} />
             </div>
             <h2 className='text-2xl font-bold'>Commands</h2>
             <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4'>
-              {!isUsageLoading && !usageError && usage && usage.data?.sort(CommandUsage.sortByInvocationsDesc).map(commandStatistic =>
+              {isUsageLoading || usageError &&
+              <InformationCard loading={true} />
+              }
+              {!isUsageLoading && usageData?.sort(CommandUsage.sortByInvocationsDesc).map(commandStatistic =>
                 <InformationCard loading={false} title={`/${commandStatistic.commandName}`} value={commandStatistic.invocations} suffix={"times"} key={commandStatistic.commandName} />
               )}
             </div>

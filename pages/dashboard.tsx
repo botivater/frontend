@@ -6,26 +6,20 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import InformationCard from '../components/cards/InformationCard'
 import Layout from '../components/layout'
+import Discord from '../lib/api/Discord'
 
 const Dashboard: NextPage = () => {
   const { isLoading, user } = useAuth0()
 
-  const [shortStatistics, setShortStatistics] = useState([
-    {
-      title: "Total guilds",
-      value: 1
-    },
-    {
-      title: "Total channels",
-      value: 164
-    },
-    {
-      title: "Total members",
-      value: 174
-    }
-  ]);
+  const { error: allGuildsError, data: allGuildsData, isLoading: allGuildsIsLoading } = Discord.useAllDiscordGuilds();
+  const { error: allGuildChannelsError, data: allGuildChannelsData, isLoading: allGuildChannelsIsLoading } = Discord.useAllDiscordGuildChannels();
+  const { error: allGuildMembersError, data: allGuildMembersData, isLoading: allGuildMembersIsLoading } = Discord.useAllDiscordGuildMembers();
 
-  const [quickLinks, setQuickLinks] = useState([
+  if (allGuildsError) console.error(allGuildsError);
+  if (allGuildChannelsError) console.error(allGuildChannelsError);
+  if (allGuildMembersError) console.error(allGuildMembersError);
+
+  const quickLinks = [
     {
       href: "/statistics",
       text: "Statistics"
@@ -35,14 +29,14 @@ const Dashboard: NextPage = () => {
       text: "Speak"
     },
     {
-      href: "/dashboard",
+      href: "/commands",
       text: "Commands"
     },
     {
       href: "/dashboard",
       text: "Flows"
     }
-  ]);
+  ];
 
   return (
     <Layout>
@@ -63,16 +57,16 @@ const Dashboard: NextPage = () => {
             </div>
             <h2 className='text-2xl font-bold'>Statistics</h2>
             <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4'>
-              {shortStatistics.map(shortStatistic =>
-                <InformationCard loading={false} title={shortStatistic.title} value={shortStatistic.value} key={shortStatistic.title} />
-              )}
+              <InformationCard loading={allGuildsIsLoading} title={"Total guilds"} value={!allGuildsIsLoading && allGuildsData?.length} />
+              <InformationCard loading={allGuildChannelsIsLoading} title={"Total channels"} value={!allGuildChannelsIsLoading && allGuildChannelsData?.length} />
+              <InformationCard loading={allGuildMembersIsLoading} title={"Total members"} value={!allGuildMembersIsLoading && allGuildMembersData?.length} />
             </div>
             <h2 className='text-2xl font-bold'>Quick links</h2>
             <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4'>
               {quickLinks.map(quickLink =>
                 <Link href={quickLink.href} key={quickLink.text}>
-                  <a className='bg-blue-500 hover:bg-blue-700 rounded-md shadow-md p-4 transition-all duration-300'>
-                    <h1 className='font-bold text-lg'>{quickLink.text}</h1>
+                  <a className='bg-blue-600 hover:bg-blue-700 rounded-md shadow-md p-4 transition-all duration-300'>
+                    <h1 className='font-bold text-lg text-center'>{quickLink.text}</h1>
                   </a>
                 </Link>
               )}
