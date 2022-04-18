@@ -10,7 +10,7 @@ import { useToken } from '../hooks/use-token'
 import Discord from '../lib/api/Discord'
 import Mira from '../lib/api/Mira'
 
-const Dashboard: NextPage = () => {
+const SpeakPage: NextPage = () => {
   const { isLoading, user } = useAuth0();
   const { guildId } = useAppContext();
   const token = useToken();
@@ -93,4 +93,4 @@ const Dashboard: NextPage = () => {
   )
 }
 
-export default withAuthenticationRequired(Dashboard);
+export default withAuthenticationRequired(SpeakPage);

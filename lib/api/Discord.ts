@@ -73,9 +73,9 @@ const useAllDiscordGuilds = () => {
     }
 }
 
-const useDiscordGuild = (guildId: string) => {
+const useDiscordGuild = (guildId?: string) => {
     const token = useToken();
-    const { error, data } = useSWR<ApiResponse<Guild>>(token ? [`${apiEndpoint}/discord/guilds/${guildId}`, token] : null, fetchWithToken);
+    const { error, data } = useSWR<ApiResponse<Guild>>(token && guildId ? [`${apiEndpoint}/discord/guilds/${guildId}`, token] : null, fetchWithToken);
 
     if (data && data.error) {
         return {
@@ -92,9 +92,9 @@ const useDiscordGuild = (guildId: string) => {
     }
 }
 
-const useDiscordGuildChannels = (guildId: string) => {
+const useDiscordGuildChannels = (guildId?: string) => {
     const token = useToken();
-    const { error, data } = useSWR<ApiResponse<GuildChannel[]>>(token ? [`${apiEndpoint}/discord/guilds/${guildId}/channels`, token] : null, fetchWithToken);
+    const { error, data } = useSWR<ApiResponse<GuildChannel[]>>(token && guildId ? [`${apiEndpoint}/discord/guilds/${guildId}/channels`, token] : null, fetchWithToken);
 
     if (data && data.error) {
         return {
@@ -174,9 +174,9 @@ const useAllDiscordGuildChannels = () => {
     }
 }
 
-const useDiscordGuildMembers = (guildId: string) => {
+const useDiscordGuildMembers = (guildId?: string) => {
     const token = useToken();
-    const { error, data } = useSWR<ApiResponse<GuildMember[]>>(token ? [`${apiEndpoint}/discord/guilds/${guildId}/members`, token] : null, fetchWithToken);
+    const { error, data } = useSWR<ApiResponse<GuildMember[]>>(token && guildId ? [`${apiEndpoint}/discord/guilds/${guildId}/members`, token] : null, fetchWithToken);
 
     if (data && data.error) {
         return {
@@ -218,9 +218,9 @@ const useAllDiscordGuildMembers = () => {
     }
 }
 
-const useDiscordGuildRoles = (guildId: string) => {
+const useDiscordGuildRoles = (guildId?: string) => {
     const token = useToken();
-    const { error, data } = useSWR<ApiResponse<GuildRole[]>>(token ? [`${apiEndpoint}/discord/guilds/${guildId}/roles`, token] : null, fetchWithToken);
+    const { error, data } = useSWR<ApiResponse<GuildRole[]>>(token && guildId ? [`${apiEndpoint}/discord/guilds/${guildId}/roles`, token] : null, fetchWithToken);
 
     if (data && data.error) {
         return {

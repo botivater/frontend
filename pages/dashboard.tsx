@@ -1,25 +1,27 @@
 import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
 import InformationCard from '../components/cards/InformationCard'
+import { useAppContext } from '../components/context/AppContext'
 import Layout from '../components/layout'
 import Discord from '../lib/api/Discord'
 
 const Dashboard: NextPage = () => {
   const { isLoading, user } = useAuth0()
+  const { guildId } = useAppContext();
 
-  const { error: allGuildsError, data: allGuildsData, isLoading: allGuildsIsLoading } = Discord.useAllDiscordGuilds();
-  const { error: allGuildChannelsError, data: allGuildChannelsData, isLoading: allGuildChannelsIsLoading } = Discord.useAllDiscordGuildChannels();
-  const { error: allGuildMembersError, data: allGuildMembersData, isLoading: allGuildMembersIsLoading } = Discord.useAllDiscordGuildMembers();
+  const { error: allGuildChannelsError, data: allGuildChannelsData, isLoading: allGuildChannelsIsLoading } = Discord.useDiscordGuildChannels(guildId);
+  const { error: allGuildMembersError, data: allGuildMembersData, isLoading: allGuildMembersIsLoading } = Discord.useDiscordGuildMembers(guildId);
 
-  if (allGuildsError) console.error(allGuildsError);
   if (allGuildChannelsError) console.error(allGuildChannelsError);
   if (allGuildMembersError) console.error(allGuildMembersError);
 
   const quickLinks = [
+    {
+      href: "/tenantSwitcher",
+      text: "Tenant switcher"
+    },
     {
       href: "/statistics",
       text: "Statistics"
@@ -56,8 +58,7 @@ const Dashboard: NextPage = () => {
               <p className='text-white text-opacity-30'>The quick bits!</p>
             </div>
             <h2 className='text-2xl font-bold'>Statistics</h2>
-            <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4'>
-              <InformationCard loading={allGuildsIsLoading} title={"Total guilds"} value={!allGuildsIsLoading && allGuildsData?.length} />
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
               <InformationCard loading={allGuildChannelsIsLoading} title={"Total channels"} value={!allGuildChannelsIsLoading && allGuildChannelsData?.length} />
               <InformationCard loading={allGuildMembersIsLoading} title={"Total members"} value={!allGuildMembersIsLoading && allGuildMembersData?.length} />
             </div>
