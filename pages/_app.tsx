@@ -2,6 +2,7 @@ import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { AppState, Auth0Provider } from '@auth0/auth0-react'
 import Router from 'next/router';
+import { AppContextWrapper } from '../components/context/AppContext';
 
 
 const onRedirectCallback = (appState: AppState) => {
@@ -17,7 +18,9 @@ function App({ Component, pageProps: { ...pageProps } }: AppProps) {
       scope={"openid user email"}
       redirectUri={(typeof window !== 'undefined' && window.location.origin) || ""}
       onRedirectCallback={onRedirectCallback}>
-      <Component {...pageProps} />
+      <AppContextWrapper>
+        <Component {...pageProps} />
+      </AppContextWrapper>
     </Auth0Provider>
   )
 }

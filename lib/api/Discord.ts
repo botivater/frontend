@@ -111,9 +111,9 @@ const useDiscordGuildChannels = (guildId: string) => {
     }
 }
 
-const useDiscordGuildTextChannels = (guildId: string) => {
+const useDiscordGuildTextChannels = (guildId?: string) => {
     const token = useToken();
-    const { error, data } = useSWR<ApiResponse<GuildChannel[]>>(token ? [`${apiEndpoint}/discord/guilds/${guildId}/channels?type=text`, token] : null, fetchWithToken);
+    const { error, data } = useSWR<ApiResponse<GuildChannel[]>>(token && guildId ? [`${apiEndpoint}/discord/guilds/${guildId}/channels?type=text`, token] : null, fetchWithToken);
 
     if (data && data.error) {
         return {
@@ -300,6 +300,18 @@ const useReactionCollector = (reactionCollectorId: number) => {
     }
 }
 
+const sortChannelsByNameAsc = (a: GuildChannel, b: GuildChannel) => {
+    if (a.name > b.name) return 1;
+    if (a.name < b.name) return -1;
+    return 0;
+}
+
+const sortChannelsByNameDesc = (a: GuildChannel, b: GuildChannel) => {
+    if (a.name > b.name) return -1;
+    if (a.name < b.name) return 1;
+    return 0;
+}
+
 const exports = {
     useAllDiscordGuilds,
     useDiscordGuild,
@@ -312,7 +324,9 @@ const exports = {
     useDiscordGuildRoles,
     useAllDiscordGuildRoles,
     useAllReactionCollectors,
-    useReactionCollector
+    useReactionCollector,
+    sortChannelsByNameAsc,
+    sortChannelsByNameDesc
 }
 
 export default exports;

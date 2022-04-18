@@ -86,7 +86,7 @@ const IndividualCommandListPage: NextPage = () => {
     if (!id) throw new Error("Command list ID not set.");
 
     if (confirm("Are you sure you want to delete?")) {
-      
+
       setSubmitting(true);
 
       try {
@@ -106,29 +106,28 @@ const IndividualCommandListPage: NextPage = () => {
     }
   }
 
-return (
-  <Layout>
-    <>
-      <Head>
-        <title>Command lists</title>
-      </Head>
-      {isLoading &&
-        <div className='flex items-center justify-center h-full'>
-          <h1>Loading...</h1>
-        </div>
-      }
-      {!isLoading && user &&
-        <div className='max-w-6xl mx-auto px-4 flex flex-col gap-4'>
-          <div>
-            <h1 className='text-3xl font-bold'>Command lists</h1>
-            <p className='text-white text-opacity-30'>Commands that randomly pick an item from a list.</p>
+  return (
+    <Layout>
+      <>
+        <Head>
+          <title>Command lists</title>
+        </Head>
+        {isLoading &&
+          <div className='flex items-center justify-center h-full'>
+            <h1>Loading...</h1>
           </div>
-          <div>
-            <h2 className='text-2xl font-bold'>Command list editor</h2>
-            <p className='text-white text-opacity-30'>Editing command list: /{commandListData?.name}</p>
-          </div>
-          {!commandListIsLoading && commandListData &&
-            <>
+        }
+        {!isLoading && user &&
+          <div className='max-w-6xl mx-auto px-4 flex flex-col gap-4'>
+            <div>
+              <h1 className='text-3xl font-bold'>Command lists</h1>
+              <p className='text-white text-opacity-30'>Commands that randomly pick an item from a list.</p>
+            </div>
+            <div>
+              <h2 className='text-2xl font-bold'>Command list editor</h2>
+              <p className='text-white text-opacity-30'>Editing command list: /{commandListData?.name}</p>
+            </div>
+            {!commandListIsLoading && commandListData &&
               <form className='grid grid-cols-1 sm:grid-cols-2 gap-4' onSubmit={(e) => handleSubmit(e)}>
                 <div>
                   <label htmlFor="name" className='block font-bold'>Name:</label>
@@ -167,14 +166,12 @@ return (
                   <button className='bg-red-600 hover:bg-red-700 rounded-md shadow-md py-2 px-4 transition-all duration-300 w-full' onClick={(e) => handleDelete(e)} disabled={submitting}>Delete</button>
                 </div>
               </form>
-
-            </>
-          }
-        </div>
-      }
-    </>
-  </Layout>
-)
+            }
+          </div>
+        }
+      </>
+    </Layout>
+  )
 }
 
 export default withAuthenticationRequired(IndividualCommandListPage);

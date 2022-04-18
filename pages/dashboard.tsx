@@ -25,7 +25,7 @@ const Dashboard: NextPage = () => {
       text: "Statistics"
     },
     {
-      href: "/dashboard",
+      href: "/speak",
       text: "Speak"
     },
     {
