@@ -15,7 +15,7 @@ const Header: React.FC<Props> = ({ children }) => {
             <div className='container mx-auto'>
                 <div className='flex flex-row justify-between items-center h-16 px-4 max-w-6xl mx-auto'>
                     <h1 className='text-xl'>Discord Bot Admin</h1>
-                    <ul className='flex flex-row items-center gap-2 h-full'>
+                    <ul className='flex flex-row items-center gap-4 h-full'>
                         {isLoading &&
                             <li>
                                 <span>Loading...</span>
@@ -25,6 +25,9 @@ const Header: React.FC<Props> = ({ children }) => {
                             <>
                                 <li>
                                     <Link href={"/dashboard"}><a>Dashboard</a></Link>
+                                </li>
+                                <li>
+                                    <Link href={"/tenantSwitcher"}><a>Switch tenant</a></Link>
                                 </li>
                                 <li>
                                     <a onClick={() => logout({ returnTo: window.location.origin })} className='cursor-pointer'>Logout</a>

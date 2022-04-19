@@ -50,7 +50,6 @@ const TenantSwitcherPage: NextPage = () => {
                             <h1 className='text-3xl font-bold'>Tenant switcher</h1>
                             <p className='text-white text-opacity-30'>Switch between Discord guilds.</p>
                         </div>
-                        <h2 className='text-2xl font-bold'>Tenant</h2>
                         <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'>
                             <div>
                                 <label htmlFor="guildId" className='block font-bold'>Guild name:</label>

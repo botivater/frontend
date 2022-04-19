@@ -19,10 +19,6 @@ const Dashboard: NextPage = () => {
 
   const quickLinks = [
     {
-      href: "/tenantSwitcher",
-      text: "Tenant switcher"
-    },
-    {
       href: "/statistics",
       text: "Statistics"
     },
