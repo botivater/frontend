@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import Layout from '../components/layout'
+import Loading from '../components/loading'
 
 
 const Home: NextPage = () => {
@@ -16,6 +17,10 @@ const Home: NextPage = () => {
     if (!isLoading && user) router.push("/dashboard");
   });
 
+  if (isLoading) {
+    return <Loading />
+  }
+
   return (
     <Layout>
       <>
@@ -24,12 +29,7 @@ const Home: NextPage = () => {
           {/* <link rel="icon" href="/favicon.ico" /> */}
         </Head>
         <div className='grid grid-cols-1 md:grid-cols-3 gap-2 items-center h-full'>
-          {isLoading &&
-            <div className='md:col-start-2 text-center'>
-              <h1>Loading...</h1>
-            </div>
-          }
-          {!isLoading && user &&
+          {user &&
             <div className='bg-gray-700 rounded-md shadow-md p-4 md:col-start-2'>
               <div className='pb-2'>
                 <h1 className='font-bold text-lg'>Logged in!</h1>
@@ -39,7 +39,7 @@ const Home: NextPage = () => {
               </div>
             </div>
           }
-          {!isLoading && !user &&
+          {!user &&
             <div className='bg-gray-700 rounded-md shadow-md p-4 md:col-start-2'>
               <div className='pb-2'>
                 <h1 className='font-bold text-lg'>Not logged in.</h1>

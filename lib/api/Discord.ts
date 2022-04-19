@@ -281,9 +281,9 @@ const useAllReactionCollectors = () => {
     }
 }
 
-const useReactionCollector = (reactionCollectorId: number) => {
+const useReactionCollector = (reactionCollectorId?: number) => {
     const token = useToken();
-    const { error, data } = useSWR<ApiResponse<CommandFlowGroup>>(token ? [`${apiEndpoint}/discord/reactionCollectors/${reactionCollectorId}`, token] : null, fetchWithToken);
+    const { error, data } = useSWR<ApiResponse<CommandFlowGroup>>(token && reactionCollectorId ? [`${apiEndpoint}/discord/reactionCollectors/${reactionCollectorId}`, token] : null, fetchWithToken);
 
     if (data && data.error) {
         return {
@@ -312,6 +312,30 @@ const sortChannelsByNameDesc = (a: GuildChannel, b: GuildChannel) => {
     return 0;
 }
 
+const sortMembersByDisplayNameAsc = (a: GuildMember, b: GuildMember) => {
+    if (a.displayName > b.displayName) return 1;
+    if (a.displayName < b.displayName) return -1;
+    return 0;
+}
+
+const sortMembersByDisplayNameDesc = (a: GuildMember, b: GuildMember) => {
+    if (a.displayName > b.displayName) return -1;
+    if (a.displayName < b.displayName) return 1;
+    return 0;
+}
+
+const sortRolesByNameAsc = (a: GuildRole, b: GuildRole) => {
+    if (a.name > b.name) return 1;
+    if (a.name < b.name) return -1;
+    return 0;
+}
+
+const sortRolesByNameDesc = (a: GuildRole, b: GuildRole) => {
+    if (a.name > b.name) return -1;
+    if (a.name < b.name) return 1;
+    return 0;
+}
+
 const exports = {
     useAllDiscordGuilds,
     useDiscordGuild,
@@ -326,7 +350,11 @@ const exports = {
     useAllReactionCollectors,
     useReactionCollector,
     sortChannelsByNameAsc,
-    sortChannelsByNameDesc
+    sortChannelsByNameDesc,
+    sortMembersByDisplayNameAsc,
+    sortMembersByDisplayNameDesc,
+    sortRolesByNameAsc,
+    sortRolesByNameDesc
 }
 
 export default exports;

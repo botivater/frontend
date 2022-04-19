@@ -4,7 +4,9 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
+import ErrorComponent from '../../components/errorComponent'
 import Layout from '../../components/layout'
+import Loading from '../../components/loading'
 import { useToken } from '../../hooks/use-token'
 import CommandList from '../../lib/api/CommandList';
 
@@ -22,7 +24,6 @@ const IndividualCommandListPage: NextPage = () => {
   const [submitting, setSubmitting] = useState(false);
 
   const { error: commandListError, data: commandListData, isLoading: commandListIsLoading } = CommandList.useCommandList(parseInt(id as string));
-  if (commandListError) console.error(commandListError);
 
   useEffect(() => {
     setName(commandListData?.name || "");
@@ -106,18 +107,22 @@ const IndividualCommandListPage: NextPage = () => {
     }
   }
 
+  if (commandListError) {
+    console.error(commandListError);
+    return <ErrorComponent message={commandListError.toString()} />
+  }
+
+  if (isLoading) {
+    return <Loading />
+  }
+
   return (
     <Layout>
       <>
         <Head>
-          <title>Command lists</title>
+          <title>Editing command list</title>
         </Head>
-        {isLoading &&
-          <div className='flex items-center justify-center h-full'>
-            <h1>Loading...</h1>
-          </div>
-        }
-        {!isLoading && user &&
+        {user &&
           <div className='max-w-6xl mx-auto px-4 flex flex-col gap-4'>
             <div>
               <h1 className='text-3xl font-bold'>Command lists</h1>

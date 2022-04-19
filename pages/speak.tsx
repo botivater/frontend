@@ -5,7 +5,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useContext, useEffect, useState } from 'react'
 import { useAppContext } from '../components/context/AppContext'
+import ErrorComponent from '../components/errorComponent'
 import Layout from '../components/layout'
+import Loading from '../components/loading'
 import { useToken } from '../hooks/use-token'
 import Discord from '../lib/api/Discord'
 import Mira from '../lib/api/Mira'
@@ -20,6 +22,12 @@ const SpeakPage: NextPage = () => {
   const [channelId, setChannelId] = useState("");
   const [message, setMessage] = useState("");
   const [isSubmitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (guildChannelsData) {
+      setChannelId(guildChannelsData[0].id);
+    }
+  }, [guildChannelsData, setChannelId]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -47,18 +55,22 @@ const SpeakPage: NextPage = () => {
     }
   }
 
+  if (guildChannelsError) {
+    console.error(guildChannelsError);
+    return <ErrorComponent message={guildChannelsError.toString()} />
+  }
+
+  if (isLoading) {
+    return <Loading />
+  }
+
   return (
     <Layout>
       <>
         <Head>
           <title>Speak</title>
         </Head>
-        {isLoading &&
-          <div className='flex items-center justify-center h-full'>
-            <h1>Loading...</h1>
-          </div>
-        }
-        {!isLoading && user &&
+        {user &&
           <div className='max-w-6xl mx-auto px-4 flex flex-col gap-4'>
             <div>
               <h1 className='text-3xl font-bold'>Speak</h1>

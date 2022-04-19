@@ -3,7 +3,9 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
+import ErrorComponent from '../components/errorComponent'
 import Layout from '../components/layout'
+import Loading from '../components/loading'
 import Discord from '../lib/api/Discord'
 import { setTenant, useTenant } from '../lib/tenant'
 
@@ -15,8 +17,6 @@ const TenantSwitcherPage: NextPage = () => {
 
     const { data: tenantGuildId, mutate: mutateTenant } = useTenant();
     const { error: allGuildsError, data: allGuildsData, isLoading: isAllGuildsLoading } = Discord.useAllDiscordGuilds();
-
-    if (allGuildsError) console.error(allGuildsError);
 
     useEffect(() => {
         if (tenantGuildId) setGuildId(tenantGuildId);
@@ -33,18 +33,22 @@ const TenantSwitcherPage: NextPage = () => {
         router.push('/');
     }
 
+    if (allGuildsError) {
+        console.error(allGuildsError);
+        return <ErrorComponent message={allGuildsError.toString()} />
+      }
+    
+      if (isLoading) {
+        return <Loading />
+      }
+
     return (
         <Layout>
             <>
                 <Head>
                     <title>Tenant Switcher</title>
                 </Head>
-                {isLoading &&
-                    <div className='flex items-center justify-center h-full'>
-                        <h1>Loading...</h1>
-                    </div>
-                }
-                {!isLoading && user &&
+                {user &&
                     <div className='max-w-6xl mx-auto px-4 flex flex-col gap-4'>
                         <div>
                             <h1 className='text-3xl font-bold'>Tenant switcher</h1>

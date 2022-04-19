@@ -4,7 +4,9 @@ import Head from 'next/head'
 import Link from 'next/link'
 import InformationCard from '../components/cards/InformationCard'
 import { useAppContext } from '../components/context/AppContext'
+import ErrorComponent from '../components/errorComponent'
 import Layout from '../components/layout'
+import Loading from '../components/loading'
 import Discord from '../lib/api/Discord'
 
 const Dashboard: NextPage = () => {
@@ -31,10 +33,24 @@ const Dashboard: NextPage = () => {
       text: "Commands"
     },
     {
-      href: "/dashboard",
+      href: "/flows",
       text: "Flows"
     }
   ];
+
+  if (allGuildChannelsError) {
+    console.error(allGuildChannelsError);
+    return <ErrorComponent message={allGuildChannelsError.toString()} />
+  }
+
+  if (allGuildMembersError) {
+    console.error(allGuildMembersError);
+    return <ErrorComponent message={allGuildMembersError.toString()} />
+  }
+
+  if (isLoading) {
+    return <Loading />
+  }
 
   return (
     <Layout>
@@ -42,12 +58,7 @@ const Dashboard: NextPage = () => {
         <Head>
           <title>Dashboard</title>
         </Head>
-        {isLoading &&
-          <div className='flex items-center justify-center h-full'>
-            <h1>Loading...</h1>
-          </div>
-        }
-        {!isLoading && user &&
+        {user &&
           <div className='max-w-6xl mx-auto px-4 flex flex-col gap-4'>
             <div>
               <h1 className='text-3xl font-bold'>Dashboard</h1>

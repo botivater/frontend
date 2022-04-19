@@ -3,7 +3,9 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
 import InformationCard from '../components/cards/InformationCard'
+import ErrorComponent from '../components/errorComponent'
 import Layout from '../components/layout'
+import Loading from '../components/loading'
 import CommandUsage from '../lib/api/CommandUsage'
 
 
@@ -11,7 +13,14 @@ const Statistics: NextPage = () => {
   const { isLoading, user } = useAuth0();
   const { error: usageError, data: usageData, isLoading: isUsageLoading } = CommandUsage.useCommandUsage();
 
-  if (usageError) console.error(usageError);
+  if (usageError) {
+    console.error(usageError);
+    return <ErrorComponent message={usageError.toString()} />
+  }
+
+  if (isLoading) {
+    return <Loading />
+  }
 
   return (
     <Layout>
@@ -19,12 +28,7 @@ const Statistics: NextPage = () => {
         <Head>
           <title>Statistics</title>
         </Head>
-        {isLoading &&
-          <div className='flex items-center justify-center h-full'>
-            <h1>Loading...</h1>
-          </div>
-        }
-        {!isLoading && user &&
+        {user &&
           <div className='max-w-6xl mx-auto px-4 flex flex-col gap-4'>
             <div>
               <h1 className='text-3xl font-bold'>Statistics</h1>

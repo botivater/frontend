@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import Layout from '../../components/layout'
+import Loading from '../../components/loading'
 import { useToken } from '../../hooks/use-token'
 import CommandList from '../../lib/api/CommandList';
 import Discord from '../../lib/api/Discord'
@@ -69,18 +70,17 @@ const CommandListPage: NextPage = () => {
     }
   }
 
+  if (isLoading) {
+    return <Loading />
+}
+
   return (
     <Layout>
       <>
         <Head>
-          <title>Command lists</title>
+          <title>New command list</title>
         </Head>
-        {isLoading &&
-          <div className='flex items-center justify-center h-full'>
-            <h1>Loading...</h1>
-          </div>
-        }
-        {!isLoading && user &&
+        {user &&
           <div className='max-w-6xl mx-auto px-4 flex flex-col gap-4'>
             <div>
               <h1 className='text-3xl font-bold'>Command lists</h1>
