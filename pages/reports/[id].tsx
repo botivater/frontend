@@ -84,7 +84,7 @@ const ReportPage: NextPage = () => {
     return <ErrorComponent message={reportedGuildMemberError.toString()} />
   }
 
-  if (isLoading || isReportLoading || isChannelLoading || isSubmitterGuildMemberLoading || isReportedGuildMemberLoading) {
+  if (isLoading || isReportLoading || isChannelLoading) {
     return <Loading />
   }
 
