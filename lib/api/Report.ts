@@ -29,7 +29,7 @@ export type Report = {
 
 const useAllReports = () => {
     const token = useToken();
-    const { error, data } = useSWR<ApiResponse<Report[]>>(token ? [`${apiEndpoint}/report`, token] : null, fetchWithToken);
+    const { error, data } = useSWR<ApiResponse<Report[]>>(token ? [`${apiEndpoint}/v1/report`, token] : null, fetchWithToken);
 
     if (data && data.error) {
         return {
@@ -48,7 +48,7 @@ const useAllReports = () => {
 
 const useReport = (id: number) => {
     const token = useToken();
-    const { error, data } = useSWR<ApiResponse<Report>>(token ? [`${apiEndpoint}/report/${id}`, token] : null, fetchWithToken);
+    const { error, data } = useSWR<ApiResponse<Report>>(token ? [`${apiEndpoint}/v1/report/${id}`, token] : null, fetchWithToken);
 
     if (data && data.error) {
         return {
@@ -67,7 +67,7 @@ const useReport = (id: number) => {
 
 // We cannot use React hooks here.
 const updateReport = async (token: string, data: { resolved: boolean }, id: number) => {
-    const response = await fetch(`${apiEndpoint}/report/${id}`, {
+    const response = await fetch(`${apiEndpoint}/v1/report/${id}`, {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',

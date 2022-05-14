@@ -12,7 +12,7 @@ export type CommandList = {
 
 const useAllCommandLists = () => {
     const token = useToken();
-    const { error, data } = useSWR<ApiResponse<CommandList[]>>(token ? [`${apiEndpoint}/command/lists`, token] : null, fetchWithToken);
+    const { error, data } = useSWR<ApiResponse<CommandList[]>>(token ? [`${apiEndpoint}/v1/command/lists`, token] : null, fetchWithToken);
 
     if (data && data.error) {
         return {
@@ -31,7 +31,7 @@ const useAllCommandLists = () => {
 
 const useCommandList = (id: number) => {
     const token = useToken();
-    const { error, data } = useSWR<ApiResponse<CommandList>>(token ? [`${apiEndpoint}/command/lists/${id}`, token] : null, fetchWithToken);
+    const { error, data } = useSWR<ApiResponse<CommandList>>(token ? [`${apiEndpoint}/v1/command/lists/${id}`, token] : null, fetchWithToken);
 
     if (data && data.error) {
         return {
@@ -50,7 +50,7 @@ const useCommandList = (id: number) => {
 
 // We cannot use React hooks here.
 const createCommandList = async (token: string, data: { name: string, description: string, options: string[] }) => {
-    const response = await fetch(`${apiEndpoint}/command/lists`, {
+    const response = await fetch(`${apiEndpoint}/v1/command/lists`, {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -67,7 +67,7 @@ const createCommandList = async (token: string, data: { name: string, descriptio
 
 // We cannot use React hooks here.
 const updateCommandList = async (token: string, data: { name: string, description: string, options: string[] }, id: number) => {
-    const response = await fetch(`${apiEndpoint}/command/lists/${id}`, {
+    const response = await fetch(`${apiEndpoint}/v1/command/lists/${id}`, {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -84,7 +84,7 @@ const updateCommandList = async (token: string, data: { name: string, descriptio
 
 // We cannot use React hooks here.
 const deleteCommandList = async (token: string, id: number) => {
-    const response = await fetch(`${apiEndpoint}/command/lists/${id}`, {
+    const response = await fetch(`${apiEndpoint}/v1/command/lists/${id}`, {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',

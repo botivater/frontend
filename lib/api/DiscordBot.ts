@@ -2,7 +2,7 @@ import { apiEndpoint } from ".";
 
 // We cannot use React hooks here.
 const reloadCommands = async (token: string) => {
-    const response = await fetch(`${apiEndpoint}/discord-bot/reload/commands`, {
+    const response = await fetch(`${apiEndpoint}/v1/discord-bot/reload/commands`, {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',

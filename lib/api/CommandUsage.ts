@@ -10,7 +10,7 @@ export type CommandUsage = {
 
 const useCommandUsage = () => {
     const token = useToken();
-    const { error, data } = useSWR<ApiResponse<CommandUsage[]>>(token ? [`${apiEndpoint}/command/usage`, token] : null, fetchWithToken);
+    const { error, data } = useSWR<ApiResponse<CommandUsage[]>>(token ? [`${apiEndpoint}/v1/command/usage`, token] : null, fetchWithToken);
 
     if (data && data.error) {
         return {

@@ -32,7 +32,7 @@ export type GuildMember = {
 
 const useAllGuildMembers = () => {
     const token = useToken();
-    const { error, data } = useSWR<ApiResponse<GuildMember[]>>(token ? [`${apiEndpoint}/guildMember`, token] : null, fetchWithToken);
+    const { error, data } = useSWR<ApiResponse<GuildMember[]>>(token ? [`${apiEndpoint}/v1/guildMember`, token] : null, fetchWithToken);
 
     if (data && data.error) {
         return {
@@ -51,7 +51,7 @@ const useAllGuildMembers = () => {
 
 const useGuildMember = (id?: number) => {
     const token = useToken();
-    const { error, data } = useSWR<ApiResponse<GuildMember>>(token && id ? [`${apiEndpoint}/guildMember/${id}`, token] : null, fetchWithToken);
+    const { error, data } = useSWR<ApiResponse<GuildMember>>(token && id ? [`${apiEndpoint}/v1/guildMember/${id}`, token] : null, fetchWithToken);
 
     if (data && data.error) {
         return {
