@@ -1,23 +1,22 @@
-# Next.js + Tailwind CSS Example
+# Botivate Frontend
+The Botivate frontend is used to control the Discord bot. It communicates through the Discord bot API with the database and the Discord bot itself.
 
-This example shows how to use [Tailwind CSS](https://tailwindcss.com/) [(v3.0)](https://tailwindcss.com/blog/tailwindcss-v3) with Next.js. It follows the steps outlined in the official [Tailwind docs](https://tailwindcss.com/docs/guides/nextjs).
+## Table of contents
+- [Botivate Frontend](#botivate-frontend)
+  - [Table of contents](#table-of-contents)
+  - [Getting started](#getting-started)
+  - [Sponsors](#sponsors)
 
-## Deploy your own
+## Getting started
+To get started with the Botivate frontend, you should setup a couple of things.
+- Clone this repository
+- Run `yarn` to install all the dependencies
+- Botivate API server (Botivate bot itself)
+- [Auth0 Credentials](docs/AUTH0_CREDENTIALS.md)
 
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example) or preview live with [StackBlitz](https://stackblitz.com/github/vercel/next.js/tree/canary/examples/with-tailwindcss)
+When you've set everything up correctly, you can run `yarn dev` to start the development server.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-tailwindcss&project-name=with-tailwindcss&repository-name=with-tailwindcss)
-
-## How to use
-
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init) or [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/) to bootstrap the example:
-
-```bash
-npx create-next-app --example with-tailwindcss with-tailwindcss-app
-# or
-yarn create next-app --example with-tailwindcss with-tailwindcss-app
-# or
-pnpm create next-app -- --example with-tailwindcss with-tailwindcss-app
-```
-
-Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
+## Sponsors
+| Sponsor name | Sponsor logo |
+| ------------ | ------------ |
+| [Lymevereniging](https://lymevereniging.nl/) | ![Logo Lymevereniging](contrib/logos/lymevereniging.nl.svg) |
