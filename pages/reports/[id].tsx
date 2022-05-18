@@ -27,8 +27,8 @@ const ReportPage: NextPage = () => {
 
   const { error: reportError, data: reportData, isLoading: isReportLoading } = Report.useReport(parseInt(id as string));
   const { error: channelError, data: channelData, isLoading: isChannelLoading } = Discord.useDiscordGuildChannels(guildId);
-  const { error: submitterGuildMemberError, data: submitterGuildMemberData, isLoading: isSubmitterGuildMemberLoading } = GuildMember.useGuildMember(reportData?.guildMember);
-  const { error: reportedGuildMemberError, data: reportedGuildMemberData, isLoading: isReportedGuildMemberLoading } = GuildMember.useGuildMember(reportData?.user);
+  const { error: submitterGuildMemberError, data: submitterGuildMemberData, isLoading: isSubmitterGuildMemberLoading } = GuildMember.useGuildMember(reportData?.guildMemberId);
+  const { error: reportedGuildMemberError, data: reportedGuildMemberData, isLoading: isReportedGuildMemberLoading } = GuildMember.useGuildMember(reportData?.reportedGuildMemberId);
 
   useEffect(() => {
     setResolved(reportData?.resolved || false);
@@ -126,7 +126,7 @@ const ReportPage: NextPage = () => {
                   <small className='block'>Description of the report.</small>
                 </div>
               }
-              {reportData.user &&
+              {reportData.guildMemberId &&
                 <div>
                   <label htmlFor="user" className='block font-bold'>User:</label>
                   <div className='flex items-stretch justify-center bg-black bg-opacity-30 rounded-md'>

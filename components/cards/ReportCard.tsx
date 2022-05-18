@@ -14,7 +14,7 @@ const ReportCard: React.FC<Props> = ({ reportId }) => {
     const { guildId } = useAppContext();
     const { error, data, isLoading } = Report.useReport(reportId);
     const { error: channelError, data: channelData, isLoading: isChannelLoading } = Discord.useDiscordGuildChannels(guildId);
-    const { error: submitterGuildMemberError, data: submitterGuildMemberData, isLoading: isSubmitterGuildMemberLoading } = GuildMember.useGuildMember(data?.guildMember);
+    const { error: submitterGuildMemberError, data: submitterGuildMemberData, isLoading: isSubmitterGuildMemberLoading } = GuildMember.useGuildMember(data?.guildMemberId);
 
     if (error || channelError || submitterGuildMemberError) return (
         <div className={'bg-gray-700 text-red-500 rounded-md shadow-md p-4 flex flex-col justify-start items-start text-lg'}>

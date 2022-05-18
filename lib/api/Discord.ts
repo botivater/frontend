@@ -1,5 +1,6 @@
 import useSWR from "swr";
 import { apiEndpoint, ApiResponse } from ".";
+import { BuildingBlockType, CheckType, OnType } from "../../components/flows/FlowActionGroupInput";
 import { useToken } from "../../hooks/use-token";
 import fetchWithToken from "../fetchWithToken";
 
@@ -300,6 +301,33 @@ const useReactionCollector = (reactionCollectorId?: number) => {
     }
 }
 
+// We cannot use React hooks here.
+const createReactionCollector = async (token: string, data: {
+    type: number,
+    guildId: string,
+    channelId: string,
+    name: string,
+    description: string,
+    messageText: string,
+    reactions: string[],
+    commandFlows: unknown[],
+}) => {
+    console.log(data);
+    const response = await fetch(`${apiEndpoint}/v1/discord/reactionCollectors`, {
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        method: 'POST',
+        body: JSON.stringify(data)
+    });
+
+    const responseJson = await response.json();
+
+    return response.status === 200;
+}
+
 const sortChannelsByNameAsc = (a: GuildChannel, b: GuildChannel) => {
     if (a.name > b.name) return 1;
     if (a.name < b.name) return -1;
@@ -349,6 +377,7 @@ const exports = {
     useAllDiscordGuildRoles,
     useAllReactionCollectors,
     useReactionCollector,
+    createReactionCollector,
     sortChannelsByNameAsc,
     sortChannelsByNameDesc,
     sortMembersByDisplayNameAsc,

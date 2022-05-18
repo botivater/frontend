@@ -2,7 +2,9 @@ import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
+import { useAppContext } from '../../../components/context/AppContext'
 import ErrorComponent from '../../../components/errorComponent'
 import FlowActionGroupInput, { BuildingBlockType, FlowActionGroup, OnType } from '../../../components/flows/FlowActionGroupInput'
 import FlowDescriptionInput from '../../../components/flows/FlowDescriptionInput'
@@ -12,10 +14,15 @@ import FlowReactionInput from '../../../components/flows/FlowReactionInput'
 import FlowTextChannelSelect from '../../../components/flows/FlowTextChannelSelect'
 import Layout from '../../../components/layout'
 import Loading from '../../../components/loading'
+import { useToken } from '../../../hooks/use-token'
+import Discord from '../../../lib/api/Discord'
 
 
 const FlowsReactionNewPage: NextPage = () => {
     const { isLoading, user } = useAuth0()
+    const token = useToken();
+    const { guildId } = useAppContext();
+    const router = useRouter();
 
     const [channelId, setChannelId] = useState("");
     const [name, setName] = useState("");
@@ -25,13 +32,44 @@ const FlowsReactionNewPage: NextPage = () => {
     const [actionGroups, setActionGroups] = useState<FlowActionGroup[]>([{
         onType: OnType.REACTION_ADD,
         buildingBlockType: BuildingBlockType.SEND_MESSAGE,
-        options: {}
+        options: {},
     }]);
 
-    const [submitting, setSubmitting] = useState();
+    const [submitting, setSubmitting] = useState(false);
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
 
+        setSubmitting(true);
+
+        try {
+            const actionGroupsCopy = actionGroups;
+            for (let actionGroupIndex = 0; actionGroupIndex < actionGroupsCopy.length; actionGroupIndex++) {
+                actionGroupsCopy[actionGroupIndex].order = actionGroupIndex;
+            }
+
+            const result = await Discord.createReactionCollector(token, {
+                type: 1,
+                guildId: guildId || "",
+                channelId,
+                name,
+                description,
+                messageText,
+                reactions: reactionsList,
+                commandFlows: actionGroupsCopy
+            });
+
+            setSubmitting(false);
+
+            if (result) {
+                router.push("/flows");
+            } else {
+                alert("An error occurred when submitting the form.");
+            }
+        } catch (err) {
+            setSubmitting(false);
+            console.error(err);
+        }
     }
 
     if (isLoading) {
