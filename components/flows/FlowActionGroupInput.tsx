@@ -33,6 +33,7 @@ export type FlowActionGroup = {
     onType: OnType;
     buildingBlockType: BuildingBlockType;
     options: FlowActionGroupOptions;
+    order?: number;
     checkType?: CheckType;
     checkValue?: string;
 }

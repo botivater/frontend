@@ -15,7 +15,7 @@ export type Report = {
     description: string;
 
     // ID of the user in the database that was reported.
-    user: number;
+    reportedGuildMemberId: number;
 
     // Has the report been submitted anonymously?
     anonymous: boolean;
@@ -24,7 +24,7 @@ export type Report = {
     resolved: boolean;
 
     // ID of the user in the database that submitted the report.
-    guildMember: number;
+    guildMemberId: number;
 }
 
 const useAllReports = () => {
