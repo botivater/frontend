@@ -16,7 +16,7 @@ type Props = {
     deleteAction(index: number, event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void;
 }
 
-const FlowActionInput: React.FC<Props> = ({ children, index, value, setValue, deleteAction }) => {
+const FlowActionInput: React.FC<Props> = ({ index, value, setValue, deleteAction }) => {
     const [onType, setOnType] = useState(value.onType || OnType.NONE);
     const [buildingBlockType, setBuildingBlockType] = useState(value.buildingBlockType || BuildingBlockType.NONE);
     const [options, setOptions] = useState<FlowActionGroupOptions>(value.options || {});

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Discord from '../../../lib/api/Discord';
+import { sortRolesByNameAsc, useDiscordGuildRoles } from '../../../lib/api/Discord';
 import { useAppContext } from '../../context/AppContext';
 import { FlowActionGroupOptions } from '../FlowActionGroupInput';
 
@@ -9,11 +9,11 @@ type Props = {
     setValue: React.Dispatch<React.SetStateAction<FlowActionGroupOptions>>;
 }
 
-const FlowActionBuildingBlockAddRole: React.FC<Props> = ({ children, index, value, setValue }) => {
+const FlowActionBuildingBlockAddRole: React.FC<Props> = ({ index, value, setValue }) => {
     const [roleId, setRoleId] = useState(value.roleId || "");
 
     const { guildId } = useAppContext();
-    const { error: guildRolesError, data: guildRolesData, isLoading: isGuildRolesLoading } = Discord.useDiscordGuildRoles(guildId);
+    const { error: guildRolesError, data: guildRolesData, isLoading: isGuildRolesLoading } = useDiscordGuildRoles(guildId);
 
     if (guildRolesError) console.error(guildRolesError);
 
@@ -35,7 +35,7 @@ const FlowActionBuildingBlockAddRole: React.FC<Props> = ({ children, index, valu
             <div>
                 <label htmlFor={`buildingBlockAddRole${index}`} className='block font-bold'>Role:</label>
                 <select name={`buildingBlockAddRole${index}`} id={`buildingBlockAddRole${index}`} className='w-full rounded-r-md bg-black bg-opacity-30 border-none' value={roleId} onChange={(e) => setRoleId(e.currentTarget.value)}>
-                    {!isGuildRolesLoading && guildRolesData?.sort(Discord.sortRolesByNameAsc).map(guildRole => <option key={guildRole.id} value={guildRole.id} className='bg-black bg-opacity-90'>{guildRole.name}</option>)}
+                    {!isGuildRolesLoading && guildRolesData?.sort(sortRolesByNameAsc).map(guildRole => <option key={guildRole.id} value={guildRole.id} className='bg-black bg-opacity-90'>{guildRole.name}</option>)}
                 </select>
                 <small className='block'>Please select the role here.</small>
             </div>

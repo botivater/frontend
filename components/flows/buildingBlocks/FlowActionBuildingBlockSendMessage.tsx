@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import Discord from '../../../lib/api/Discord';
 import { useAppContext } from '../../context/AppContext';
 import { FlowActionGroupOptions, SendMessageTo } from '../FlowActionGroupInput';
+import { sortChannelsByNameAsc, sortMembersByDisplayNameAsc, useDiscordGuildMembers, useDiscordGuildTextChannels } from '../../../lib/api/Discord';
 
 type Props = {
     index: number;
@@ -9,14 +9,14 @@ type Props = {
     setValue: React.Dispatch<React.SetStateAction<FlowActionGroupOptions>>;
 }
 
-const FlowActionBuildingBlockSendMessage: React.FC<Props> = ({ children, index, value, setValue }) => {
+const FlowActionBuildingBlockSendMessage: React.FC<Props> = ({ index, value, setValue }) => {
     const [toType, setToType] = useState(value.toType || SendMessageTo.SENDER);
     const [to, setTo] = useState(value.to || "");
     const [messageFormat, setMessageFormat] = useState(value.messageFormat || "");
 
     const { guildId } = useAppContext();
-    const { error: guildChannelsError, data: guildChannelsData, isLoading: isGuildChannelsLoading } = Discord.useDiscordGuildTextChannels(guildId);
-    const { error: guildMembersError, data: guildMembersData, isLoading: isGuildMembersLoading } = Discord.useDiscordGuildMembers(guildId);
+    const { error: guildChannelsError, data: guildChannelsData, isLoading: isGuildChannelsLoading } = useDiscordGuildTextChannels(guildId);
+    const { error: guildMembersError, data: guildMembersData, isLoading: isGuildMembersLoading } = useDiscordGuildMembers(guildId);
 
     if (guildChannelsError) console.error(guildChannelsError);
     if (guildMembersError) console.error(guildMembersError);
@@ -55,7 +55,7 @@ const FlowActionBuildingBlockSendMessage: React.FC<Props> = ({ children, index, 
                 <div>
                     <label htmlFor={`buildingBlockSendMessage${index}_to`} className='block font-bold'>User:</label>
                     <select name={`buildingBlockSendMessage${index}_to`} id={`buildingBlockSendMessage${index}_to`} className='w-full rounded-r-md bg-black bg-opacity-30 border-none' value={to} onChange={(e) => setTo(e.currentTarget.value)}>
-                        {!isGuildMembersLoading && guildMembersData?.sort(Discord.sortMembersByDisplayNameAsc).map(guildMember => <option key={guildMember.userId} value={guildMember.userId} className='bg-black bg-opacity-90'>{guildMember.displayName}</option>)}
+                        {!isGuildMembersLoading && guildMembersData?.sort(sortMembersByDisplayNameAsc).map(guildMember => <option key={guildMember.userId} value={guildMember.userId} className='bg-black bg-opacity-90'>{guildMember.displayName}</option>)}
                     </select>
                     <small className='block'>Please select the user here.</small>
                 </div>
@@ -64,7 +64,7 @@ const FlowActionBuildingBlockSendMessage: React.FC<Props> = ({ children, index, 
                 <div>
                     <label htmlFor={`buildingBlockSendMessage${index}_to`} className='block font-bold'>Channel:</label>
                     <select name={`buildingBlockSendMessage${index}_to`} id={`buildingBlockSendMessage${index}_to`} className='w-full rounded-r-md bg-black bg-opacity-30 border-none' value={to} onChange={(e) => setTo(e.currentTarget.value)}>
-                        {!isGuildChannelsLoading && guildChannelsData?.sort(Discord.sortChannelsByNameAsc).map(guildChannel => <option key={guildChannel.id} value={guildChannel.id} className='bg-black bg-opacity-90'>{guildChannel.name}</option>)}
+                        {!isGuildChannelsLoading && guildChannelsData?.sort(sortChannelsByNameAsc).map(guildChannel => <option key={guildChannel.id} value={guildChannel.id} className='bg-black bg-opacity-90'>{guildChannel.name}</option>)}
                     </select>
                     <small className='block'>Please select channel here.</small>
                 </div>

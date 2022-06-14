@@ -8,14 +8,14 @@ import AuthContext from '../components/context/AuthContext'
 import ErrorComponent from '../components/errorComponent'
 import Layout from '../components/layout'
 import Loading from '../components/loading'
-import Discord from '../lib/api/Discord'
+import { useDiscordGuildChannels, useDiscordGuildMembers } from '../lib/api/Discord'
 
 const Dashboard: NextPage = () => {
   const { isLoading, user } = useContext(AuthContext)!;
   const { guildId } = useAppContext();
 
-  const { error: allGuildChannelsError, data: allGuildChannelsData, isLoading: allGuildChannelsIsLoading } = Discord.useDiscordGuildChannels(guildId);
-  const { error: allGuildMembersError, data: allGuildMembersData, isLoading: allGuildMembersIsLoading } = Discord.useDiscordGuildMembers(guildId);
+  const { error: allGuildChannelsError, data: allGuildChannelsData, isLoading: allGuildChannelsIsLoading } = useDiscordGuildChannels(guildId);
+  const { error: allGuildMembersError, data: allGuildMembersData, isLoading: allGuildMembersIsLoading } = useDiscordGuildMembers(guildId);
 
   const quickLinks = [
     {

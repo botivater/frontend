@@ -7,7 +7,7 @@ import ErrorComponent from '../components/errorComponent'
 import Layout from '../components/layout'
 import Loading from '../components/loading'
 import { useToken } from '../hooks/use-token'
-import Discord from '../lib/api/Discord'
+import { sortChannelsByNameAsc, useDiscordGuildTextChannels } from '../lib/api/Discord'
 import { speak } from '../lib/api/Speak'
 
 const SpeakPage: NextPage = () => {
@@ -15,7 +15,7 @@ const SpeakPage: NextPage = () => {
   const { guildId } = useAppContext();
   const token = useToken();
 
-  const { error: guildChannelsError, data: guildChannelsData, isLoading: isGuildChannelsLoading } = Discord.useDiscordGuildTextChannels(guildId);
+  const { error: guildChannelsError, data: guildChannelsData, isLoading: isGuildChannelsLoading } = useDiscordGuildTextChannels(guildId);
 
   const [channelSnowflake, setChannelSnowflake] = useState("");
   const [message, setMessage] = useState("");
@@ -77,7 +77,7 @@ const SpeakPage: NextPage = () => {
                   </div>
                   <select name="channelId" id="channelId" className='w-full rounded-r-md bg-transparent border-none' placeholder='welcome' value={channelSnowflake} onChange={(e) => setChannelSnowflake(e.currentTarget.value)} disabled={isGuildChannelsLoading}>
                     <option value="">Select a channel...</option>
-                    {!isGuildChannelsLoading && guildChannelsData?.sort(Discord.sortChannelsByNameAsc).map(guildChannel => <option value={guildChannel.id} key={guildChannel.id} className='bg-black bg-opacity-90'>{guildChannel.name}</option>)}
+                    {!isGuildChannelsLoading && guildChannelsData?.sort(sortChannelsByNameAsc).map(guildChannel => <option value={guildChannel.id} key={guildChannel.id} className='bg-black bg-opacity-90'>{guildChannel.name}</option>)}
                   </select>
                 </div>
                 <small className='block'>Please choose the channel to send a message in here.</small>

@@ -7,7 +7,7 @@ type Props = {
     setValue: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const FlowActionCheckTypeSelect: React.FC<Props> = ({ children, index, value, setValue }) => {
+const FlowActionCheckTypeSelect: React.FC<Props> = ({ index, value, setValue }) => {
     return (
         <div>
             <label htmlFor={`checkType${index}`} className='block font-bold'>Check type:</label>

@@ -8,8 +8,8 @@ import ErrorComponent from '../../components/errorComponent'
 import Layout from '../../components/layout'
 import Loading from '../../components/loading'
 import { useToken } from '../../hooks/use-token'
-import Discord from '../../lib/api/Discord'
-import Report from '../../lib/api/Report'
+import { useDiscordGuildChannels } from '../../lib/api/Discord'
+import { updateReport, useReport } from '../../lib/api/Report'
 
 
 const ReportPage: NextPage = () => {
@@ -22,8 +22,8 @@ const ReportPage: NextPage = () => {
   const [resolved, setResolved] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const { error: reportError, data: reportData, isLoading: isReportLoading } = Report.useReport(parseInt(id as string));
-  const { error: channelError, data: channelData, isLoading: isChannelLoading } = Discord.useDiscordGuildChannels(guildId);
+  const { error: reportError, data: reportData, isLoading: isReportLoading } = useReport(parseInt(id as string));
+  const { error: channelError, data: channelData, isLoading: isChannelLoading } = useDiscordGuildChannels(guildId);
 
   useEffect(() => {
     setResolved(reportData?.resolved || false);
@@ -42,7 +42,7 @@ const ReportPage: NextPage = () => {
     setSubmitting(true);
 
     try {
-      const result = await Report.updateReport(token, data, id);
+      const result = await updateReport(token, data, id);
 
       setSubmitting(false);
 

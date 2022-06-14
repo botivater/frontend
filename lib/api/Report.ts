@@ -15,7 +15,7 @@ export const useAllReports = (guildId?: number) => {
     }
 }
 
-const useReport = (id: number) => {
+export const useReport = (id: number) => {
     const token = useToken();
     const { error, data } = useSWR<Report>(token && id ? [`${configProvider.getApiEndpoint()}/v1/report/${id}`, token] : null, fetchWithToken);
 
@@ -27,7 +27,7 @@ const useReport = (id: number) => {
 }
 
 // We cannot use React hooks here.
-const updateReport = async (token: string, data: { resolved: boolean }, id: number) => {
+export const updateReport = async (token: string, data: { resolved: boolean }, id: number) => {
     const response = await fetch(`${configProvider.getApiEndpoint()}/v1/report/${id}`, {
         headers: {
             'Content-Type': 'application/json',
@@ -43,24 +43,14 @@ const updateReport = async (token: string, data: { resolved: boolean }, id: numb
     return response.status === 200;
 }
 
-const sortReportsByIdAsc = (a: Report, b: Report) => {
+export const sortReportsByIdAsc = (a: Report, b: Report) => {
     if (a.id > b.id) return 1;
     if (a.id < b.id) return -1;
     return 0;
 }
 
-const sortReportsByIdDesc = (a: Report, b: Report) => {
+export const sortReportsByIdDesc = (a: Report, b: Report) => {
     if (a.id > b.id) return -1;
     if (a.id < b.id) return 1;
     return 0;
 }
-
-const exports = {
-    useAllReports,
-    useReport,
-    updateReport,
-    sortReportsByIdAsc,
-    sortReportsByIdDesc
-}
-
-export default exports;

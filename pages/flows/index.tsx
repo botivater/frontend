@@ -1,27 +1,29 @@
-import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import ErrorComponent from '../../components/errorComponent'
 import ReactionCollectorCard from '../../components/cards/ReactionCollectorCard'
 import Layout from '../../components/layout'
 import { useToken } from '../../hooks/use-token'
-import Discord from '../../lib/api/Discord'
 import Loading from '../../components/loading'
+import AuthContext from '../../components/context/AuthContext'
+import { useAllReactionCollectors } from '../../lib/api/Discord'
+import { useAppContext } from '../../components/context/AppContext'
 
 const FlowsPage: NextPage = () => {
-    const { isLoading, user } = useAuth0()
+    const { isLoading, user } = useContext(AuthContext)!;
+    const { guildId } = useAppContext();
     const token = useToken();
 
-    const { error: allReactionCollectorsError, data: allReactionCollectors, isLoading: isAllReactionCollectorsLoading } = Discord.useAllReactionCollectors();
+    const { error: allReactionCollectorsError, data: allReactionCollectors, isLoading: isAllReactionCollectorsLoading } = useAllReactionCollectors(guildId);
 
     if (allReactionCollectorsError) {
         console.error(allReactionCollectorsError);
         return <ErrorComponent message={allReactionCollectorsError.toString()} />
     }
 
-    if (isLoading) {
+    if (isLoading || isAllReactionCollectorsLoading) {
         return <Loading />
     }
 
@@ -50,7 +52,8 @@ const FlowsPage: NextPage = () => {
                             </div>
                         </div>
                         <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'>
-                            {!isAllReactionCollectorsLoading && allReactionCollectors?.map(reactionCollector => <ReactionCollectorCard reactionCollectorId={reactionCollector.id} key={reactionCollector.id} />)}
+                            {allReactionCollectors && allReactionCollectors?.length === 0 && <p className='col-span-full bg-black bg-opacity-30 p-4 text-center rounded-md'>No reaction flows have been found.</p> }
+                            {allReactionCollectors && allReactionCollectors?.length > 0 && allReactionCollectors?.map(reactionCollector => <ReactionCollectorCard reactionCollectorId={reactionCollector.id} key={reactionCollector.id} />)}
                         </div>
                         <div>
                             <h2 className='text-2xl font-bold'>Message flows</h2>
@@ -73,4 +76,4 @@ const FlowsPage: NextPage = () => {
     )
 }
 
-export default withAuthenticationRequired(FlowsPage);
+export default FlowsPage;

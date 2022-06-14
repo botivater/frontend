@@ -7,7 +7,7 @@ type Props = {
     setValue: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const FlowActionBuildingBlockTypeSelect: React.FC<Props> = ({ children, index, value, setValue }) => {
+const FlowActionBuildingBlockTypeSelect: React.FC<Props> = ({ index, value, setValue }) => {
     return (
         <div>
             <label htmlFor={`buildingBlockType${index}`} className='block font-bold'>Building block:</label>

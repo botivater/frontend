@@ -73,7 +73,7 @@ export type CommandFlowGroup = {
     commandFlows: CommandFlowEntity[];
 }
 
-const useAllDiscordGuilds = () => {
+export const useAllDiscordGuilds = () => {
     const token = useToken();
     const { error, data } = useSWR<Guild[]>(token ? [`${configProvider.getApiEndpoint()}/v1/guild`, token] : null, fetchWithToken);
 
@@ -84,7 +84,7 @@ const useAllDiscordGuilds = () => {
     }
 }
 
-const useDiscordGuild = (guildId?: string) => {
+export const useDiscordGuild = (guildId?: number) => {
     const token = useToken();
     const { error, data } = useSWR<Guild>(token && guildId ? [`${configProvider.getApiEndpoint()}/v1/guild/${guildId}`, token] : null, fetchWithToken);
 
@@ -95,7 +95,7 @@ const useDiscordGuild = (guildId?: string) => {
     }
 }
 
-const useDiscordGuildChannels = (guildId?: number) => {
+export const useDiscordGuildChannels = (guildId?: number) => {
     const token = useToken();
     const { error, data } = useSWR<GuildChannelResponse>(token && guildId ? [`${configProvider.getApiEndpoint()}/v1/discord/guild-channel?guildId=${guildId}`, token] : null, fetchWithToken);
 
@@ -106,7 +106,7 @@ const useDiscordGuildChannels = (guildId?: number) => {
     }
 }
 
-const useDiscordGuildTextChannels = (guildId?: number) => {
+export const useDiscordGuildTextChannels = (guildId?: number) => {
     const token = useToken();
     const { error, data } = useSWR<GuildChannelResponse>(token && guildId ? [`${configProvider.getApiEndpoint()}/v1/discord/guild-channel?guildId=${guildId}`, token] : null, fetchWithToken);
 
@@ -117,7 +117,7 @@ const useDiscordGuildTextChannels = (guildId?: number) => {
     }
 }
 
-const useDiscordGuildVoiceChannels = (guildId?: number) => {
+export const useDiscordGuildVoiceChannels = (guildId?: number) => {
     const token = useToken();
     const { error, data } = useSWR<GuildChannelResponse>(token ? [`${configProvider.getApiEndpoint()}/v1/discord/guild-channel?guildId=${guildId}`, token] : null, fetchWithToken);
 
@@ -128,7 +128,7 @@ const useDiscordGuildVoiceChannels = (guildId?: number) => {
     }
 }
 
-const useAllDiscordGuildChannels = () => {
+export const useAllDiscordGuildChannels = () => {
     const token = useToken();
 
     const customFetcher = async (key: string, token: string) => {
@@ -153,7 +153,7 @@ const useAllDiscordGuildChannels = () => {
     }
 }
 
-const useDiscordGuildMembers = (guildId?: number) => {
+export const useDiscordGuildMembers = (guildId?: number) => {
     const token = useToken();
     const { error, data } = useSWR<GuildMemberResponse>(token && guildId ? [`${configProvider.getApiEndpoint()}/v1/discord/guild-member?guildId=${guildId}`, token] : null, fetchWithToken);
 
@@ -164,20 +164,20 @@ const useDiscordGuildMembers = (guildId?: number) => {
     }
 }
 
-const useDiscordGuildRoles = (guildId?: string) => {
+export const useDiscordGuildRoles = (guildId?: number) => {
     const token = useToken();
     const { error, data } = useSWR<GuildRoleResponse>(token && guildId ? [`${configProvider.getApiEndpoint()}/v1/discord/guild-role?guildId=${guildId}`, token] : null, fetchWithToken);
 
     return {
-        data,
+        data: data ? data.roles : undefined,
         isLoading: !error && !data,
         error
     }
 }
 
-const useAllReactionCollectors = () => {
+export const useAllReactionCollectors = (guildId?: number) => {
     const token = useToken();
-    const { error, data } = useSWR<CommandFlowGroup[]>(token ? [`${configProvider.getApiEndpoint()}/v1/discord/reactionCollectors`, token] : null, fetchWithToken);
+    const { error, data } = useSWR<CommandFlowGroup[]>(token && guildId ? [`${configProvider.getApiEndpoint()}/v1/command-flow-group?guildId=${guildId}`, token] : null, fetchWithToken);
 
     return {
         data,
@@ -186,9 +186,9 @@ const useAllReactionCollectors = () => {
     }
 }
 
-const useReactionCollector = (reactionCollectorId?: number) => {
+export const useReactionCollector = (reactionCollectorId?: number) => {
     const token = useToken();
-    const { error, data } = useSWR<CommandFlowGroup>(token && reactionCollectorId ? [`${configProvider.getApiEndpoint()}/v1/discord/reactionCollectors/${reactionCollectorId}`, token] : null, fetchWithToken);
+    const { error, data } = useSWR<CommandFlowGroup>(token && reactionCollectorId ? [`${configProvider.getApiEndpoint()}/v1/command-flow-group/${reactionCollectorId}`, token] : null, fetchWithToken);
 
     return {
         data,
@@ -198,10 +198,10 @@ const useReactionCollector = (reactionCollectorId?: number) => {
 }
 
 // We cannot use React hooks here.
-const createReactionCollector = async (token: string, data: {
+export const createReactionCollector = async (token: string, data: {
     type: number,
-    guildId: string,
-    channelId: string,
+    guildId: number,
+    channelSnowflake: string,
     name: string,
     description: string,
     messageText: string,
@@ -209,7 +209,7 @@ const createReactionCollector = async (token: string, data: {
     commandFlows: unknown[],
 }) => {
     console.log(data);
-    const response = await fetch(`${configProvider.getApiEndpoint()}/v1/discord/reactionCollectors`, {
+    const response = await fetch(`${configProvider.getApiEndpoint()}/v1/command-flow-group`, {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -224,60 +224,38 @@ const createReactionCollector = async (token: string, data: {
     return response.status === 200;
 }
 
-const sortChannelsByNameAsc = (a: GuildChannel, b: GuildChannel) => {
+export const sortChannelsByNameAsc = (a: GuildChannel, b: GuildChannel) => {
     if (a.name > b.name) return 1;
     if (a.name < b.name) return -1;
     return 0;
 }
 
-const sortChannelsByNameDesc = (a: GuildChannel, b: GuildChannel) => {
+export const sortChannelsByNameDesc = (a: GuildChannel, b: GuildChannel) => {
     if (a.name > b.name) return -1;
     if (a.name < b.name) return 1;
     return 0;
 }
 
-const sortMembersByDisplayNameAsc = (a: GuildMember, b: GuildMember) => {
+export const sortMembersByDisplayNameAsc = (a: GuildMember, b: GuildMember) => {
     if (a.displayName > b.displayName) return 1;
     if (a.displayName < b.displayName) return -1;
     return 0;
 }
 
-const sortMembersByDisplayNameDesc = (a: GuildMember, b: GuildMember) => {
+export const sortMembersByDisplayNameDesc = (a: GuildMember, b: GuildMember) => {
     if (a.displayName > b.displayName) return -1;
     if (a.displayName < b.displayName) return 1;
     return 0;
 }
 
-const sortRolesByNameAsc = (a: GuildRole, b: GuildRole) => {
+export const sortRolesByNameAsc = (a: GuildRole, b: GuildRole) => {
     if (a.name > b.name) return 1;
     if (a.name < b.name) return -1;
     return 0;
 }
 
-const sortRolesByNameDesc = (a: GuildRole, b: GuildRole) => {
+export const sortRolesByNameDesc = (a: GuildRole, b: GuildRole) => {
     if (a.name > b.name) return -1;
     if (a.name < b.name) return 1;
     return 0;
 }
-
-const exports = {
-    useAllDiscordGuilds,
-    useDiscordGuild,
-    useDiscordGuildChannels,
-    useDiscordGuildTextChannels,
-    useDiscordGuildVoiceChannels,
-    useAllDiscordGuildChannels,
-    useDiscordGuildMembers,
-    useDiscordGuildRoles,
-    useAllReactionCollectors,
-    useReactionCollector,
-    createReactionCollector,
-    sortChannelsByNameAsc,
-    sortChannelsByNameDesc,
-    sortMembersByDisplayNameAsc,
-    sortMembersByDisplayNameDesc,
-    sortRolesByNameAsc,
-    sortRolesByNameDesc
-}
-
-export default exports;

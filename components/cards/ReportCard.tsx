@@ -1,9 +1,8 @@
 import classNames from 'classnames';
 import Link from 'next/link';
 import React from 'react';
-import Discord from '../../lib/api/Discord';
-import GuildMember from '../../lib/api/GuildMember';
-import Report from '../../lib/api/Report';
+import { useDiscordGuildChannels } from '../../lib/api/Discord';
+import { useReport } from '../../lib/api/Report';
 import { useAppContext } from '../context/AppContext';
 
 type Props = {
@@ -12,8 +11,8 @@ type Props = {
 
 const ReportCard: React.FC<Props> = ({ reportId }) => {
     const { guildId } = useAppContext();
-    const { error, data, isLoading } = Report.useReport(reportId);
-    const { error: channelError, data: channelData, isLoading: isChannelLoading } = Discord.useDiscordGuildChannels(guildId);
+    const { error, data, isLoading } = useReport(reportId);
+    const { error: channelError, data: channelData, isLoading: isChannelLoading } = useDiscordGuildChannels(guildId);
 
     if (error || channelError) return (
         <div className={'bg-gray-700 text-red-500 rounded-md shadow-md p-4 flex flex-col justify-start items-start text-lg'}>
