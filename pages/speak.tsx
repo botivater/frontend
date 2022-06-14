@@ -1,46 +1,38 @@
-import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
-import Link from 'next/link'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useState } from 'react'
 import { useAppContext } from '../components/context/AppContext'
+import AuthContext from '../components/context/AuthContext'
 import ErrorComponent from '../components/errorComponent'
 import Layout from '../components/layout'
 import Loading from '../components/loading'
 import { useToken } from '../hooks/use-token'
 import Discord from '../lib/api/Discord'
-import Mira from '../lib/api/Mira'
+import { speak } from '../lib/api/Speak'
 
 const SpeakPage: NextPage = () => {
-  const { isLoading, user } = useAuth0();
+  const { isLoading, user } = useContext(AuthContext)!;
   const { guildId } = useAppContext();
   const token = useToken();
 
   const { error: guildChannelsError, data: guildChannelsData, isLoading: isGuildChannelsLoading } = Discord.useDiscordGuildTextChannels(guildId);
 
-  const [channelId, setChannelId] = useState("");
+  const [channelSnowflake, setChannelSnowflake] = useState("");
   const [message, setMessage] = useState("");
   const [isSubmitting, setSubmitting] = useState(false);
-
-  useEffect(() => {
-    if (guildChannelsData) {
-      setChannelId(guildChannelsData[0].id);
-    }
-  }, [guildChannelsData, setChannelId]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const data = {
-      channelId,
+      channelSnowflake,
       message
     };
 
     setSubmitting(true);
 
     try {
-      const result = await Mira.speak(token, data);
+      const result = await speak(token, data);
 
       setSubmitting(false);
 
@@ -83,7 +75,8 @@ const SpeakPage: NextPage = () => {
                   <div className='bg-black bg-opacity-60 flex items-center justify-center rounded-l-md'>
                     <span className='px-4'>#</span>
                   </div>
-                  <select name="channelId" id="channelId" className='w-full rounded-r-md bg-transparent border-none' placeholder='welcome' value={channelId} onChange={(e) => setChannelId(e.currentTarget.value)} disabled={isGuildChannelsLoading}>
+                  <select name="channelId" id="channelId" className='w-full rounded-r-md bg-transparent border-none' placeholder='welcome' value={channelSnowflake} onChange={(e) => setChannelSnowflake(e.currentTarget.value)} disabled={isGuildChannelsLoading}>
+                    <option value="">Select a channel...</option>
                     {!isGuildChannelsLoading && guildChannelsData?.sort(Discord.sortChannelsByNameAsc).map(guildChannel => <option value={guildChannel.id} key={guildChannel.id} className='bg-black bg-opacity-90'>{guildChannel.name}</option>)}
                   </select>
                 </div>
@@ -105,4 +98,4 @@ const SpeakPage: NextPage = () => {
   )
 }
 
-export default withAuthenticationRequired(SpeakPage);
+export default SpeakPage;
