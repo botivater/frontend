@@ -14,15 +14,14 @@ const ReportCard: React.FC<Props> = ({ reportId }) => {
     const { guildId } = useAppContext();
     const { error, data, isLoading } = Report.useReport(reportId);
     const { error: channelError, data: channelData, isLoading: isChannelLoading } = Discord.useDiscordGuildChannels(guildId);
-    const { error: submitterGuildMemberError, data: submitterGuildMemberData, isLoading: isSubmitterGuildMemberLoading } = GuildMember.useGuildMember(data?.guildMemberId);
 
-    if (error || channelError || submitterGuildMemberError) return (
+    if (error || channelError) return (
         <div className={'bg-gray-700 text-red-500 rounded-md shadow-md p-4 flex flex-col justify-start items-start text-lg'}>
             <p>Error occurred when loading report with id {reportId}</p>
         </div>
     );
 
-    if (isLoading || isChannelLoading || isSubmitterGuildMemberLoading) return (
+    if (isLoading || isChannelLoading) return (
         <div className='bg-gray-700 rounded-md shadow-md p-4 flex flex-col gap-3 justify-start items-start animate-pulse'>
             <span className='h-7 w-3/4 bg-black bg-opacity-20 rounded-md'></span>
             <span className='h-7 w-1/2 bg-black bg-opacity-20 rounded-md'></span>
@@ -40,7 +39,7 @@ const ReportCard: React.FC<Props> = ({ reportId }) => {
                 <h1 className='font-bold'>Report #{reportId}</h1>
                 {data &&
                     <>
-                        <small className='text-white text-opacity-30'>Aangemaakt op <strong>{new Date(data.createdAt).toLocaleString("nl-NL", { dateStyle: 'medium', timeStyle: 'short' })}</strong> in het <strong>#{channelName}</strong> kanaal door <strong>{ data.anonymous ? 'anoniem' : `${submitterGuildMemberData?.name} (${submitterGuildMemberData?.identifier})` }</strong>.</small>
+                        <small className='text-white text-opacity-30'>Aangemaakt op <strong>{new Date(data.createdAt).toLocaleString("nl-NL", { dateStyle: 'medium', timeStyle: 'short' })}</strong> in het <strong>#{channelName}</strong> kanaal door <strong>{ data.anonymous ? 'anoniem' : `${data.guildMember.name} (${data.guildMember.identifier})` }</strong>.</small>
                         <small className='text-white text-opacity-30'>Deze report is <strong>{data.resolved ? 'afgehandeld' : 'nog niet afgehandeld'}</strong>.</small>
                     </>
                 }

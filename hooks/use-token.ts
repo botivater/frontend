@@ -5,5 +5,5 @@ import AuthContext from "../components/context/AuthContext";
 
 export const useToken = () => {
     const { accessToken } = useContext(AuthContext)!;
-    return accessToken;
+    return accessToken!;
 }
