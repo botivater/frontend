@@ -3,6 +3,8 @@ import Image from 'next/image'
 import React from 'react';
 import { useContext } from 'react';
 import AuthContext from './context/AuthContext';
+import { useCookies } from 'react-cookie';
+import { useRouter } from 'next/router';
 
 
 type Props = {
@@ -10,8 +12,8 @@ type Props = {
 }
 
 const Header: React.FC<Props> = ({ children }) => {
-    const { isLoading, user } = useContext(AuthContext)!;
-
+    const { isLoading, user, doLogout } = useContext(AuthContext)!;
+    
     return (
         <header className='bg-gray-700 text-white'>
             <div className='container mx-auto'>
@@ -32,7 +34,7 @@ const Header: React.FC<Props> = ({ children }) => {
                                     <Link href={"/tenantSwitcher"}><a>Switch tenant</a></Link>
                                 </li>
                                 <li>
-                                    {/* <a onClick={() => logout({ returnTo: window.location.origin })} className='cursor-pointer'>Logout</a> */}
+                                    <a onClick={doLogout} className='cursor-pointer'>Logout</a>
                                 </li>
                                 <li className='h-full py-2'>
                                     { /* eslint-disable-next-line @next/next/no-img-element */}

@@ -7,17 +7,17 @@ import AuthContext from '../components/context/AuthContext'
 import ErrorComponent from '../components/errorComponent'
 import Layout from '../components/layout'
 import Loading from '../components/loading'
-import Discord from '../lib/api/Discord'
+import { useAllDiscordGuilds } from '../lib/api/Discord'
 import { setTenant, useTenant } from '../lib/tenant'
 
 const TenantSwitcherPage: NextPage = () => {
     const { isLoading, user } = useContext(AuthContext)!;
     const router = useRouter();
 
-    const [guildId, setGuildId] = useState("");
+    const [guildId, setGuildId] = useState<number | undefined>(undefined);
 
     const { data: tenantGuildId, mutate: mutateTenant } = useTenant();
-    const { error: allGuildsError, data: allGuildsData, isLoading: isAllGuildsLoading } = Discord.useAllDiscordGuilds();
+    const { error: allGuildsError, data: allGuildsData, isLoading: isAllGuildsLoading } = useAllDiscordGuilds();
 
     useEffect(() => {
         if (tenantGuildId) setGuildId(tenantGuildId);
@@ -26,7 +26,7 @@ const TenantSwitcherPage: NextPage = () => {
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const guildId = e.currentTarget.value;
 
-        setGuildId(guildId);
+        setGuildId(parseInt(guildId));
         setTenant(guildId);
         mutateTenant(guildId);
         

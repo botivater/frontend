@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
+import { useCookies } from 'react-cookie';
 import { login, me } from '../../lib/api/Auth.api';
 
 type User = {}
@@ -25,6 +26,8 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     const [user, setUser] = useState<User | undefined>(undefined);
     const [error, setError] = useState<Error | undefined>(undefined);
     const [isLoading, setLoading] = useState(false);
+    const [cookies, setCookie, removeCookie] = useCookies();
+    const [checkAuth, setCheckAuth] = useState(false);
 
     const router = useRouter();
 
@@ -33,32 +36,47 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
         
         try { 
             const loginResponse = await login(email, password);
-            setAccessToken(loginResponse.access_token);
+            setCookie('jwt_token', loginResponse.access_token, { path: '/', sameSite: 'strict' });
+            setLoading(false);
+            setCheckAuth(true);
         } catch (err) {
             setError(err as Error);
-        } finally {
             setLoading(false);
         }
     };
 
     const checkUserLoggedIn = () => {
-        me(accessToken)
+        const jwtToken = cookies.jwt_token;
+        if (!jwtToken) {
+            router.push('/')
+            return;
+        }
+
+        me(jwtToken)
             .then(me => {
+                setAccessToken(jwtToken);
                 setUser(me);
+                setCheckAuth(false);
                 router.push('/dashboard');
             })
             .catch(err => {
                 setError(err as Error);
+                setAccessToken(undefined);
+                setUser(undefined);
+                setCheckAuth(false);
                 router.push('/')
             });
     };
 
     const doLogout = async () => {
-
+        removeCookie('jwt_token');
+        setAccessToken(undefined);
+        setUser(undefined);
+        router.push('/');
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => checkUserLoggedIn(), [accessToken]);
+    useEffect(() => checkUserLoggedIn(), [checkAuth]);
 
     return (
         <AuthContext.Provider value={{ accessToken, user, error, isLoading, doLogin, doLogout }}>
