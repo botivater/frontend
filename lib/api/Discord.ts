@@ -1,6 +1,5 @@
 import useSWR from "swr";
 import { apiEndpoint, ApiResponse } from ".";
-import { BuildingBlockType, CheckType, OnType } from "../../components/flows/FlowActionGroupInput";
 import { useToken } from "../../hooks/use-token";
 import fetchWithToken from "../fetchWithToken";
 
@@ -12,6 +11,13 @@ export type Guild = {
 export type GuildChannel = {
     id: string;
     name: string;
+    type: string;
+}
+
+export type GuildChannelResponse = {
+    success: boolean;
+    error: number;
+    channels: GuildChannel[];
 }
 
 export type GuildMember = {
@@ -22,9 +28,21 @@ export type GuildMember = {
     userId: string;
 }
 
+export type GuildMemberResponse = {
+    success: boolean;
+    error: number;
+    members: GuildMember[];
+}
+
 export type GuildRole = {
     id: string;
     name: string;
+}
+
+export type GuildRoleResponse = {
+    success: boolean;
+    error: number;
+    roles: GuildRole[];
 }
 
 export type CommandFlowEntity = {
@@ -57,18 +75,10 @@ export type CommandFlowGroup = {
 
 const useAllDiscordGuilds = () => {
     const token = useToken();
-    const { error, data } = useSWR<ApiResponse<Guild[]>>(token ? [`${apiEndpoint}/v1/discord/guilds`, token] : null, fetchWithToken);
-
-    if (data && data.error) {
-        return {
-            data: undefined,
-            isLoading: !error && !data,
-            error: data.error
-        }
-    }
+    const { error, data } = useSWR<Guild[]>(token ? [`${apiEndpoint}/v1/guild`, token] : null, fetchWithToken);
 
     return {
-        data: data?.data,
+        data,
         isLoading: !error && !data,
         error
     }
@@ -76,75 +86,43 @@ const useAllDiscordGuilds = () => {
 
 const useDiscordGuild = (guildId?: string) => {
     const token = useToken();
-    const { error, data } = useSWR<ApiResponse<Guild>>(token && guildId ? [`${apiEndpoint}/v1/discord/guilds/${guildId}`, token] : null, fetchWithToken);
-
-    if (data && data.error) {
-        return {
-            data: undefined,
-            isLoading: !error && !data,
-            error: data.error
-        }
-    }
+    const { error, data } = useSWR<Guild>(token && guildId ? [`${apiEndpoint}/v1/guild/${guildId}`, token] : null, fetchWithToken);
 
     return {
-        data: data?.data,
+        data,
         isLoading: !error && !data,
         error
     }
 }
 
-const useDiscordGuildChannels = (guildId?: string) => {
+const useDiscordGuildChannels = (guildId?: number) => {
     const token = useToken();
-    const { error, data } = useSWR<ApiResponse<GuildChannel[]>>(token && guildId ? [`${apiEndpoint}/v1/discord/guilds/${guildId}/channels`, token] : null, fetchWithToken);
-
-    if (data && data.error) {
-        return {
-            data: undefined,
-            isLoading: !error && !data,
-            error: data.error
-        }
-    }
+    const { error, data } = useSWR<GuildChannelResponse>(token && guildId ? [`${apiEndpoint}/v1/discord/guild-channel?guildId=${guildId}`, token] : null, fetchWithToken);
 
     return {
-        data: data?.data,
+        data: data ? data.channels : undefined,
         isLoading: !error && !data,
         error
     }
 }
 
-const useDiscordGuildTextChannels = (guildId?: string) => {
+const useDiscordGuildTextChannels = (guildId?: number) => {
     const token = useToken();
-    const { error, data } = useSWR<ApiResponse<GuildChannel[]>>(token && guildId ? [`${apiEndpoint}/v1/discord/guilds/${guildId}/channels?type=text`, token] : null, fetchWithToken);
-
-    if (data && data.error) {
-        return {
-            data: undefined,
-            isLoading: !error && !data,
-            error: data.error
-        }
-    }
+    const { error, data } = useSWR<GuildChannelResponse>(token && guildId ? [`${apiEndpoint}/v1/discord/guild-channel?guildId=${guildId}`, token] : null, fetchWithToken);
 
     return {
-        data: data?.data,
+        data: data ? data.channels.filter(c => c.type == "GUILD_TEXT") : undefined,
         isLoading: !error && !data,
         error
     }
 }
 
-const useDiscordGuildVoiceChannels = (guildId: string) => {
+const useDiscordGuildVoiceChannels = (guildId?: number) => {
     const token = useToken();
-    const { error, data } = useSWR<ApiResponse<GuildChannel[]>>(token ? [`${apiEndpoint}/v1/discord/guilds/${guildId}/channels?type=voice`, token] : null, fetchWithToken);
-
-    if (data && data.error) {
-        return {
-            data: undefined,
-            isLoading: !error && !data,
-            error: data.error
-        }
-    }
+    const { error, data } = useSWR<GuildChannelResponse>(token ? [`${apiEndpoint}/v1/discord/guild-channel?guildId=${guildId}`, token] : null, fetchWithToken);
 
     return {
-        data: data?.data,
+        data: data ? data.channels.filter(c => c.type == "GUILD_VOICE") : undefined,
         isLoading: !error && !data,
         error
     }
@@ -154,16 +132,16 @@ const useAllDiscordGuildChannels = () => {
     const token = useToken();
 
     const customFetcher = async (key: string, token: string) => {
-        const guilds = await fetchWithToken<Guild[]>(`${apiEndpoint}/v1/discord/guilds`, token);
-        if (!guilds.data) throw new Error("Could not get guilds");
+        const guilds = await fetchWithToken<Guild[]>(`${apiEndpoint}/v1/guild`, token);
+        if (!guilds) throw new Error("Could not get guilds");
 
         const guildChannels = await Promise.all(
-            guilds.data.map(guild => {
-                return fetchWithToken<GuildChannel[]>(`${apiEndpoint}/v1/discord/guilds/${guild.id}/channels`, token)
+            guilds.map(guild => {
+                return fetchWithToken<GuildChannel[]>(`${apiEndpoint}/v1/discord/guild-channel?guildId=${guild.id}`, token)
             })
         )
 
-        return guildChannels.map(guildChannel => guildChannel.data || []).flat();
+        return guildChannels.map(guildChannel => guildChannel || []).flat();
     }
 
     const { error, data } = useSWR<GuildChannel[]>(token ? [`internal_${apiEndpoint}_useAllDiscordGuildChannels`, token] : null, customFetcher);
@@ -175,45 +153,12 @@ const useAllDiscordGuildChannels = () => {
     }
 }
 
-const useDiscordGuildMembers = (guildId?: string) => {
+const useDiscordGuildMembers = (guildId?: number) => {
     const token = useToken();
-    const { error, data } = useSWR<ApiResponse<GuildMember[]>>(token && guildId ? [`${apiEndpoint}/v1/discord/guilds/${guildId}/members`, token] : null, fetchWithToken);
-
-    if (data && data.error) {
-        return {
-            data: undefined,
-            isLoading: !error && !data,
-            error: data.error
-        }
-    }
+    const { error, data } = useSWR<GuildMemberResponse>(token && guildId ? [`${apiEndpoint}/v1/discord/guild-member?guildId=${guildId}`, token] : null, fetchWithToken);
 
     return {
-        data: data?.data,
-        isLoading: !error && !data,
-        error
-    }
-}
-
-const useAllDiscordGuildMembers = () => {
-    const token = useToken();
-
-    const customFetcher = async (key: string, token: string) => {
-        const guilds = await fetchWithToken<Guild[]>(`${apiEndpoint}/v1/discord/guilds`, token);
-        if (!guilds.data) throw new Error("Could not get guilds");
-
-        const guildMembers = await Promise.all(
-            guilds.data.map(guild => {
-                return fetchWithToken<GuildMember[]>(`${apiEndpoint}/v1/discord/guilds/${guild.id}/members`, token)
-            })
-        )
-
-        return guildMembers.map(guildMember => guildMember.data || []).flat();
-    }
-
-    const { error, data } = useSWR<GuildMember[]>(token ? [`internal_${apiEndpoint}_useAllDiscordGuildMembers`, token] : null, customFetcher);
-
-    return {
-        data,
+        data: data ? data.members : undefined,
         isLoading: !error && !data,
         error
     }
@@ -221,40 +166,7 @@ const useAllDiscordGuildMembers = () => {
 
 const useDiscordGuildRoles = (guildId?: string) => {
     const token = useToken();
-    const { error, data } = useSWR<ApiResponse<GuildRole[]>>(token && guildId ? [`${apiEndpoint}/v1/discord/guilds/${guildId}/roles`, token] : null, fetchWithToken);
-
-    if (data && data.error) {
-        return {
-            data: undefined,
-            isLoading: !error && !data,
-            error: data.error
-        }
-    }
-
-    return {
-        data: data?.data,
-        isLoading: !error && !data,
-        error
-    }
-}
-
-const useAllDiscordGuildRoles = () => {
-    const token = useToken();
-
-    const customFetcher = async (key: string, token: string) => {
-        const guilds = await fetchWithToken<Guild[]>(`${apiEndpoint}/v1/discord/guilds`, token);
-        if (!guilds.data) throw new Error("Could not get guilds");
-
-        const guildRoles = await Promise.all(
-            guilds.data.map(guild => {
-                return fetchWithToken<GuildRole[]>(`${apiEndpoint}/v1/discord/guilds/${guild.id}/roles`, token)
-            })
-        )
-
-        return guildRoles.map(guildRole => guildRole.data || []).flat();
-    }
-
-    const { error, data } = useSWR<GuildRole[]>(token ? [`internal_${apiEndpoint}_useAllDiscordGuildRoles`, token] : null, customFetcher);
+    const { error, data } = useSWR<GuildRoleResponse>(token && guildId ? [`${apiEndpoint}/v1/discord/guild-role?guildId=${guildId}`, token] : null, fetchWithToken);
 
     return {
         data,
@@ -372,9 +284,7 @@ const exports = {
     useDiscordGuildVoiceChannels,
     useAllDiscordGuildChannels,
     useDiscordGuildMembers,
-    useAllDiscordGuildMembers,
     useDiscordGuildRoles,
-    useAllDiscordGuildRoles,
     useAllReactionCollectors,
     useReactionCollector,
     createReactionCollector,

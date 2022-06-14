@@ -1,8 +1,9 @@
-import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
+import { useContext } from 'react'
+import AuthContext from '../components/context/AuthContext'
 import ErrorComponent from '../components/errorComponent'
 import Layout from '../components/layout'
 import Loading from '../components/loading'
@@ -10,7 +11,7 @@ import Discord from '../lib/api/Discord'
 import { setTenant, useTenant } from '../lib/tenant'
 
 const TenantSwitcherPage: NextPage = () => {
-    const { isLoading, user } = useAuth0()
+    const { isLoading, user } = useContext(AuthContext)!;
     const router = useRouter();
 
     const [guildId, setGuildId] = useState("");
@@ -71,4 +72,4 @@ const TenantSwitcherPage: NextPage = () => {
     )
 }
 
-export default withAuthenticationRequired(TenantSwitcherPage);
+export default TenantSwitcherPage;

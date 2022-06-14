@@ -4,12 +4,16 @@ import Discord from "../../lib/api/Discord";
 import { useTenant } from "../../lib/tenant";
 
 export interface AppContextInterface {
-    guildId?: string;
+    guildId?: number;
 }
 
 export const AppContext = React.createContext<AppContextInterface>({});
 
-export const AppContextWrapper: React.FC = ({ children }) => {
+type Props = {
+    children: React.ReactNode;
+}
+
+export const AppContextWrapper: React.FC<Props> = ({ children }) => {
     const { data: guildId } = useTenant();
     const [sharedState, setSharedState] = useState<AppContextInterface>({});
 

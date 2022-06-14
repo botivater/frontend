@@ -1,23 +1,21 @@
-import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
+import { useContext } from 'react'
 import InformationCard from '../components/cards/InformationCard'
 import { useAppContext } from '../components/context/AppContext'
+import AuthContext from '../components/context/AuthContext'
 import ErrorComponent from '../components/errorComponent'
 import Layout from '../components/layout'
 import Loading from '../components/loading'
 import Discord from '../lib/api/Discord'
 
 const Dashboard: NextPage = () => {
-  const { isLoading, user } = useAuth0()
+  const { isLoading, user } = useContext(AuthContext)!;
   const { guildId } = useAppContext();
 
   const { error: allGuildChannelsError, data: allGuildChannelsData, isLoading: allGuildChannelsIsLoading } = Discord.useDiscordGuildChannels(guildId);
   const { error: allGuildMembersError, data: allGuildMembersData, isLoading: allGuildMembersIsLoading } = Discord.useDiscordGuildMembers(guildId);
-
-  if (allGuildChannelsError) console.error(allGuildChannelsError);
-  if (allGuildMembersError) console.error(allGuildMembersError);
 
   const quickLinks = [
     {
@@ -90,4 +88,4 @@ const Dashboard: NextPage = () => {
   )
 }
 
-export default withAuthenticationRequired(Dashboard);
+export default Dashboard;

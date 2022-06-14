@@ -7,7 +7,7 @@ export const useTenant = () => {
     const { error, data, mutate } = useSWR(TENANT_KEY, getFromLocalStorage);
 
     return {
-        data,
+        data: data ? parseInt(data) : undefined,
         isLoading: !error && !data,
         error,
         mutate

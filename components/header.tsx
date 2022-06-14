@@ -1,14 +1,16 @@
-import { useAuth0 } from '@auth0/auth0-react';
 import Link from 'next/link';
 import Image from 'next/image'
 import React from 'react';
+import { useContext } from 'react';
+import AuthContext from './context/AuthContext';
 
 
 type Props = {
+    children: React.ReactNode;
 }
 
 const Header: React.FC<Props> = ({ children }) => {
-    const { isAuthenticated, isLoading, user, loginWithRedirect, logout } = useAuth0();
+    const { isLoading, user } = useContext(AuthContext)!;
 
     return (
         <header className='bg-gray-700 text-white'>
@@ -21,7 +23,7 @@ const Header: React.FC<Props> = ({ children }) => {
                                 <span>Loading...</span>
                             </li>
                         }
-                        {isAuthenticated && user &&
+                        {user &&
                             <>
                                 <li>
                                     <Link href={"/dashboard"}><a>Dashboard</a></Link>
@@ -30,11 +32,11 @@ const Header: React.FC<Props> = ({ children }) => {
                                     <Link href={"/tenantSwitcher"}><a>Switch tenant</a></Link>
                                 </li>
                                 <li>
-                                    <a onClick={() => logout({ returnTo: window.location.origin })} className='cursor-pointer'>Logout</a>
+                                    {/* <a onClick={() => logout({ returnTo: window.location.origin })} className='cursor-pointer'>Logout</a> */}
                                 </li>
                                 <li className='h-full py-2'>
                                     { /* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img src={user.picture} alt={"Profile picture"} className="object-contain h-full rounded-full" />
+                                    {/* <img src={user.picture} alt={"Profile picture"} className="object-contain h-full rounded-full" /> */}
                                 </li>
                             </>
                         }
