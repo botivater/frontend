@@ -1,12 +1,12 @@
 import useSWR from "swr";
-import { apiEndpoint, ApiResponse } from ".";
 import { useToken } from "../../hooks/use-token";
+import { configProvider } from "../config/Config.provider";
 import fetchWithToken from "../fetchWithToken";
 import { Report } from "./types/Report";
 
 export const useAllReports = (guildId?: number) => {
     const token = useToken();
-    const { error, data } = useSWR<Report[]>(token && guildId ? [`${apiEndpoint}/v1/report?guildId=${guildId}`, token] : null, fetchWithToken);
+    const { error, data } = useSWR<Report[]>(token && guildId ? [`${configProvider.getApiEndpoint()}/v1/report?guildId=${guildId}`, token] : null, fetchWithToken);
 
     return {
         data,
@@ -17,7 +17,7 @@ export const useAllReports = (guildId?: number) => {
 
 const useReport = (id: number) => {
     const token = useToken();
-    const { error, data } = useSWR<Report>(token && id ? [`${apiEndpoint}/v1/report/${id}`, token] : null, fetchWithToken);
+    const { error, data } = useSWR<Report>(token && id ? [`${configProvider.getApiEndpoint()}/v1/report/${id}`, token] : null, fetchWithToken);
 
     return {
         data,
@@ -28,7 +28,7 @@ const useReport = (id: number) => {
 
 // We cannot use React hooks here.
 const updateReport = async (token: string, data: { resolved: boolean }, id: number) => {
-    const response = await fetch(`${apiEndpoint}/v1/report/${id}`, {
+    const response = await fetch(`${configProvider.getApiEndpoint()}/v1/report/${id}`, {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',

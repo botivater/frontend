@@ -1,6 +1,6 @@
 import useSWR from "swr";
-import { apiEndpoint, ApiResponse } from ".";
 import { useToken } from "../../hooks/use-token";
+import { configProvider } from "../config/Config.provider";
 import fetchWithToken from "../fetchWithToken";
 
 export type CommandInvocation = {
@@ -9,7 +9,7 @@ export type CommandInvocation = {
 
 export const useAllCommandInvocation = (guildId?: number) => {
     const token = useToken();
-    const { error, data } = useSWR<CommandInvocation[]>(token && guildId ? [`${apiEndpoint}/v1/command-invocation?guildId=${guildId}`, token] : null, fetchWithToken);
+    const { error, data } = useSWR<CommandInvocation[]>(token && guildId ? [`${configProvider.getApiEndpoint()}/v1/command-invocation?guildId=${guildId}`, token] : null, fetchWithToken);
 
     return {
         data,

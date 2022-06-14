@@ -1,6 +1,6 @@
 import useSWR from "swr";
-import { apiEndpoint, ApiResponse } from ".";
 import { useToken } from "../../hooks/use-token";
+import { configProvider } from "../config/Config.provider";
 import fetchWithToken from "../fetchWithToken";
 
 export type Guild = {
@@ -75,7 +75,7 @@ export type CommandFlowGroup = {
 
 const useAllDiscordGuilds = () => {
     const token = useToken();
-    const { error, data } = useSWR<Guild[]>(token ? [`${apiEndpoint}/v1/guild`, token] : null, fetchWithToken);
+    const { error, data } = useSWR<Guild[]>(token ? [`${configProvider.getApiEndpoint()}/v1/guild`, token] : null, fetchWithToken);
 
     return {
         data,
@@ -86,7 +86,7 @@ const useAllDiscordGuilds = () => {
 
 const useDiscordGuild = (guildId?: string) => {
     const token = useToken();
-    const { error, data } = useSWR<Guild>(token && guildId ? [`${apiEndpoint}/v1/guild/${guildId}`, token] : null, fetchWithToken);
+    const { error, data } = useSWR<Guild>(token && guildId ? [`${configProvider.getApiEndpoint()}/v1/guild/${guildId}`, token] : null, fetchWithToken);
 
     return {
         data,
@@ -97,7 +97,7 @@ const useDiscordGuild = (guildId?: string) => {
 
 const useDiscordGuildChannels = (guildId?: number) => {
     const token = useToken();
-    const { error, data } = useSWR<GuildChannelResponse>(token && guildId ? [`${apiEndpoint}/v1/discord/guild-channel?guildId=${guildId}`, token] : null, fetchWithToken);
+    const { error, data } = useSWR<GuildChannelResponse>(token && guildId ? [`${configProvider.getApiEndpoint()}/v1/discord/guild-channel?guildId=${guildId}`, token] : null, fetchWithToken);
 
     return {
         data: data ? data.channels : undefined,
@@ -108,7 +108,7 @@ const useDiscordGuildChannels = (guildId?: number) => {
 
 const useDiscordGuildTextChannels = (guildId?: number) => {
     const token = useToken();
-    const { error, data } = useSWR<GuildChannelResponse>(token && guildId ? [`${apiEndpoint}/v1/discord/guild-channel?guildId=${guildId}`, token] : null, fetchWithToken);
+    const { error, data } = useSWR<GuildChannelResponse>(token && guildId ? [`${configProvider.getApiEndpoint()}/v1/discord/guild-channel?guildId=${guildId}`, token] : null, fetchWithToken);
 
     return {
         data: data ? data.channels.filter(c => c.type == "GUILD_TEXT") : undefined,
@@ -119,7 +119,7 @@ const useDiscordGuildTextChannels = (guildId?: number) => {
 
 const useDiscordGuildVoiceChannels = (guildId?: number) => {
     const token = useToken();
-    const { error, data } = useSWR<GuildChannelResponse>(token ? [`${apiEndpoint}/v1/discord/guild-channel?guildId=${guildId}`, token] : null, fetchWithToken);
+    const { error, data } = useSWR<GuildChannelResponse>(token ? [`${configProvider.getApiEndpoint()}/v1/discord/guild-channel?guildId=${guildId}`, token] : null, fetchWithToken);
 
     return {
         data: data ? data.channels.filter(c => c.type == "GUILD_VOICE") : undefined,
@@ -132,19 +132,19 @@ const useAllDiscordGuildChannels = () => {
     const token = useToken();
 
     const customFetcher = async (key: string, token: string) => {
-        const guilds = await fetchWithToken<Guild[]>(`${apiEndpoint}/v1/guild`, token);
+        const guilds = await fetchWithToken<Guild[]>(`${configProvider.getApiEndpoint()}/v1/guild`, token);
         if (!guilds) throw new Error("Could not get guilds");
 
         const guildChannels = await Promise.all(
             guilds.map(guild => {
-                return fetchWithToken<GuildChannel[]>(`${apiEndpoint}/v1/discord/guild-channel?guildId=${guild.id}`, token)
+                return fetchWithToken<GuildChannel[]>(`${configProvider.getApiEndpoint()}/v1/discord/guild-channel?guildId=${guild.id}`, token)
             })
         )
 
         return guildChannels.map(guildChannel => guildChannel || []).flat();
     }
 
-    const { error, data } = useSWR<GuildChannel[]>(token ? [`internal_${apiEndpoint}_useAllDiscordGuildChannels`, token] : null, customFetcher);
+    const { error, data } = useSWR<GuildChannel[]>(token ? [`internal_${configProvider.getApiEndpoint()}_useAllDiscordGuildChannels`, token] : null, customFetcher);
 
     return {
         data,
@@ -155,7 +155,7 @@ const useAllDiscordGuildChannels = () => {
 
 const useDiscordGuildMembers = (guildId?: number) => {
     const token = useToken();
-    const { error, data } = useSWR<GuildMemberResponse>(token && guildId ? [`${apiEndpoint}/v1/discord/guild-member?guildId=${guildId}`, token] : null, fetchWithToken);
+    const { error, data } = useSWR<GuildMemberResponse>(token && guildId ? [`${configProvider.getApiEndpoint()}/v1/discord/guild-member?guildId=${guildId}`, token] : null, fetchWithToken);
 
     return {
         data: data ? data.members : undefined,
@@ -166,7 +166,7 @@ const useDiscordGuildMembers = (guildId?: number) => {
 
 const useDiscordGuildRoles = (guildId?: string) => {
     const token = useToken();
-    const { error, data } = useSWR<GuildRoleResponse>(token && guildId ? [`${apiEndpoint}/v1/discord/guild-role?guildId=${guildId}`, token] : null, fetchWithToken);
+    const { error, data } = useSWR<GuildRoleResponse>(token && guildId ? [`${configProvider.getApiEndpoint()}/v1/discord/guild-role?guildId=${guildId}`, token] : null, fetchWithToken);
 
     return {
         data,
@@ -177,18 +177,10 @@ const useDiscordGuildRoles = (guildId?: string) => {
 
 const useAllReactionCollectors = () => {
     const token = useToken();
-    const { error, data } = useSWR<ApiResponse<CommandFlowGroup[]>>(token ? [`${apiEndpoint}/v1/discord/reactionCollectors`, token] : null, fetchWithToken);
-
-    if (data && data.error) {
-        return {
-            data: undefined,
-            isLoading: !error && !data,
-            error: data.error
-        }
-    }
+    const { error, data } = useSWR<CommandFlowGroup[]>(token ? [`${configProvider.getApiEndpoint()}/v1/discord/reactionCollectors`, token] : null, fetchWithToken);
 
     return {
-        data: data?.data,
+        data,
         isLoading: !error && !data,
         error
     }
@@ -196,18 +188,10 @@ const useAllReactionCollectors = () => {
 
 const useReactionCollector = (reactionCollectorId?: number) => {
     const token = useToken();
-    const { error, data } = useSWR<ApiResponse<CommandFlowGroup>>(token && reactionCollectorId ? [`${apiEndpoint}/v1/discord/reactionCollectors/${reactionCollectorId}`, token] : null, fetchWithToken);
-
-    if (data && data.error) {
-        return {
-            data: undefined,
-            isLoading: !error && !data,
-            error: data.error
-        }
-    }
+    const { error, data } = useSWR<CommandFlowGroup>(token && reactionCollectorId ? [`${configProvider.getApiEndpoint()}/v1/discord/reactionCollectors/${reactionCollectorId}`, token] : null, fetchWithToken);
 
     return {
-        data: data?.data,
+        data,
         isLoading: !error && !data,
         error
     }
@@ -225,7 +209,7 @@ const createReactionCollector = async (token: string, data: {
     commandFlows: unknown[],
 }) => {
     console.log(data);
-    const response = await fetch(`${apiEndpoint}/v1/discord/reactionCollectors`, {
+    const response = await fetch(`${configProvider.getApiEndpoint()}/v1/discord/reactionCollectors`, {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',

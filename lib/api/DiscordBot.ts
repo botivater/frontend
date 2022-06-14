@@ -1,22 +1,20 @@
-import { apiEndpoint } from ".";
+import { configProvider } from "../config/Config.provider";
+
 
 // We cannot use React hooks here.
-const reloadCommands = async (token: string) => {
-    const response = await fetch(`${apiEndpoint}/v1/discord-bot/reload/commands`, {
+export const loadGuildCommands = async (token: string, id?: number) => {
+    const response = await fetch(`${configProvider.getApiEndpoint()}/v1/discord/load-guild-commands`, {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Authorization': `Bearer ${token}`
-        }
+        },
+        method: 'POST',
+        body: JSON.stringify({
+            id
+        })
     });
 
     const responseJson = await response.json();
-
-    return response.status === 200;
+    return response.status === 201;
 }
-
-const exports = {
-    reloadCommands
-}
-
-export default exports;
