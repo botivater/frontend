@@ -1,6 +1,5 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useContext, useEffect, useState } from 'react'
 import { useAppContext } from '../../components/context/AppContext'
@@ -9,9 +8,7 @@ import ErrorComponent from '../../components/errorComponent'
 import Layout from '../../components/layout'
 import Loading from '../../components/loading'
 import { useToken } from '../../hooks/use-token'
-import CommandList from '../../lib/api/CommandList';
 import Discord from '../../lib/api/Discord'
-import GuildMember from '../../lib/api/GuildMember'
 import Report from '../../lib/api/Report'
 
 
