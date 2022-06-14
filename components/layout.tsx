@@ -4,8 +4,8 @@ import Header from './header';
 
 
 type Props = {
+    children: React.ReactNode;
 }
-
 
 const Layout: React.FC<Props> = ({ children }) => {
     const date = new Date();

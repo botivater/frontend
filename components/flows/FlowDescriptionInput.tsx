@@ -5,7 +5,7 @@ type Props = {
     setValue: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const FlowDescriptionInput: React.FC<Props> = ({ children, value, setValue }) => {
+const FlowDescriptionInput: React.FC<Props> = ({ value, setValue }) => {
     return (
         <div>
             <label htmlFor="description" className='block font-bold'>Description:</label>

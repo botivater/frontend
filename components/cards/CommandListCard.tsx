@@ -1,19 +1,20 @@
 import Link from 'next/link';
 import React from 'react';
-import CommandList from "../../lib/api/CommandList";
+import { useCommandList } from "../../lib/api/CommandList";
 
 type Props = {
     commandListId: number;
 }
 
 const CommandListCard: React.FC<Props> = ({ commandListId }) => {
-    const { error, data, isLoading } = CommandList.useCommandList(commandListId);
+    const { error, data, isLoading } = useCommandList(commandListId);
 
     if (error) return (
         <div className={'bg-gray-700 text-red-500 rounded-md shadow-md p-4 flex flex-col justify-start items-start text-lg'}>
             <p>Error occurred when loading command list with id {commandListId}</p>
         </div>
     );
+    
     if (isLoading) return (
         <div className='bg-gray-700 rounded-md shadow-md p-4 flex flex-col gap-3 justify-start items-start animate-pulse'>
             <span className='h-7 w-3/4 bg-black bg-opacity-20 rounded-md'></span>

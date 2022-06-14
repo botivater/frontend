@@ -1,19 +1,19 @@
-import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
-import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useContext } from 'react'
 import ReportCard from '../../components/cards/ReportCard'
+import { useAppContext } from '../../components/context/AppContext'
+import AuthContext from '../../components/context/AuthContext'
 import ErrorComponent from '../../components/errorComponent'
 import Layout from '../../components/layout'
 import Loading from '../../components/loading'
-import Report from '../../lib/api/Report';
+import { sortReportsByIdDesc, useAllReports } from '../../lib/api/Report';
 
 const ReportsPage: NextPage = () => {
-    const { isLoading, user } = useAuth0()
+    const { isLoading, user } = useContext(AuthContext)!;
+    const { guildId } = useAppContext();
 
-    const { error: allReportsError, data: allReportsData, isLoading: isAllReportsLoading } = Report.useAllReports();
+    const { error: allReportsError, data: allReportsData, isLoading: isAllReportsLoading } = useAllReports(guildId);
 
     if (allReportsError) {
         console.error(allReportsError);
@@ -36,12 +36,8 @@ const ReportsPage: NextPage = () => {
                             <h1 className='text-3xl font-bold'>Reports</h1>
                             <p className='text-white text-opacity-30'>Reports that have been submitted by users.</p>
                         </div>
-                        {/* <h2 className='text-2xl font-bold'>Reports</h2> */}
-                        {/* <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'>
-                            {!allCommandListsIsLoading && allCommandListsData?.map(commandList => <CommandListCard commandListId={commandList.id} key={commandList.id} />)}
-                        </div> */}
                         <div className='grid grid-cols-1 gap-4'>
-                            {!isAllReportsLoading && allReportsData?.sort(Report.sortReportsByIdDesc).map(report => <ReportCard reportId={report.id} key={report.id} />) }
+                            {!isAllReportsLoading && allReportsData?.sort(sortReportsByIdDesc).map(report => <ReportCard reportId={report.id} key={report.id} />) }
                         </div>
                     </div>
                 }
@@ -50,4 +46,4 @@ const ReportsPage: NextPage = () => {
     )
 }
 
-export default withAuthenticationRequired(ReportsPage);
+export default ReportsPage;

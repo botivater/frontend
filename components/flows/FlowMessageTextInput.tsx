@@ -5,7 +5,7 @@ type Props = {
     setValue: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const FlowMessageTextInput: React.FC<Props> = ({ children, value, setValue }) => {
+const FlowMessageTextInput: React.FC<Props> = ({ value, setValue }) => {
     return (
         <div className='col-span-full'>
             <label htmlFor="messageText" className='block font-bold'>Message text:</label>

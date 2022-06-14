@@ -1,34 +1,29 @@
-import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useAppContext } from '../../components/context/AppContext'
+import AuthContext from '../../components/context/AuthContext'
 import ErrorComponent from '../../components/errorComponent'
 import Layout from '../../components/layout'
 import Loading from '../../components/loading'
 import { useToken } from '../../hooks/use-token'
-import CommandList from '../../lib/api/CommandList';
-import Discord from '../../lib/api/Discord'
-import GuildMember from '../../lib/api/GuildMember'
-import Report from '../../lib/api/Report'
+import { useDiscordGuildChannels } from '../../lib/api/Discord'
+import { updateReport, useReport } from '../../lib/api/Report'
 
 
 const ReportPage: NextPage = () => {
   const router = useRouter();
   const { id } = router.query;
-  const { isLoading, user } = useAuth0()
+  const { isLoading, user } = useContext(AuthContext)!;
   const token = useToken();
   const { guildId } = useAppContext();
 
   const [resolved, setResolved] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const { error: reportError, data: reportData, isLoading: isReportLoading } = Report.useReport(parseInt(id as string));
-  const { error: channelError, data: channelData, isLoading: isChannelLoading } = Discord.useDiscordGuildChannels(guildId);
-  const { error: submitterGuildMemberError, data: submitterGuildMemberData, isLoading: isSubmitterGuildMemberLoading } = GuildMember.useGuildMember(reportData?.guildMemberId);
-  const { error: reportedGuildMemberError, data: reportedGuildMemberData, isLoading: isReportedGuildMemberLoading } = GuildMember.useGuildMember(reportData?.reportedGuildMemberId);
+  const { error: reportError, data: reportData, isLoading: isReportLoading } = useReport(parseInt(id as string));
+  const { error: channelError, data: channelData, isLoading: isChannelLoading } = useDiscordGuildChannels(guildId);
 
   useEffect(() => {
     setResolved(reportData?.resolved || false);
@@ -47,7 +42,7 @@ const ReportPage: NextPage = () => {
     setSubmitting(true);
 
     try {
-      const result = await Report.updateReport(token, data, id);
+      const result = await updateReport(token, data, id);
 
       setSubmitting(false);
 
@@ -72,16 +67,6 @@ const ReportPage: NextPage = () => {
   if (channelError) {
     console.error(channelError);
     return <ErrorComponent message={channelError.toString()} />
-  }
-
-  if (submitterGuildMemberError) {
-    console.error(submitterGuildMemberError);
-    return <ErrorComponent message={submitterGuildMemberError.toString()} />
-  }
-
-  if (reportedGuildMemberError) {
-    console.error(reportedGuildMemberError);
-    return <ErrorComponent message={reportedGuildMemberError.toString()} />
   }
 
   if (isLoading || isReportLoading || isChannelLoading) {
@@ -126,14 +111,14 @@ const ReportPage: NextPage = () => {
                   <small className='block'>Description of the report.</small>
                 </div>
               }
-              {reportData.guildMemberId &&
+              {reportData.reportedGuildMember &&
                 <div>
                   <label htmlFor="user" className='block font-bold'>User:</label>
                   <div className='flex items-stretch justify-center bg-black bg-opacity-30 rounded-md'>
                     <div className='bg-black bg-opacity-60 flex items-center justify-center rounded-l-md'>
                       <span className='px-4'>@</span>
                     </div>
-                    <input type="text" name="user" id="user" className='w-full rounded-r-md bg-transparent border-none' value={`${reportedGuildMemberData?.name} (${reportedGuildMemberData?.identifier})`} disabled />
+                    <input type="text" name="user" id="user" className='w-full rounded-r-md bg-transparent border-none' value={`${reportData.reportedGuildMember.name} (${reportData.reportedGuildMember.identifier})`} disabled />
                   </div>
                   <small className='block'>User that was reported.</small>
                 </div>
@@ -152,7 +137,7 @@ const ReportPage: NextPage = () => {
                     <div className='bg-black bg-opacity-60 flex items-center justify-center rounded-l-md'>
                       <span className='px-4'>@</span>
                     </div>
-                    <input type="text" name="guildMember" id="guildMember" className='w-full rounded-r-md bg-transparent border-none' value={`${submitterGuildMemberData?.name} (${submitterGuildMemberData?.identifier})`} disabled />
+                    <input type="text" name="guildMember" id="guildMember" className='w-full rounded-r-md bg-transparent border-none' value={`${reportData.guildMember.name} (${reportData.guildMember.identifier})`} disabled />
                   </div>
                   <small className='block'>User that created this report.</small>
                 </div>
@@ -178,4 +163,4 @@ const ReportPage: NextPage = () => {
   )
 }
 
-export default withAuthenticationRequired(ReportPage);
+export default ReportPage;

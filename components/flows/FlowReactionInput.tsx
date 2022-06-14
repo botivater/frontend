@@ -5,7 +5,7 @@ type Props = {
     setValue: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
-const FlowReactionInput: React.FC<Props> = ({ children, value, setValue }) => {
+const FlowReactionInput: React.FC<Props> = ({ value, setValue }) => {
     const updateReactionsList = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
         const newOptions = [...value];
         newOptions[index] = event.target.value;

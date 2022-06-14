@@ -1,18 +1,18 @@
-import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import { useAppContext } from '../../components/context/AppContext'
+import AuthContext from '../../components/context/AuthContext'
 import Layout from '../../components/layout'
 import Loading from '../../components/loading'
 import { useToken } from '../../hooks/use-token'
-import CommandList from '../../lib/api/CommandList';
-import Discord from '../../lib/api/Discord'
+import { createCommandList } from '../../lib/api/CommandList'
 
 
 const CommandListPage: NextPage = () => {
-  const { isLoading, user } = useAuth0()
+  const { isLoading, user } = useContext(AuthContext)!;
+  const { guildId } = useAppContext();
   const token = useToken();
   const router = useRouter();
 
@@ -49,13 +49,13 @@ const CommandListPage: NextPage = () => {
       name,
       description,
       options,
-      guildId: 1
+      guildId: guildId
     };
 
     setSubmitting(true);
 
     try {
-      const result = await CommandList.createCommandList(token, data);
+      const result = await createCommandList(token, data);
 
       setSubmitting(false);
 
@@ -132,4 +132,4 @@ const CommandListPage: NextPage = () => {
   )
 }
 
-export default withAuthenticationRequired(CommandListPage);
+export default CommandListPage;

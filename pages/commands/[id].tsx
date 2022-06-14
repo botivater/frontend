@@ -1,20 +1,19 @@
-import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import AuthContext from '../../components/context/AuthContext'
 import ErrorComponent from '../../components/errorComponent'
 import Layout from '../../components/layout'
 import Loading from '../../components/loading'
 import { useToken } from '../../hooks/use-token'
-import CommandList from '../../lib/api/CommandList';
+import { deleteCommandList, updateCommandList, useCommandList } from '../../lib/api/CommandList'
 
 
 const IndividualCommandListPage: NextPage = () => {
   const router = useRouter();
   const { id } = router.query;
-  const { isLoading, user } = useAuth0()
+  const { isLoading, user } = useContext(AuthContext)!;
   const token = useToken();
 
   const [name, setName] = useState("");
@@ -23,7 +22,7 @@ const IndividualCommandListPage: NextPage = () => {
 
   const [submitting, setSubmitting] = useState(false);
 
-  const { error: commandListError, data: commandListData, isLoading: commandListIsLoading } = CommandList.useCommandList(parseInt(id as string));
+  const { error: commandListError, data: commandListData, isLoading: commandListIsLoading } = useCommandList(parseInt(id as string));
 
   useEffect(() => {
     setName(commandListData?.name || "");
@@ -65,7 +64,7 @@ const IndividualCommandListPage: NextPage = () => {
     setSubmitting(true);
 
     try {
-      const result = await CommandList.updateCommandList(token, data, id);
+      const result = await updateCommandList(token, data, id);
 
       setSubmitting(false);
 
@@ -91,7 +90,7 @@ const IndividualCommandListPage: NextPage = () => {
       setSubmitting(true);
 
       try {
-        const result = await CommandList.deleteCommandList(token, id);
+        const result = await deleteCommandList(token, id);
 
         setSubmitting(false);
 
@@ -179,4 +178,4 @@ const IndividualCommandListPage: NextPage = () => {
   )
 }
 
-export default withAuthenticationRequired(IndividualCommandListPage);
+export default IndividualCommandListPage;

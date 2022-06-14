@@ -1,11 +1,9 @@
-import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useAppContext } from '../../../components/context/AppContext'
-import ErrorComponent from '../../../components/errorComponent'
+import AuthContext from '../../../components/context/AuthContext'
 import FlowActionGroupInput, { BuildingBlockType, FlowActionGroup, OnType } from '../../../components/flows/FlowActionGroupInput'
 import FlowDescriptionInput from '../../../components/flows/FlowDescriptionInput'
 import FlowMessageTextInput from '../../../components/flows/FlowMessageTextInput'
@@ -15,16 +13,16 @@ import FlowTextChannelSelect from '../../../components/flows/FlowTextChannelSele
 import Layout from '../../../components/layout'
 import Loading from '../../../components/loading'
 import { useToken } from '../../../hooks/use-token'
-import Discord from '../../../lib/api/Discord'
+import { createReactionCollector } from '../../../lib/api/Discord'
 
 
 const FlowsReactionNewPage: NextPage = () => {
-    const { isLoading, user } = useAuth0()
+    const { isLoading, user } = useContext(AuthContext)!;
     const token = useToken();
     const { guildId } = useAppContext();
     const router = useRouter();
 
-    const [channelId, setChannelId] = useState("");
+    const [channelSnowflake, setChannelSnowflake] = useState("");
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [messageText, setMessageText] = useState("");
@@ -48,10 +46,10 @@ const FlowsReactionNewPage: NextPage = () => {
                 actionGroupsCopy[actionGroupIndex].order = actionGroupIndex;
             }
 
-            const result = await Discord.createReactionCollector(token, {
+            const result = await createReactionCollector(token, {
                 type: 1,
-                guildId: guildId || "",
-                channelId,
+                guildId: guildId!,
+                channelSnowflake,
                 name,
                 description,
                 messageText,
@@ -62,7 +60,7 @@ const FlowsReactionNewPage: NextPage = () => {
             setSubmitting(false);
 
             if (result) {
-                router.push("/flows");
+                // router.push("/flows");
             } else {
                 alert("An error occurred when submitting the form.");
             }
@@ -95,7 +93,7 @@ const FlowsReactionNewPage: NextPage = () => {
                             <p className='text-white text-opacity-30'>Creating a new reaction flow.</p>
                         </div>
                         <form className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4' onSubmit={(e) => handleSubmit(e)}>
-                            <FlowTextChannelSelect value={channelId} setValue={setChannelId} />
+                            <FlowTextChannelSelect value={channelSnowflake} setValue={setChannelSnowflake} />
                             <FlowNameInput value={name} setValue={setName} />
                             <FlowDescriptionInput value={description} setValue={setDescription} />
                             <FlowMessageTextInput value={messageText} setValue={setMessageText} />
@@ -112,4 +110,4 @@ const FlowsReactionNewPage: NextPage = () => {
     )
 }
 
-export default withAuthenticationRequired(FlowsReactionNewPage);
+export default FlowsReactionNewPage;

@@ -7,7 +7,7 @@ type Props = {
     setValue: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const FlowActionOnTypeSelect: React.FC<Props> = ({ children, index, value, setValue }) => {
+const FlowActionOnTypeSelect: React.FC<Props> = ({ index, value, setValue }) => {
     return (
         <div>
             <label htmlFor={`onType${index}`} className='block font-bold'>On:</label>

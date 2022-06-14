@@ -10,47 +10,31 @@ export type CommandList = {
     options: string[];
 }
 
-const useAllCommandLists = () => {
+export const useAllCommandLists = (guildId?: number) => {
     const token = useToken();
-    const { error, data } = useSWR<ApiResponse<CommandList[]>>(token ? [`${apiEndpoint}/v1/command/lists`, token] : null, fetchWithToken);
-
-    if (data && data.error) {
-        return {
-            data: undefined,
-            isLoading: !error && !data,
-            error: data.error
-        }
-    }
+    const { error, data } = useSWR<CommandList[]>(token ? [`${apiEndpoint}/v1/command-list?guildId=${guildId}`, token] : null, fetchWithToken);
 
     return {
-        data: data?.data,
+        data,
         isLoading: !error && !data,
         error
     }
 }
 
-const useCommandList = (id: number) => {
+export const useCommandList = (id: number) => {
     const token = useToken();
-    const { error, data } = useSWR<ApiResponse<CommandList>>(token ? [`${apiEndpoint}/v1/command/lists/${id}`, token] : null, fetchWithToken);
-
-    if (data && data.error) {
-        return {
-            data: undefined,
-            isLoading: !error && !data,
-            error: data.error
-        }
-    }
+    const { error, data } = useSWR<CommandList>(token ? [`${apiEndpoint}/v1/command-list/${id}`, token] : null, fetchWithToken);
 
     return {
-        data: data?.data,
+        data,
         isLoading: !error && !data,
         error
     }
 }
 
 // We cannot use React hooks here.
-const createCommandList = async (token: string, data: { name: string, description: string, options: string[] }) => {
-    const response = await fetch(`${apiEndpoint}/v1/command/lists`, {
+export const createCommandList = async (token: string, data: { name: string, description: string, options: string[] }) => {
+    const response = await fetch(`${apiEndpoint}/v1/command-list`, {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -62,18 +46,18 @@ const createCommandList = async (token: string, data: { name: string, descriptio
 
     const responseJson = await response.json();
 
-    return response.status === 200;
+    return response.status === 201;
 }
 
 // We cannot use React hooks here.
-const updateCommandList = async (token: string, data: { name: string, description: string, options: string[] }, id: number) => {
-    const response = await fetch(`${apiEndpoint}/v1/command/lists/${id}`, {
+export const updateCommandList = async (token: string, data: { name: string, description: string, options: string[] }, id: number) => {
+    const response = await fetch(`${apiEndpoint}/v1/command-list/${id}`, {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Authorization': `Bearer ${token}`
         },
-        method: 'PUT',
+        method: 'PATCH',
         body: JSON.stringify(data)
     });
 
@@ -83,8 +67,8 @@ const updateCommandList = async (token: string, data: { name: string, descriptio
 }
 
 // We cannot use React hooks here.
-const deleteCommandList = async (token: string, id: number) => {
-    const response = await fetch(`${apiEndpoint}/v1/command/lists/${id}`, {
+export const deleteCommandList = async (token: string, id: number) => {
+    const response = await fetch(`${apiEndpoint}/v1/command-list/${id}`, {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -97,13 +81,3 @@ const deleteCommandList = async (token: string, id: number) => {
 
     return response.status === 200;
 }
-
-const exports = {
-    useAllCommandLists,
-    useCommandList,
-    createCommandList,
-    updateCommandList,
-    deleteCommandList
-}
-
-export default exports;

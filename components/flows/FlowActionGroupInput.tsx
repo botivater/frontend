@@ -50,7 +50,7 @@ type Props = {
     setValue: React.Dispatch<React.SetStateAction<FlowActionGroup[]>>;
 }
 
-const FlowActionGroupInput: React.FC<Props> = ({ children, value, setValue }) => {
+const FlowActionGroupInput: React.FC<Props> = ({ value, setValue }) => {
     const emptyAction = {
         onType: OnType.NONE,
         buildingBlockType: BuildingBlockType.NONE,

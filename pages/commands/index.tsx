@@ -1,20 +1,21 @@
-import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import Image from 'next/image'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import CommandListCard from '../../components/cards/CommandListCard'
-import InformationCard from '../../components/cards/InformationCard'
+import { useAppContext } from '../../components/context/AppContext'
+import AuthContext from '../../components/context/AuthContext'
 import ErrorComponent from '../../components/errorComponent'
 import Layout from '../../components/layout'
 import Loading from '../../components/loading'
 import { useToken } from '../../hooks/use-token'
-import CommandList from '../../lib/api/CommandList'
-import DiscordBot from '../../lib/api/DiscordBot'
+import { useAllCommandLists } from '../../lib/api/CommandList'
+import { loadGuildCommands } from '../../lib/api/DiscordBot'
+
 
 const CommandListsPage: NextPage = () => {
-  const { isLoading, user } = useAuth0()
+  const { isLoading, user } = useContext(AuthContext)!;
+  const { guildId } = useAppContext();
   const token = useToken();
 
   const [isReloading, setReloading] = useState(false);
@@ -24,7 +25,7 @@ const CommandListsPage: NextPage = () => {
     setReloading(true);
 
     try {
-      const result = await DiscordBot.reloadCommands(token);
+      const result = await loadGuildCommands(token, guildId);
 
       setReloading(false);
 
@@ -36,7 +37,7 @@ const CommandListsPage: NextPage = () => {
     }
   }
 
-  const { error: allCommandListsError, data: allCommandListsData, isLoading: allCommandListsIsLoading } = CommandList.useAllCommandLists();
+  const { error: allCommandListsError, data: allCommandListsData, isLoading: allCommandListsIsLoading } = useAllCommandLists(guildId);
   
   if (allCommandListsError) {
     console.error(allCommandListsError);
@@ -62,7 +63,7 @@ const CommandListsPage: NextPage = () => {
             <h2 className='text-2xl font-bold'>General</h2>
             <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'>
               <div>
-                <button className='bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 rounded-md shadow-md py-2 px-4 transition-all duration-300 w-full' disabled={isReloading} onClick={(e) => reloadCommands(e)}>Push changes</button>
+                <button className='bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:animate-pulse rounded-md shadow-md py-2 px-4 transition-all duration-300 w-full' disabled={isReloading} onClick={(e) => reloadCommands(e)}>Push changes to Discord</button>
                 <small className='text-white text-opacity-30 block'>Press this button when you have made changes to the commands.</small>
               </div>
               <div>
@@ -83,4 +84,4 @@ const CommandListsPage: NextPage = () => {
   )
 }
 
-export default withAuthenticationRequired(CommandListsPage);
+export default CommandListsPage;
