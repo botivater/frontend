@@ -1,8 +1,8 @@
-import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import AuthContext from '../../../components/context/AuthContext'
 import ErrorComponent from '../../../components/errorComponent'
 import FlowActionGroupInput, { BuildingBlockType, FlowActionGroup, OnType } from '../../../components/flows/FlowActionGroupInput'
 import FlowDescriptionInput from '../../../components/flows/FlowDescriptionInput'
@@ -12,14 +12,14 @@ import FlowReactionInput from '../../../components/flows/FlowReactionInput'
 import FlowTextChannelSelect from '../../../components/flows/FlowTextChannelSelect'
 import Layout from '../../../components/layout'
 import Loading from '../../../components/loading'
-import Discord from '../../../lib/api/Discord'
+import { useReactionCollector } from '../../../lib/api/Discord'
 
 
 const FlowsReactionPage: NextPage = () => {
     const router = useRouter();
     const { id } = router.query;
-    const { isLoading, user } = useAuth0()
-    const { error: reactionCollectorError, data: reactionCollectorData, isLoading: isReactionCollectorLoading } = Discord.useReactionCollector(parseInt(id as string));
+    const { isLoading, user } = useContext(AuthContext)!;
+    const { error: reactionCollectorError, data: reactionCollectorData, isLoading: isReactionCollectorLoading } = useReactionCollector(parseInt(id as string));
 
     const [channelId, setChannelId] = useState("");
     const [name, setName] = useState("");
@@ -105,4 +105,4 @@ const FlowsReactionPage: NextPage = () => {
     )
 }
 
-export default withAuthenticationRequired(FlowsReactionPage);
+export default FlowsReactionPage;

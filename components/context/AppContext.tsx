@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
-import Discord from "../../lib/api/Discord";
 import { useTenant } from "../../lib/tenant";
 
 export interface AppContextInterface {

@@ -1,13 +1,13 @@
 import Link from 'next/link';
 import React from 'react';
-import Discord from '../../lib/api/Discord';
+import { useReactionCollector } from '../../lib/api/Discord';
 
 type Props = {
     reactionCollectorId: number;
 }
 
 const ReactionCollectorCard: React.FC<Props> = ({ reactionCollectorId }) => {
-    const { error, data, isLoading } = Discord.useReactionCollector(reactionCollectorId);
+    const { error, data, isLoading } = useReactionCollector(reactionCollectorId);
 
     if (error) return (
         <div className={'bg-gray-700 text-red-500 rounded-md shadow-md p-4 flex flex-col justify-start items-start text-lg'}>

@@ -8,10 +8,9 @@ import { useRouter } from 'next/router';
 
 
 type Props = {
-    children: React.ReactNode;
 }
 
-const Header: React.FC<Props> = ({ children }) => {
+const Header: React.FC<Props> = ({  }) => {
     const { isLoading, user, doLogout } = useContext(AuthContext)!;
     
     return (

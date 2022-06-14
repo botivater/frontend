@@ -8,7 +8,7 @@ type Props = {
     message?: string;
 }
 
-const ErrorComponent: React.FC<Props> = ({ children, message }) => {
+const ErrorComponent: React.FC<Props> = ({ message }) => {
     return (
         <Layout>
             <>

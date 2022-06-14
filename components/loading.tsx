@@ -3,7 +3,7 @@ import React from 'react';
 import Layout from './layout';
 
 
-const Loading: React.FC = ({ children }) => {
+const Loading: React.FC = ({  }) => {
     return (
         <Layout>
             <>
