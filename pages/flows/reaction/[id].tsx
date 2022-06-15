@@ -42,7 +42,7 @@ const FlowsReactionPage: NextPage = () => {
 
             const processedCommandFlows: FlowActionGroup[] = [];
             reactionCollectorData.commandFlows.forEach(commandFlow => {
-                const parsedOpts = JSON.parse(commandFlow.options);
+                const parsedOpts: any = commandFlow.options;
 
                 processedCommandFlows.push({
                     onType: commandFlow.onType,
