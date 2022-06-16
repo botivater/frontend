@@ -1,6 +1,6 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useAppContext } from '../../components/context/AppContext'
 import AuthContext from '../../components/context/AuthContext'
 import ErrorComponent from '../../components/errorComponent'
@@ -9,11 +9,15 @@ import Loading from '../../components/loading'
 import { useAllGuildChannels } from '../../lib/api/GuildChannel.api'
 import { useAllGuildMembers } from '../../lib/api/GuildMember.api'
 import { useAllMessages } from '../../lib/api/Message.api'
+import { Message } from '../../lib/api/types/Message'
 
 
 const MessageLogPage: NextPage = () => {
   const { isLoading, user } = useContext(AuthContext)!;
   const { guildId } = useAppContext();
+
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [messageCount, setMessageCount] = useState<number>(0);
 
   const { error: allGuildChannelsError, data: allGuildChannels, isLoading: isAllGuildChannelsLoading } = useAllGuildChannels(guildId);
   const { error: allGuildMembersError, data: allGuildMembers, isLoading: isAllGuildMembersLoading } = useAllGuildMembers(guildId);
@@ -26,13 +30,24 @@ const MessageLogPage: NextPage = () => {
 
   const [filterRemoved, setFilterRemoved] = useState(0);
 
+  const [resultLimit, setResultLimit] = useState(10);
+  const [resultOffset, setResultOffset] = useState(0);
+  const [page, setPage] = useState(0);
+
   const { error: allMessagesError, data: allMessages, isLoading: isAllMessagesLoading } = useAllMessages({
     guildChannelId: guildChannel?.id,
     guildMemberId: guildMember?.id,
     isRemovedOnDiscord: filterRemoved === 0 ? undefined : filterRemoved === 1,
-    limit: 100,
-    offset: 0
+    limit: resultLimit,
+    offset: resultOffset
   });
+
+  useEffect(() => {
+    if (allMessages) {
+      setMessages(allMessages[0]);
+      setMessageCount(allMessages[1]);
+    }
+  }, [allMessages]);
 
   const sortChannelsByNameAsc = (a: any, b: any) => {
     if (a.name > b.name) return 1;
@@ -45,6 +60,43 @@ const MessageLogPage: NextPage = () => {
     if (a.name < b.name) return -1;
     return 0;
   }
+
+  const paginateBackwards = () => {
+    const newResultOffset = resultOffset - resultLimit;
+
+    if (newResultOffset < 0) {
+      setResultOffset(0);
+      return;
+    }
+
+    setPage(newResultOffset / resultLimit);
+  }
+
+  const paginateForwards = () => {
+    const newResultOffset = resultOffset + resultLimit;
+
+    if (newResultOffset > messageCount) {
+      return;
+    }
+
+    setPage(newResultOffset / resultLimit);
+  }
+
+  useEffect(() => {
+    const newResultOffset = resultLimit * page;
+    
+    if (newResultOffset < 0) {
+      setResultOffset(0);
+      return;
+    }
+
+    if (newResultOffset > messageCount) {
+      setPage(Math.floor(messageCount / resultLimit));
+      return;
+    }
+
+    setResultOffset(newResultOffset);
+  }, [page, messageCount, resultLimit]);
 
   if (allGuildChannelsError) {
     console.error(allGuildChannelsError);
@@ -116,12 +168,27 @@ const MessageLogPage: NextPage = () => {
                 </select>
                 <small className='block'>Choose a removed filter here.</small>
               </div>
+              <div>
+                <label htmlFor="resultLimit" className='block font-bold'>Result limit:</label>
+                <select name="resultLimit" id="resultLimit" className='w-full bg-black bg-opacity-30 rounded-md border-none' value={resultLimit} onChange={(e) => { setResultLimit(parseInt(e.target.value)) }}>
+                  <option value={10} className='bg-black bg-opacity-90'>10</option>
+                  <option value={20} className='bg-black bg-opacity-90'>20</option>
+                  <option value={50} className='bg-black bg-opacity-90'>50</option>
+                  <option value={100} className='bg-black bg-opacity-90'>100</option>
+                </select>
+                <small className='block'>Choose a result limit here.</small>
+              </div>
             </div>
-            {allMessages &&
+            {messages.length > 0 &&
               <>
-                <p>Showing <span className='font-bold'>{allMessages[0].length}</span> messages out of <span className='font-bold'>{allMessages[1]}</span>.</p>
+                <p>Showing message <span className='font-bold'>{resultOffset}-{resultOffset + resultLimit}</span> out of <span className='font-bold'>{messageCount}</span>.</p>
+                <div className='flex justify-between'>
+                  <button className='bg-blue-500 py-2 px-4 rounded hover:bg-blue-600' onClick={() => paginateBackwards()}>Previous</button>
+                  <input className='bg-black bg-opacity-30 rounded-md border-none w-12 text-center' placeholder='...' value={page} onChange={(e) => setPage(parseInt(e.currentTarget.value) || 0)} />
+                  <button className='bg-blue-500 py-2 px-4 rounded hover:bg-blue-600' onClick={() => paginateForwards()}>Next</button>
+                </div>
                 <div className='grid grid-cols-1 gap-2'>
-                  {allMessages[0].map(message =>
+                  {!isAllMessagesLoading && messages.map(message =>
                     <div className={'py-2 px-4 rounded bg-gray-900 bg-opacity-30 hover:bg-opacity-50 group'} key={message.snowflake}>
                       <div>
                         <div className='py-1 space-x-1'>
@@ -142,6 +209,11 @@ const MessageLogPage: NextPage = () => {
                       </div>
                     </div>
                   )}
+                </div>
+                <div className='flex justify-between'>
+                  <button className='bg-blue-500 py-2 px-4 rounded hover:bg-blue-600' onClick={() => paginateBackwards()}>Previous</button>
+                  <input className='bg-black bg-opacity-30 rounded-md border-none w-12 text-center' placeholder='...' value={page} onChange={(e) => setPage(parseInt(e.currentTarget.value) || 0)} />
+                  <button className='bg-blue-500 py-2 px-4 rounded hover:bg-blue-600' onClick={() => paginateForwards()}>Next</button>
                 </div>
               </>
             }
