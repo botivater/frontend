@@ -13,7 +13,7 @@ const Layout: React.FC<Props> = ({ children }) => {
     return (
         <>
             <Head>
-                <title>Discord Bot Admin</title>
+                <title>Botivater Control Panel</title>
             </Head>
 
             <div className='min-h-screen flex flex-col'>

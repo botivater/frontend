@@ -1,46 +1,39 @@
-import Link from 'next/link';
-import Image from 'next/image'
 import React from 'react';
 import { useContext } from 'react';
 import AuthContext from './context/AuthContext';
-import { useCookies } from 'react-cookie';
-import { useRouter } from 'next/router';
+import { NavigationLinkItem } from './navigation/NavigationLinkItem';
 
 
-type Props = {
-}
+const Header: React.FC = () => {
+    const { isLoading, user } = useContext(AuthContext)!;
 
-const Header: React.FC<Props> = ({  }) => {
-    const { isLoading, user, doLogout } = useContext(AuthContext)!;
-    
+    const navigationLinks = [
+        {
+            text: "Dashboard",
+            href: "/dashboard"
+        },
+        {
+            text: "Switch tenant",
+            href: "/tenantSwitcher"
+        },
+        {
+            text: "Logout",
+            href: "/logout"
+        },
+    ]
+
     return (
         <header className='bg-gray-700 text-white'>
             <div className='container mx-auto'>
                 <div className='flex flex-row justify-between items-center h-16 px-4 max-w-6xl mx-auto'>
-                    <h1 className='text-xl'>Discord Bot Admin</h1>
+                    <h1 className='text-xl'>Botivater Control Panel</h1>
                     <ul className='flex flex-row items-center gap-4 h-full'>
                         {isLoading &&
                             <li>
                                 <span>Loading...</span>
                             </li>
                         }
-                        {user &&
-                            <>
-                                <li>
-                                    <Link href={"/dashboard"}><a>Dashboard</a></Link>
-                                </li>
-                                <li>
-                                    <Link href={"/tenantSwitcher"}><a>Switch tenant</a></Link>
-                                </li>
-                                <li>
-                                    <a onClick={doLogout} className='cursor-pointer'>Logout</a>
-                                </li>
-                                <li className='h-full py-2'>
-                                    { /* eslint-disable-next-line @next/next/no-img-element */}
-                                    {/* <img src={user.picture} alt={"Profile picture"} className="object-contain h-full rounded-full" /> */}
-                                </li>
-                            </>
-                        }
+                        {user && navigationLinks.map(navigationLink => <NavigationLinkItem key={navigationLink.text} text={navigationLink.text} href={navigationLink.href} />)}
                     </ul>
                 </div>
             </div>
