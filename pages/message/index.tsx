@@ -42,13 +42,6 @@ const MessageLogPage: NextPage = () => {
     offset: resultOffset
   });
 
-  useEffect(() => {
-    if (allMessages) {
-      setMessages(allMessages[0]);
-      setMessageCount(allMessages[1]);
-    }
-  }, [allMessages]);
-
   const sortChannelsByNameAsc = (a: any, b: any) => {
     if (a.name > b.name) return 1;
     if (a.name < b.name) return -1;
@@ -81,6 +74,15 @@ const MessageLogPage: NextPage = () => {
 
     setPage(newResultOffset / resultLimit);
   }
+
+  useEffect(() => {
+    if (allMessages) {
+      setMessages(allMessages[0]);
+      setMessageCount(allMessages[1]);
+
+      setPage(Math.floor(allMessages[1] / resultLimit));
+    }
+  }, [allMessages, resultLimit]);
 
   useEffect(() => {
     const newResultOffset = resultLimit * page;
