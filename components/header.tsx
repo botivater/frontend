@@ -1,3 +1,5 @@
+import { faBars } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
 import React, { useState } from 'react';
 import { useContext } from 'react';
@@ -43,7 +45,7 @@ const Header: React.FC = () => {
                         }
                         {user && navigationLinks.map(navigationLink => <NavigationLinkItem key={navigationLink.text} text={navigationLink.text} href={navigationLink.href} />)}
                     </ul>
-                    <button className='sm:hidden' onClick={() => setShowNavDropdown(!showNavDropdown)}>Show nav</button>
+                    <button className='sm:hidden' onClick={() => setShowNavDropdown(!showNavDropdown)}><FontAwesomeIcon icon={faBars} /></button>
                 </div>
                 <ul className={classNames({
                     'flex sm:hidden flex-col items-start gap-4 h-full bg-gray-700 py-6 px-4 border-t-2 border-gray-800': true,
