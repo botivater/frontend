@@ -44,17 +44,17 @@ export const WelcomeMessageConfig: React.FC<{ welcomeMessageConfig: WelcomeMessa
     return (
         <>
             <div>
-                <label htmlFor="channelSnowflake" className='block font-bold'>Welcome message:</label>
+                <label htmlFor="channelSnowflake" className='block font-bold'>Channel:</label>
                 <select name="channelSnowflake" id="channelSnowflake" className='w-full bg-black bg-opacity-30 rounded-md border-none' value={welcomeMessageConfig.channelSnowflake} onChange={(e) => { setChannelSnowflake(e.target.value) }}>
                     <option value="" className='bg-black bg-opacity-90'>Select a channel...</option>
                     {allGuildChannels && allGuildChannels.sort(Sorting.sortGuildChannelsByNameAsc).filter(guildChannel => guildChannel.type === 'GUILD_TEXT').map(guildChannel => <option key={guildChannel.snowflake} value={guildChannel.snowflake} className='bg-black bg-opacity-90'>{guildChannel.name}</option>)}
                 </select>
-                <small className='block'>Select the welcome channel here.</small>
+                <small className='block'>Select the welcome channel.</small>
             </div>
-            <div>
+            <div className="col-span-full">
                 <label htmlFor="format" className='block font-bold'>Format:</label>
-                <textarea name="format" id="format" className='w-full bg-black bg-opacity-30 rounded-md border-none' value={welcomeMessageConfig.format} onChange={(e) => { setFormat(e.target.value) }}></textarea>
-                <small className='block'>Enter a format here.</small>
+                <textarea name="format" id="format" className='w-full bg-black bg-opacity-30 rounded-md border-none' value={welcomeMessageConfig.format} onChange={(e) => { setFormat(e.target.value) }} rows={10}></textarea>
+                <small className='block'>Enter a format.</small>
             </div>
         </>
     );
