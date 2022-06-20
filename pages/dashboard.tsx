@@ -47,7 +47,11 @@ const Dashboard: NextPage = () => {
     {
       href: "/config",
       text: "Configuration"
-    }
+    },
+    {
+      href: "/guild-member",
+      text: "Guild members"
+    },
   ];
 
   if (allGuildChannelsError) {
