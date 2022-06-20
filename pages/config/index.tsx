@@ -147,7 +147,7 @@ const ConfigPage: NextPage = () => {
                     <small className='block'>Enable or disable pronoun checking here.</small>
                   </div>
                   <div>
-                    <label htmlFor="isInactivityCheckEnabled" className='block font-bold'>Pronoun check:</label>
+                    <label htmlFor="isInactivityCheckEnabled" className='block font-bold'>Inactivity checking:</label>
                     <select name="isInactivityCheckEnabled" id="isInactivityCheckEnabled" className='w-full bg-black bg-opacity-30 rounded-md border-none' value={isInactivityCheckEnabled ? 1 : 0} onChange={(e) => { setInactivityCheckEnabled(parseInt(e.target.value) === 1 ? true : false) }}>
                       <option value={0} className='bg-black bg-opacity-90'>Disabled</option>
                       <option value={1} className='bg-black bg-opacity-90'>Enabled</option>
@@ -156,7 +156,7 @@ const ConfigPage: NextPage = () => {
                   </div>
                   <div>
                     <label htmlFor="isOpenAIEnabled" className='block font-bold'>OpenAI:</label>
-                    <select name="isOpenAIEnabled" id="isOpenAIEnabled" className='w-full bg-black bg-opacity-30 rounded-md border-none' value={isOpenAIEnabled ? 1 : 0} onChange={(e) => { setOpenAIEnabled(parseInt(e.target.value) === 1 ? true : false) }}>
+                    <select name="isOpenAIEnabled" id="isOpenAIEnabled" className='w-full bg-black bg-opacity-30 rounded-md border-none' value={isOpenAIEnabled ? 1 : 0} onChange={(e) => { setOpenAIEnabled(parseInt(e.target.value) === 1 ? true : false) }} disabled>
                       <option value={0} className='bg-black bg-opacity-90'>Disabled</option>
                       <option value={1} className='bg-black bg-opacity-90'>Enabled</option>
                     </select>
