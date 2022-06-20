@@ -12,14 +12,14 @@ type Props = {
 
 const InformationCard: React.FC<Props> = ({ loading, title, value, suffix, color }) => {
     if (loading) return (
-        <div className='bg-gradient-to-br from-pink-500 to-purple-700 rounded-md shadow-md p-4 flex flex-row gap-3 justify-between items-center animate-pulse'>
+        <div className='bg-gradient-to-br from-pink-500 to-purple-700 rounded-md shadow-md py-3 px-4 flex flex-row gap-3 justify-between items-center animate-pulse'>
             <span className='h-7 w-full bg-black bg-opacity-20 rounded-md'></span>
             <span className='h-7 w-1/4 bg-black bg-opacity-20 rounded-md'></span>
         </div>
     )
 
     return (
-        <div className={classNames('bg-gradient-to-br rounded-md shadow-md p-4 flex flex-row justify-between items-center text-lg', {
+        <div className={classNames('bg-gradient-to-br rounded-md shadow-md py-3 px-4 flex flex-row justify-between items-center text-lg', {
             'from-pink-500 to-purple-700': !color || color == 'pink',
             'from-purple-500 to-blue-700': color == 'blue',
             'from-lime-500 to-green-700': color == 'green',

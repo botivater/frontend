@@ -1,4 +1,4 @@
-import { faBars } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faHome, faRightFromBracket, faShuffle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
 import React, { useState } from 'react';
@@ -19,15 +19,15 @@ const Header: React.FC = () => {
 
     const navigationLinks = [
         {
-            text: "Dashboard",
+            text: <span><FontAwesomeIcon icon={faHome} />&nbsp;Dashboard</span>,
             href: "/dashboard"
         },
         {
-            text: "Switch tenant",
+            text: <span><FontAwesomeIcon icon={faShuffle} />&nbsp;Switch tenant</span>,
             href: "/tenantSwitcher"
         },
         {
-            text: "Logout",
+            text: <span><FontAwesomeIcon icon={faRightFromBracket} />&nbsp;Logout</span>,
             href: "/logout"
         },
     ]
@@ -43,22 +43,24 @@ const Header: React.FC = () => {
                                 <span>Loading...</span>
                             </li>
                         }
-                        {user && navigationLinks.map(navigationLink => <NavigationLinkItem key={navigationLink.text} text={navigationLink.text} href={navigationLink.href} />)}
+                        {user && navigationLinks.map(navigationLink => <NavigationLinkItem key={navigationLink.href} href={navigationLink.href} >{navigationLink.text}</NavigationLinkItem>)}
                     </ul>
                     <button className='sm:hidden' onClick={() => setShowNavDropdown(!showNavDropdown)}><FontAwesomeIcon icon={faBars} /></button>
                 </div>
-                <ul className={classNames({
-                    'flex sm:hidden flex-col items-start gap-4 h-full bg-gray-700 py-6 px-4 border-t-2 border-gray-800': true,
-                    'hidden': !showNavDropdown
-                })}>
+            </div>
+
+            <div className={classNames({
+                'py-4 bg-gray-800 sm:hidden': true,
+                'hidden': !showNavDropdown
+            })}>
+                <ul className={'flex flex-col gap-4 h-full px-4 container mx-auto'}>
                     {isAuthLoading &&
                         <li>
                             <span>Loading...</span>
                         </li>
                     }
-                    {user && navigationLinks.map(navigationLink => <NavigationLinkItem key={navigationLink.text} text={navigationLink.text} href={navigationLink.href} />)}
+                    {user && navigationLinks.map(navigationLink => <NavigationLinkItem key={navigationLink.href} href={navigationLink.href}>{navigationLink.text}</NavigationLinkItem>)}
                 </ul>
-
             </div>
 
             {user &&
