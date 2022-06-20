@@ -4,4 +4,5 @@ export type Guild = {
     updatedAt: string;
     snowflake: string;
     name: string;
+    guildConfigId?: number;
 }

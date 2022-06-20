@@ -57,7 +57,8 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
                 setAccessToken(jwtToken);
                 setUser(me);
                 setCheckAuth(false);
-                router.push('/dashboard');
+
+                if (router.pathname == '/') router.push('/dashboard');
             })
             .catch(err => {
                 setError(err as Error);

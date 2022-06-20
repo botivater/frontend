@@ -41,6 +41,10 @@ const Dashboard: NextPage = () => {
     {
       href: "/message",
       text: "Message log"
+    },
+    {
+      href: "/config",
+      text: "Configuration"
     }
   ];
 

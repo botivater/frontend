@@ -1,3 +1,5 @@
+import { faHeart, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Head from 'next/head';
 import React from 'react';
 import Header from './header';
@@ -14,6 +16,7 @@ const Layout: React.FC<Props> = ({ children }) => {
         <>
             <Head>
                 <title>Botivater Control Panel</title>
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             </Head>
 
             <div className='min-h-screen flex flex-col'>
@@ -27,7 +30,7 @@ const Layout: React.FC<Props> = ({ children }) => {
                     <div className='container mx-auto'>
                         <div className='flex flex-row justify-between max-w-6xl mx-auto px-4'>
                             <small>&copy; {date.getFullYear()} Jonas Claes. All rights reserved.</small>
-                            <small>Made with ❤ in 🇧🇪</small>
+                            <small>Made with <FontAwesomeIcon icon={faHeart} className='text-red-600' /> in 🇧🇪</small>
                         </div>
                     </div>
 

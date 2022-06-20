@@ -37,7 +37,7 @@ const Home: NextPage = () => {
           <title>Login</title>
           {/* <link rel="icon" href="/favicon.ico" /> */}
         </Head>
-        <div className='grid grid-cols-1 lg:grid-cols-3 gap-2 items-center h-full'>
+        <div className='max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-2 items-center h-full'>
           {user &&
             <div className='bg-gray-700 rounded-md shadow-md p-4 md:col-start-2'>
               <div className='pb-2'>
@@ -55,27 +55,26 @@ const Home: NextPage = () => {
               </div>
               {error &&
                 <div className='bg-red-500 p-2 rounded'>
-                  <p className=''>Error: { error.message }</p>
+                  <p className=''>Error: {error.message}</p>
                 </div>
               }
               <div className='pt-2'>
                 <form onSubmit={handleLoginSubmit} className='grid grid-cols-1 gap-3'>
-                <div>
-                  <label htmlFor="email" className='block font-bold'>Email:</label>
-                  <input type="email" name="email" id="email" className='w-full rounded-md bg-black bg-opacity-30 border-none' placeholder='john.doe@example.com' value={email} onChange={(e) => setEmail(e.currentTarget.value)} minLength={1} />
-                  <small className='block'>Please enter your email address here.</small>
-                </div>
-                <div>
-                  <label htmlFor="password" className='block font-bold'>Password:</label>
-                  <input type="password" name="password" id="password" className='w-full rounded-md bg-black bg-opacity-30 border-none' value={password} onChange={(e) => setPassword(e.currentTarget.value)} minLength={1} />
-                  <small className='block'>Please enter your password here.</small>
-                </div>
-                <button className='bg-blue-500 hover:bg-blue-700 transition-all duration-300 p-2 block text-center rounded-md shadow-md cursor-pointer' type='submit'>Login</button>
+                  <div>
+                    <label htmlFor="email" className='block font-bold'>Email:</label>
+                    <input type="email" name="email" id="email" className='w-full rounded-md bg-black bg-opacity-30 border-none' placeholder='john.doe@example.com' value={email} onChange={(e) => setEmail(e.currentTarget.value)} minLength={1} />
+                    <small className='block'>Please enter your email address here.</small>
+                  </div>
+                  <div>
+                    <label htmlFor="password" className='block font-bold'>Password:</label>
+                    <input type="password" name="password" id="password" className='w-full rounded-md bg-black bg-opacity-30 border-none' value={password} onChange={(e) => setPassword(e.currentTarget.value)} minLength={1} />
+                    <small className='block'>Please enter your password here.</small>
+                  </div>
+                  <button className='bg-blue-500 hover:bg-blue-700 transition-all duration-300 p-2 block text-center rounded-md shadow-md cursor-pointer' type='submit'>Login</button>
                 </form>
               </div>
             </div>
           }
-
         </div>
       </>
     </Layout>
