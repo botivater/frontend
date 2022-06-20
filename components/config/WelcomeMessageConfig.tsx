@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useAllGuildChannels } from "../../lib/api/GuildChannel.api";
 import { Sorting } from "../../lib/Sorting";
 import { useAppContext } from "../context/AppContext";
