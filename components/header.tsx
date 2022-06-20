@@ -61,14 +61,16 @@ const Header: React.FC = () => {
 
             </div>
 
-            <div className='bg-blue-800'>
-                <div className='container mx-auto'>
-                    <div className='max-w-6xl mx-auto py-2 px-4'>
-                        {guild && <p>You are currently working in tenant: <span className='font-bold'>{guild.name}</span></p>}
-                        {!guild && <p>No tenant has been selected! Please select a tenant to start working...</p>}
+            {user &&
+                <div className='bg-blue-800'>
+                    <div className='container mx-auto'>
+                        <div className='max-w-6xl mx-auto py-2 px-4'>
+                            {guild && <p>You are currently working in tenant: <span className='font-bold'>{guild.name}</span></p>}
+                            {!guild && <p>No tenant has been selected! Please select a tenant to start working...</p>}
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
 
         </header>
     )
