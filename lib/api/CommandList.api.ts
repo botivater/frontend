@@ -9,7 +9,7 @@ export class CommandListCreateError extends Error {};
 export class CommandListUpdateError extends Error {};
 export class CommandListDeleteError extends Error {};
 
-export const useAllCommandLists = (guildId?: Pick<CommandList, 'guildId'>) => {
+export const useAllCommandLists = (guildId?: number) => {
     const token = useToken();
     const { error, data } = useSWR<CommandList[]>(token && guildId ? [`${configProvider.getApiEndpoint()}/v1/command-list?guildId=${guildId}`, token] : null, fetchWithToken);
 
@@ -20,7 +20,7 @@ export const useAllCommandLists = (guildId?: Pick<CommandList, 'guildId'>) => {
     }
 }
 
-export const useCommandList = (id?: Pick<CommandList, 'id'>) => {
+export const useCommandList = (id?: number) => {
     const token = useToken();
     const { error, data } = useSWR<CommandList>(token && id ? [`${configProvider.getApiEndpoint()}/v1/command-list/${id}`, token] : null, fetchWithToken);
 
@@ -63,7 +63,7 @@ export const updateCommandList = async (token: string, id: number, data: Partial
     return await response.json();
 }
 
-export const deleteCommandList = async (token: string, id: Pick<CommandList, 'id'>) => {
+export const deleteCommandList = async (token: string, id: number) => {
     const response = await fetch(`${configProvider.getApiEndpoint()}/v1/command-list/${id}`, {
         headers: {
             'Content-Type': 'application/json',
