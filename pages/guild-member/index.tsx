@@ -2,7 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useContext, useMemo } from 'react'
 import { Column, useTable } from 'react-table'
-import { useAppContext } from '../../components/context/AppContext'
+import AppContext from '../../components/context/AppContext'
 import AuthContext from '../../components/context/AuthContext'
 import ErrorComponent from '../../components/errorComponent'
 import Layout from '../../components/layout'
@@ -13,7 +13,7 @@ import { GuildMember } from '../../lib/api/types/GuildMember'
 
 const GuildMemberPage: NextPage = () => {
   const { isLoading, user } = useContext(AuthContext)!;
-  const { guildId } = useAppContext();
+  const { guildId } = useContext(AppContext)!;
 
   const { error: allGuildMembersError, data: allGuildMembers, isLoading: isAllGuildMembersLoading } = useAllGuildMembers(guildId);
 

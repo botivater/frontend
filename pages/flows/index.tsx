@@ -9,11 +9,11 @@ import { useToken } from '../../hooks/use-token'
 import Loading from '../../components/loading'
 import AuthContext from '../../components/context/AuthContext'
 import { useAllReactionCollectors } from '../../lib/api/Discord'
-import { useAppContext } from '../../components/context/AppContext'
+import AppContext from '../../components/context/AppContext'
 
 const FlowsPage: NextPage = () => {
     const { isLoading, user } = useContext(AuthContext)!;
-    const { guildId } = useAppContext();
+    const { guildId } = useContext(AppContext)!;
     const token = useToken();
 
     const { error: allReactionCollectorsError, data: allReactionCollectors, isLoading: isAllReactionCollectorsLoading } = useAllReactionCollectors(guildId);

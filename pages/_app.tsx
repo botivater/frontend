@@ -1,6 +1,7 @@
 import '../styles/globals.css'
+import '../styles/form.css'
 import { AppProps } from 'next/app'
-import { AppContextWrapper } from '../components/context/AppContext';
+import { AppProvider } from '../components/context/AppContext';
 import { AuthProvider } from '../components/context/AuthContext';
 import { CookiesProvider } from 'react-cookie';
 
@@ -12,9 +13,9 @@ function App({ Component, pageProps: { ...pageProps } }: AppProps) {
   return (
     <CookiesProvider>
       <AuthProvider>
-        <AppContextWrapper>
+        <AppProvider>
           <Component {...pageProps} />
-        </AppContextWrapper>
+        </AppProvider>
       </AuthProvider>
     </CookiesProvider>
   )

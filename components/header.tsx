@@ -4,14 +4,14 @@ import classNames from 'classnames';
 import React, { useState } from 'react';
 import { useContext } from 'react';
 import { useGuild } from '../lib/api/Guild.api';
-import { useAppContext } from './context/AppContext';
+import AppContext from './context/AppContext';
 import AuthContext from './context/AuthContext';
 import { NavigationLinkItem } from './navigation/NavigationLinkItem';
 
 
 const Header: React.FC = () => {
     const { isLoading: isAuthLoading, user } = useContext(AuthContext)!;
-    const { guildId } = useAppContext();
+    const { guildId } = useContext(AppContext)!;
 
     const { error: guildError, data: guild, isLoading: isGuildLoading } = useGuild(guildId);
 

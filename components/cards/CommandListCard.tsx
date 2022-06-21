@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import React from 'react';
-import { useCommandList } from "../../lib/api/CommandList";
+import { useCommandList } from '../../lib/api/CommandList.api';
 
 type Props = {
     commandListId: number;

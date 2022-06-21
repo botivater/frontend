@@ -1,6 +1,7 @@
+import { useContext } from "react";
 import { useAllDiscordGuildRoles } from "../../lib/api/DiscordGuildRole.api";
 import { Sorting } from "../../lib/Sorting";
-import { useAppContext } from "../context/AppContext";
+import AppContext from "../context/AppContext";
 import ErrorComponent from "../errorComponent";
 import Loading from "../loading";
 
@@ -11,7 +12,7 @@ export type InactivityCheckConfig = {
 };
 
 export const InactivityCheckConfig: React.FC<{ inactivityCheckConfig: InactivityCheckConfig, setInactivityCheckConfig: (inactivityCheckConfig: InactivityCheckConfig) => void }> = ({ inactivityCheckConfig, setInactivityCheckConfig }) => {
-    const { guildId } = useAppContext();
+    const { guildId } = useContext(AppContext)!;
 
     const { error: allGuildRolesError, data: allGuildRoles, isLoading: isAllGuildRolesLoading } = useAllDiscordGuildRoles(guildId);
 

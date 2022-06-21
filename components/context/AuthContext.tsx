@@ -73,7 +73,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
         removeCookie('jwt_token');
         setAccessToken(undefined);
         setUser(undefined);
-        router.push('/');
+        await router.push('/');
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

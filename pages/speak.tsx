@@ -1,7 +1,7 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useContext, useState } from 'react'
-import { useAppContext } from '../components/context/AppContext'
+import AppContext from '../components/context/AppContext'
 import AuthContext from '../components/context/AuthContext'
 import ErrorComponent from '../components/errorComponent'
 import Layout from '../components/layout'
@@ -12,7 +12,7 @@ import { speak } from '../lib/api/Speak'
 
 const SpeakPage: NextPage = () => {
   const { isLoading, user } = useContext(AuthContext)!;
-  const { guildId } = useAppContext();
+  const { guildId } = useContext(AppContext)!;
   const token = useToken();
 
   const { error: guildChannelsError, data: guildChannelsData, isLoading: isGuildChannelsLoading } = useDiscordGuildTextChannels(guildId);

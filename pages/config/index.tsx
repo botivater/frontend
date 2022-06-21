@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { FormEvent, useCallback, useContext, useEffect, useState } from 'react'
 import { InactivityCheckConfig } from '../../components/config/InactivityCheckConfig'
 import { WelcomeMessageConfig } from '../../components/config/WelcomeMessageConfig'
-import { useAppContext } from '../../components/context/AppContext'
+import AppContext from '../../components/context/AppContext'
 import AuthContext from '../../components/context/AuthContext'
 import ErrorComponent from '../../components/errorComponent'
 import Layout from '../../components/layout'
@@ -17,7 +17,7 @@ import { GuildConfigUpdateError, updateGuildConfig, useGuildConfig } from '../..
 
 const ConfigPage: NextPage = () => {
   const { isLoading: isAuthLoading, user } = useContext(AuthContext)!;
-  const { guildId } = useAppContext();
+  const { guildId } = useContext(AppContext)!;
   const router = useRouter();
   const token = useToken();
 

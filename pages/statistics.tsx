@@ -3,7 +3,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useContext } from 'react'
 import InformationCard from '../components/cards/InformationCard'
-import { useAppContext } from '../components/context/AppContext'
+import AppContext from '../components/context/AppContext'
 import AuthContext from '../components/context/AuthContext'
 import ErrorComponent from '../components/errorComponent'
 import Layout from '../components/layout'
@@ -16,7 +16,7 @@ type UsageMap = {
 
 const Statistics: NextPage = () => {
   const { isLoading, user } = useContext(AuthContext)!;
-  const { guildId } = useAppContext();
+  const { guildId } = useContext(AppContext)!;
 
   const { error: usageError, data: usageData, isLoading: isUsageLoading } = useAllCommandInvocation(guildId);
 

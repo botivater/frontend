@@ -1,6 +1,7 @@
+import { useContext } from "react";
 import { useAllGuildChannels } from "../../lib/api/GuildChannel.api";
 import { Sorting } from "../../lib/Sorting";
-import { useAppContext } from "../context/AppContext";
+import AppContext from "../context/AppContext";
 import ErrorComponent from "../errorComponent";
 import Loading from "../loading";
 
@@ -10,7 +11,7 @@ export type WelcomeMessageConfig = {
 };
 
 export const WelcomeMessageConfig: React.FC<{ welcomeMessageConfig: WelcomeMessageConfig, setWelcomeMessageConfig: (welcomeMessageConfig: WelcomeMessageConfig) => void }> = ({ welcomeMessageConfig, setWelcomeMessageConfig }) => {
-    const { guildId } = useAppContext();
+    const { guildId } = useContext(AppContext)!;
 
     const { error: allGuildChannelsError, data: allGuildChannels, isLoading: isAllGuildChannelsLoading } = useAllGuildChannels(guildId);
 

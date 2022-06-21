@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { sortChannelsByNameAsc, useDiscordGuildTextChannels } from '../../lib/api/Discord';
-import { useAppContext } from '../context/AppContext';
+import AppContext from '../context/AppContext';
 
 type Props = {
     value: string;
@@ -8,7 +8,7 @@ type Props = {
 }
 
 const FlowTextChannelSelect: React.FC<Props> = ({ value, setValue }) => {
-    const { guildId } = useAppContext();
+    const { guildId } = useContext(AppContext)!;
     const { error, data, isLoading } = useDiscordGuildTextChannels(guildId);
 
     useEffect(() => {

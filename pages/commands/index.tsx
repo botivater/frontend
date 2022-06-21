@@ -1,22 +1,24 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
-import React, { useContext, useState } from 'react'
+import { useRouter } from 'next/router'
+import React, { useContext, useEffect, useState } from 'react'
 import CommandListCard from '../../components/cards/CommandListCard'
-import { useAppContext } from '../../components/context/AppContext'
+import AppContext from '../../components/context/AppContext'
 import AuthContext from '../../components/context/AuthContext'
 import ErrorComponent from '../../components/errorComponent'
 import Layout from '../../components/layout'
 import Loading from '../../components/loading'
 import { useToken } from '../../hooks/use-token'
-import { useAllCommandLists } from '../../lib/api/CommandList'
+import { useAllCommandLists } from '../../lib/api/CommandList.api'
 import { loadGuildCommands } from '../../lib/api/DiscordBot'
 
 
 const CommandListsPage: NextPage = () => {
   const { isLoading, user } = useContext(AuthContext)!;
-  const { guildId } = useAppContext();
+  const { guildId } = useContext(AppContext)!;
   const token = useToken();
+  const router = useRouter();
 
   const [isReloading, setReloading] = useState(false);
 
@@ -37,7 +39,7 @@ const CommandListsPage: NextPage = () => {
     }
   }
 
-  const { error: allCommandListsError, data: allCommandListsData, isLoading: allCommandListsIsLoading } = useAllCommandLists(guildId);
+  const { error: allCommandListsError, data: allCommandLists, isLoading: isAllCommandListsLoading } = useAllCommandLists(guildId);
   
   if (allCommandListsError) {
     console.error(allCommandListsError);
@@ -75,7 +77,7 @@ const CommandListsPage: NextPage = () => {
             </div>
             <h2 className='text-2xl font-bold'>Command lists</h2>
             <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'>
-              {!allCommandListsIsLoading && allCommandListsData?.map(commandList => <CommandListCard commandListId={commandList.id} key={commandList.id} />)}
+              {!isAllCommandListsLoading && allCommandLists?.map(commandList => <CommandListCard commandListId={commandList.id} key={commandList.id} />)}
             </div>
           </div>
         }

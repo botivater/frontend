@@ -1,16 +1,16 @@
 import classNames from 'classnames';
 import Link from 'next/link';
-import React from 'react';
+import React, { useContext } from 'react';
 import { useDiscordGuildChannels } from '../../lib/api/Discord';
 import { useReport } from '../../lib/api/Report';
-import { useAppContext } from '../context/AppContext';
+import AppContext from '../context/AppContext';
 
 type Props = {
     reportId: number;
 }
 
 const ReportCard: React.FC<Props> = ({ reportId }) => {
-    const { guildId } = useAppContext();
+    const { guildId } = useContext(AppContext)!;
     const { error, data, isLoading } = useReport(reportId);
     const { error: channelError, data: channelData, isLoading: isChannelLoading } = useDiscordGuildChannels(guildId);
 

@@ -1,35 +1,43 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import React, { useContext, useEffect, useState } from "react";
 import { useTenant } from "../../lib/tenant";
+import AuthContext from "./AuthContext";
 
 export interface AppContextInterface {
-    guildId?: number;
+    guildId: number;
 }
 
-export const AppContext = React.createContext<AppContextInterface>({});
+const AppContext = React.createContext<AppContextInterface | undefined>(undefined);
 
 type Props = {
     children: React.ReactNode;
 }
 
-export const AppContextWrapper: React.FC<Props> = ({ children }) => {
-    const { data: guildId } = useTenant();
-    const [sharedState, setSharedState] = useState<AppContextInterface>({});
+export const AppProvider: React.FC<Props> = ({ children }) => {
+    const { data: tenantGuildId } = useTenant();
+    const { user } = useContext(AuthContext)!;
+    const [guildId, setGuildId] = useState<number>(0);
+
+    const router = useRouter();
 
     useEffect(() => {
-        setSharedState({
-            ...sharedState,
-            guildId: guildId || undefined
-        });
-    }, [guildId]);
+        if (!guildId && user) {
+            router.push('/tenantSwitcher');
+        }
+    }, [guildId, user]);
+
+    useEffect(() => {
+        if (tenantGuildId) {
+            setGuildId(tenantGuildId);
+        }
+    }, [tenantGuildId]);
 
     return (
-        <AppContext.Provider value={sharedState}>
+        <AppContext.Provider value={{ guildId }}>
             {children}
         </AppContext.Provider>
     )
 }
 
-export const useAppContext = () => {
-    return React.useContext(AppContext);
-}
+export default AppContext;

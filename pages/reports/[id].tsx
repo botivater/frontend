@@ -2,7 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { useContext, useEffect, useState } from 'react'
-import { useAppContext } from '../../components/context/AppContext'
+import AppContext from '../../components/context/AppContext'
 import AuthContext from '../../components/context/AuthContext'
 import ErrorComponent from '../../components/errorComponent'
 import Layout from '../../components/layout'
@@ -13,11 +13,11 @@ import { updateReport, useReport } from '../../lib/api/Report'
 
 
 const ReportPage: NextPage = () => {
+  const { isLoading, user } = useContext(AuthContext)!;
+  const { guildId } = useContext(AppContext)!;
+  const token = useToken();
   const router = useRouter();
   const { id } = router.query;
-  const { isLoading, user } = useContext(AuthContext)!;
-  const token = useToken();
-  const { guildId } = useAppContext();
 
   const [resolved, setResolved] = useState(false);
   const [submitting, setSubmitting] = useState(false);

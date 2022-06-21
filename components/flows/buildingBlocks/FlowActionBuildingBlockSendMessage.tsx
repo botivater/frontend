@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useAppContext } from '../../context/AppContext';
+import React, { useContext, useEffect, useState } from 'react';
 import { FlowActionGroupOptions, SendMessageTo } from '../FlowActionGroupInput';
 import { sortChannelsByNameAsc, sortMembersByDisplayNameAsc, useDiscordGuildMembers, useDiscordGuildTextChannels } from '../../../lib/api/Discord';
+import AppContext from '../../context/AppContext';
 
 type Props = {
     index: number;
@@ -14,7 +14,7 @@ const FlowActionBuildingBlockSendMessage: React.FC<Props> = ({ index, value, set
     const [to, setTo] = useState(value.to || "");
     const [messageFormat, setMessageFormat] = useState(value.messageFormat || "");
 
-    const { guildId } = useAppContext();
+    const { guildId } = useContext(AppContext)!;
     const { error: guildChannelsError, data: guildChannelsData, isLoading: isGuildChannelsLoading } = useDiscordGuildTextChannels(guildId);
     const { error: guildMembersError, data: guildMembersData, isLoading: isGuildMembersLoading } = useDiscordGuildMembers(guildId);
 

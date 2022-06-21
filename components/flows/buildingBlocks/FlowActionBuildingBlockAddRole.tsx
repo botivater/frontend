@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { sortRolesByNameAsc, useDiscordGuildRoles } from '../../../lib/api/Discord';
-import { useAppContext } from '../../context/AppContext';
+import AppContext from '../../context/AppContext';
 import { FlowActionGroupOptions } from '../FlowActionGroupInput';
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
 const FlowActionBuildingBlockAddRole: React.FC<Props> = ({ index, value, setValue }) => {
     const [roleId, setRoleId] = useState(value.roleId || "");
 
-    const { guildId } = useAppContext();
+    const { guildId } = useContext(AppContext)!;
     const { error: guildRolesError, data: guildRolesData, isLoading: isGuildRolesLoading } = useDiscordGuildRoles(guildId);
 
     if (guildRolesError) console.error(guildRolesError);

@@ -1,107 +1,65 @@
+import { faTrash, faPlus, faSave } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FormikHelpers, Formik, Form, Field, FieldArray } from 'formik'
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect } from 'react'
+import AppContext from '../../components/context/AppContext'
 import AuthContext from '../../components/context/AuthContext'
 import ErrorComponent from '../../components/errorComponent'
+import { ErrorMessage } from '../../components/form/ErrorMessage'
 import Layout from '../../components/layout'
 import Loading from '../../components/loading'
+import { LoadingOverlay } from '../../components/LoadingOverlay'
 import { useToken } from '../../hooks/use-token'
-import { deleteCommandList, updateCommandList, useCommandList } from '../../lib/api/CommandList'
+import { deleteCommandList, updateCommandList, useCommandList } from '../../lib/api/CommandList.api'
+import { CommandListValidationSchema } from '../../lib/api/validation/CommandList.validationSchema'
+
+interface Values {
+  guildId: number;
+  name: string;
+  description: string;
+  options: string[];
+}
 
 
 const IndividualCommandListPage: NextPage = () => {
+  const { isLoading, user } = useContext(AuthContext)!;
+  const { guildId } = useContext(AppContext)!;
+  const token = useToken();
   const router = useRouter();
   const { id } = router.query;
-  const { isLoading, user } = useContext(AuthContext)!;
-  const token = useToken();
 
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [options, setOptions] = useState<string[]>([]);
+  const { error: commandListError, data: commandList, isLoading: isCommandListLoading } = useCommandList(parseInt(id as string));
 
-  const [submitting, setSubmitting] = useState(false);
-
-  const { error: commandListError, data: commandListData, isLoading: commandListIsLoading } = useCommandList(parseInt(id as string));
-
-  useEffect(() => {
-    setName(commandListData?.name || "");
-    setDescription(commandListData?.description || "");
-    setOptions(commandListData?.options || []);
-  }, [commandListData]);
-
-  const updateOptions = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
-    const newOptions = [...options];
-    newOptions[index] = event.target.value;
-    setOptions(newOptions);
+  if (typeof(id) !== "string") {
+    return <span>Invalid parameter: id</span>;
   }
 
-  const addOption = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    event.preventDefault();
-    const newOptions = [...options, ""];
-    setOptions(newOptions);
-  }
-
-  const deleteOption = (index: number, event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    event.preventDefault();
-    const newOptions = [...options];
-    newOptions.splice(index, 1);
-    setOptions(newOptions);
-  }
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    const id = commandListData?.id;
-    if (!id) throw new Error("Command list ID not set.");
-
-    const data = {
-      name,
-      description,
-      options,
-    };
-
-    setSubmitting(true);
-
+  const handleSubmit = async (values: Values, { setSubmitting }: FormikHelpers<Values>) => {
     try {
-      const result = await updateCommandList(token, data, id);
-
-      setSubmitting(false);
-
-      if (result) {
-        router.push("/commands");
-      } else {
-        alert("An error occurred when submitting the form.");
-      }
+      await updateCommandList(token, parseInt(id), values);
+      await router.push('/commands');
     } catch (err) {
-      setSubmitting(false);
       console.error(err);
+      alert(err);
+    } finally {
+      setSubmitting(false);
     }
   }
 
-  const handleDelete = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.preventDefault();
-
-    const id = commandListData?.id;
+  const handleDelete = async () => {
+    const id = commandList?.id;
     if (!id) throw new Error("Command list ID not set.");
 
     if (confirm("Are you sure you want to delete?")) {
-
-      setSubmitting(true);
-
       try {
-        const result = await deleteCommandList(token, id);
-
-        setSubmitting(false);
-
-        if (result) {
-          router.push("/commands");
-        } else {
-          alert("An error occurred when deleting the command list.");
-        }
+        await deleteCommandList(token, id);
+        await router.push("/commands");
       } catch (err) {
-        setSubmitting(false);
         console.error(err);
+        alert(err);
       }
     }
   }
@@ -109,6 +67,14 @@ const IndividualCommandListPage: NextPage = () => {
   if (commandListError) {
     console.error(commandListError);
     return <ErrorComponent message={commandListError.toString()} />
+  }
+
+  if (isCommandListLoading) {
+    return <LoadingOverlay />;
+  }
+
+  if (!commandList) {
+    return <ErrorComponent message={"Command list not defined."} />
   }
 
   if (isLoading) {
@@ -128,49 +94,76 @@ const IndividualCommandListPage: NextPage = () => {
               <p className='text-white text-opacity-30'>Commands that randomly pick an item from a list.</p>
             </div>
             <div>
-              <h2 className='text-2xl font-bold'>Command list editor</h2>
-              <p className='text-white text-opacity-30'>Editing command list: /{commandListData?.name}</p>
+              <h2 className='text-2xl font-bold'>Edit command list</h2>
             </div>
-            {!commandListIsLoading && commandListData &&
-              <form className='grid grid-cols-1 sm:grid-cols-2 gap-4' onSubmit={(e) => handleSubmit(e)}>
-                <div>
-                  <label htmlFor="name" className='block font-bold'>Name:</label>
-                  <div className='flex items-stretch justify-center bg-black bg-opacity-30 rounded-md'>
-                    <div className='bg-black bg-opacity-60 flex items-center justify-center rounded-l-md'>
-                      <span className='px-4'>/</span>
-                    </div>
-                    <input type="text" name="name" id="name" className='w-full rounded-r-md bg-transparent border-none' placeholder='selfcare' value={name} onChange={(e) => setName(e.currentTarget.value)} minLength={1} maxLength={32} />
-                  </div>
-                  <small className='block'>Please enter the command name here without the /.</small>
-                </div>
-                <div>
-                  <label htmlFor="description" className='block font-bold'>Description:</label>
-                  <input type="text" name="description" id="description" className='w-full rounded-md bg-black bg-opacity-30 border-none' placeholder='Laat de bot een self care tip geven!' value={description} onChange={(e) => setDescription(e.currentTarget.value)} minLength={1} maxLength={100} />
-                  <small className='block'>Please enter a short description for the command here.</small>
-                </div>
-                {options.map((option, index) =>
-                  <div key={index} className='col-span-full'>
-                    <label htmlFor={`option${index}`} className='block font-bold'>Option {index + 1}:</label>
+            <Formik
+              initialValues={{
+                guildId,
+                name: commandList.name,
+                description: commandList.description,
+                options: commandList.options
+              }}
+              validationSchema={CommandListValidationSchema}
+              onSubmit={handleSubmit}>
+              {({ isSubmitting, values }) => (
+                <Form className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                  <div>
+                    <label htmlFor="name" className='formLabel'>Name:</label>
                     <div className='flex items-stretch justify-center bg-black bg-opacity-30 rounded-md'>
-                      <input type="text" name={`option${index}`} id={`option${index}`} className='w-full rounded-l-md bg-transparent border-none' placeholder='' value={option} onChange={(e) => updateOptions(index, e)} />
-                      <div className='bg-red-600 flex items-center justify-center rounded-r-md'>
-                        <button className='px-4 h-full' onClick={(e) => deleteOption(index, e)}>Delete</button>
+                      <div className='bg-black bg-opacity-60 flex items-center justify-center rounded-l-md'>
+                        <span className='px-4'>/</span>
                       </div>
+                      <Field type="text" id="name" name="name" placeholder="selfcare" className='w-full rounded-r-md bg-transparent border-none' />
                     </div>
-                    <small className='block'>Please enter a text here.</small>
+                    <small className='formSmall'>Enter the command name without the /.</small>
+                    <ErrorMessage name='name' />
                   </div>
-                )}
-                <div>
-                  <button className='bg-blue-600 hover:bg-blue-700 rounded-md shadow-md py-2 px-4 transition-all duration-300 w-full' onClick={(e) => addOption(e)}>Add option</button>
-                </div>
-                <div>
-                  <button className='bg-green-600 hover:bg-green-700 rounded-md shadow-md py-2 px-4 transition-all duration-300 w-full' type='submit' disabled={submitting}>Save</button>
-                </div>
-                <div>
-                  <button className='bg-red-600 hover:bg-red-700 rounded-md shadow-md py-2 px-4 transition-all duration-300 w-full' onClick={(e) => handleDelete(e)} disabled={submitting}>Delete</button>
-                </div>
-              </form>
-            }
+
+                  <div className='formGroup'>
+                    <label htmlFor="description">Description:</label>
+                    <Field id="description" name="description" placeholder="Laat de bot een self care tip geven!" />
+                    <small>Enter a short description for the command.</small>
+                    <ErrorMessage name='description' />
+                  </div>
+
+                  <div className='col-span-full '>
+                    <FieldArray
+                      name='options'
+                      render={arrayHelpers => (
+                        <div className='grid grid-cols-1 sm:grid-cols-1 gap-4'>
+                          {values.options && values.options.length > 0 ? (
+                            values.options.map((option, index) => (
+                              <div key={index}>
+                                <label htmlFor={`options.${index}`} className='formLabel'>Option {index + 1}:</label>
+                                <div className='flex items-stretch justify-center bg-black bg-opacity-30 rounded-md'>
+                                  <Field type="text" name={`options.${index}`} id={`options.${index}`} placeholder='' className='w-full rounded-l-md bg-transparent border-none' />
+                                  <div className='flex items-center justify-center rounded-r overflow-clip'>
+                                    <button className='bg-red-600 px-4 h-full' type='button' onClick={() => arrayHelpers.remove(index)}><FontAwesomeIcon icon={faTrash} /></button>
+                                    <button className='bg-blue-600 px-4 h-full' type='button' onClick={() => arrayHelpers.insert(index + 1, '')}><FontAwesomeIcon icon={faPlus} /></button>
+                                  </div>
+                                </div>
+                                <small className='block'>Enter a text.</small>
+                                <ErrorMessage name={`options.${index}`} />
+                              </div>
+                            ))
+                          ) : (
+                            <div>
+                              <button type='button' onClick={() => arrayHelpers.push('')} className='formButton bg-blue-600 hover:bg-blue-700'><FontAwesomeIcon icon={faPlus} />&nbsp;Add option</button>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    />
+                    <ErrorMessage name='options' />
+                  </div>
+
+                  <div className='formGroup col-span-full grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                    <button type='button' className='formButton bg-red-600 hover:bg-red-700' onClick={() => handleDelete()}><FontAwesomeIcon icon={faTrash} />&nbsp;Delete</button>
+                    <button type='submit' disabled={isSubmitting}><FontAwesomeIcon icon={faSave} />&nbsp;Save</button>
+                  </div>
+                </Form>
+              )}
+            </Formik>
           </div>
         }
       </>

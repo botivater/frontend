@@ -2,7 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import React, { useContext } from 'react'
 import ReportCard from '../../components/cards/ReportCard'
-import { useAppContext } from '../../components/context/AppContext'
+import AppContext from '../../components/context/AppContext'
 import AuthContext from '../../components/context/AuthContext'
 import ErrorComponent from '../../components/errorComponent'
 import Layout from '../../components/layout'
@@ -11,7 +11,7 @@ import { sortReportsByIdDesc, useAllReports } from '../../lib/api/Report';
 
 const ReportsPage: NextPage = () => {
     const { isLoading, user } = useContext(AuthContext)!;
-    const { guildId } = useAppContext();
+    const { guildId } = useContext(AppContext)!;
 
     const { error: allReportsError, data: allReportsData, isLoading: isAllReportsLoading } = useAllReports(guildId);
 

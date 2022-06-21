@@ -2,7 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { useContext, useState } from 'react'
-import { useAppContext } from '../../../components/context/AppContext'
+import AppContext from '../../../components/context/AppContext'
 import AuthContext from '../../../components/context/AuthContext'
 import FlowActionGroupInput, { BuildingBlockType, FlowActionGroup, OnType } from '../../../components/flows/FlowActionGroupInput'
 import FlowDescriptionInput from '../../../components/flows/FlowDescriptionInput'
@@ -18,8 +18,8 @@ import { createReactionCollector } from '../../../lib/api/Discord'
 
 const FlowsReactionNewPage: NextPage = () => {
     const { isLoading, user } = useContext(AuthContext)!;
+    const { guildId } = useContext(AppContext)!;
     const token = useToken();
-    const { guildId } = useAppContext();
     const router = useRouter();
 
     const [channelSnowflake, setChannelSnowflake] = useState("");
