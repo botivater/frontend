@@ -15,7 +15,7 @@ export const useAllGuildMembers = (guildId?: number) => {
     }
 }
 
-export const useGuildMember = (id?: number) => {
+export const useGuildMember = (id?: Pick<GuildMember, 'id'>) => {
     const token = useToken();
     const { error, data } = useSWR<GuildMember>(token && id ? [`${configProvider.getApiEndpoint()}/v1/guild-member/${id}`, token] : null, fetchWithToken);
 

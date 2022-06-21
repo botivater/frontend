@@ -1,7 +1,6 @@
-export type GuildChannel = {
-    id: number;
-    createdAt: string;
-    updatedAt: string;
+import { CommonObject } from "./CommonObject";
+
+export type GuildChannel = CommonObject & {
     snowflake: string;
     name: string;
     type: string;

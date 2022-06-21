@@ -1,7 +1,6 @@
-export type CommandList = {
-    id: number;
-    createdAt: string;
-    updatedAt: string;
+import { CommonObject } from "./CommonObject";
+
+export type CommandList = CommonObject & {
     name: string;
     description: string;
     options: string[];

@@ -6,7 +6,7 @@ import { GuildConfig } from "./types/GuildConfig";
 
 export class GuildConfigUpdateError extends Error {};
 
-export const useGuildConfig = (id?: number) => {
+export const useGuildConfig = (id?: Pick<GuildConfig, 'id'>) => {
     const token = useToken();
     const { error, data } = useSWR<GuildConfig>(token && id ? [`${configProvider.getApiEndpoint()}/v1/guild-config/${id}`, token] : null, fetchWithToken);
 
@@ -17,7 +17,7 @@ export const useGuildConfig = (id?: number) => {
     }
 }
 
-export const updateGuildConfig = async ({ token, id, data }: {token: string; id: number; data: Partial<GuildConfig>; }) => {
+export const updateGuildConfig = async ({ token, id, data }: {token: string; id: Pick<GuildConfig, 'id'>; data: Partial<GuildConfig>; }) => {
     const response = await fetch(`${configProvider.getApiEndpoint()}/v1/guild-config/${id}`, {
         headers: {
             'Content-Type': 'application/json',

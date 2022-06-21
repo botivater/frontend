@@ -3,12 +3,13 @@ import { useToken } from "../../hooks/use-token";
 import { configProvider } from "../config/Config.provider";
 import fetchWithToken from "../fetchWithToken";
 import { CommandList } from "./types/CommandList";
+import { IdCreatedAtUpdatedAt } from "./types/IdCreatedAtUpdatedAt";
 
 export class CommandListCreateError extends Error {};
 export class CommandListUpdateError extends Error {};
 export class CommandListDeleteError extends Error {};
 
-export const useAllCommandLists = (guildId?: number) => {
+export const useAllCommandLists = (guildId?: Pick<CommandList, 'guildId'>) => {
     const token = useToken();
     const { error, data } = useSWR<CommandList[]>(token && guildId ? [`${configProvider.getApiEndpoint()}/v1/command-list?guildId=${guildId}`, token] : null, fetchWithToken);
 
@@ -19,7 +20,7 @@ export const useAllCommandLists = (guildId?: number) => {
     }
 }
 
-export const useCommandList = (id?: number) => {
+export const useCommandList = (id?: Pick<CommandList, 'id'>) => {
     const token = useToken();
     const { error, data } = useSWR<CommandList>(token && id ? [`${configProvider.getApiEndpoint()}/v1/command-list/${id}`, token] : null, fetchWithToken);
 
@@ -30,7 +31,7 @@ export const useCommandList = (id?: number) => {
     }
 }
 
-export const createCommandList = async (token: string, data: Omit<CommandList, 'id'|'createdAt'|'updatedAt'>): Promise<CommandList> => {
+export const createCommandList = async (token: string, data: Omit<CommandList, IdCreatedAtUpdatedAt>): Promise<CommandList> => {
     const response = await fetch(`${configProvider.getApiEndpoint()}/v1/command-list`, {
         headers: {
             'Content-Type': 'application/json',
@@ -62,7 +63,7 @@ export const updateCommandList = async (token: string, id: number, data: Partial
     return await response.json();
 }
 
-export const deleteCommandList = async (token: string, id: number) => {
+export const deleteCommandList = async (token: string, id: Pick<CommandList, 'id'>) => {
     const response = await fetch(`${configProvider.getApiEndpoint()}/v1/command-list/${id}`, {
         headers: {
             'Content-Type': 'application/json',

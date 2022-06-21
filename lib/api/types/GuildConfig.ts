@@ -1,7 +1,6 @@
-export type GuildConfig = {
-    id: number;
-    createdAt: string;
-    updatedAt: string;
+import { CommonObject } from "./CommonObject";
+
+export type GuildConfig = CommonObject & {
     systemChannelId: string;
     announcementChannelId: string | null;
     pronounCheckEnabled: boolean;

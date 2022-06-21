@@ -1,12 +1,7 @@
+import { CommonObject } from "./CommonObject";
 import { GuildMember } from "./GuildMember";
 
-export type Report = {
-    id: number;
-
-    createdAt: string;
-    
-    updatedAt: string;
-    
+export type Report = CommonObject & {
     // Discord Guild Channel Snowflake.
     channelId: string;
 
