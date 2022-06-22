@@ -18,6 +18,10 @@
     @apply text-red-500 font-bold;
 }
 
+.formSelectOption {
+    @apply bg-black bg-opacity-90;
+}
+
 .formGroup label {
     @apply formLabel;
 }
@@ -32,4 +36,8 @@
 
 .formGroup button[type='submit'] {
     @apply formButton bg-green-600 hover:bg-green-700;
+}
+
+.formGroup option {
+    @apply formSelectOption;
 }

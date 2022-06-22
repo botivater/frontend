@@ -52,6 +52,10 @@ const Dashboard: NextPage = () => {
       href: "/guild-member",
       text: "Guild members"
     },
+    {
+      href: "/commandAlias",
+      text: "Command aliases"
+    },
   ];
 
   if (allGuildChannelsError) {
