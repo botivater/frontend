@@ -12,7 +12,8 @@ export const options = [
   "couple-login",
   "q-and-a",
   "ask-ai",
-  "chat-ai-reply"
+  "chat-ai-reply",
+  "ask-anonymously"
 ];
 
 export const CommandAliasValidationSchema = Yup.object().shape({
