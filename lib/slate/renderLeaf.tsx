@@ -12,7 +12,6 @@ const Leaf = (props: RenderLeafProps) => {
                 "font-bold": props.leaf.bold,
                 "font-mono bg-gray-800 p-1": props.leaf.code,
                 "italic": props.leaf.italic,
-                "underline": props.leaf.underline,
                 "line-through": props.leaf.strikeThrough
             })
         }>
