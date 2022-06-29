@@ -79,14 +79,16 @@ const MessageLogPage: NextPage = () => {
     if (allMessages) {
       setMessages(allMessages[0]);
       setMessageCount(allMessages[1]);
-
-      setPage(Math.floor(allMessages[1] / resultLimit));
     }
-  }, [allMessages, resultLimit]);
+  }, [allMessages]);
+
+  useEffect(() => {
+    setPage(Math.floor(messageCount / resultLimit));
+  }, [guildChannelName, guildMemberIdentifier, resultLimit, messageCount]);
 
   useEffect(() => {
     const newResultOffset = resultLimit * page;
-    
+
     if (newResultOffset < 0) {
       setResultOffset(0);
       return;
