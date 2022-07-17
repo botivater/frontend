@@ -84,8 +84,11 @@ const SpeakPage: NextPage = () => {
               </div>
               <div className='col-span-full'>
                 <label htmlFor="message" className='block font-bold'>Message:</label>
-                <input type="text" name="message" id="message" className='w-full rounded-md bg-black bg-opacity-30 border-none' placeholder='This is an example message!' value={message} onChange={(e) => setMessage(e.currentTarget.value)} minLength={1} maxLength={2000} />
+                <textarea name="message" id="message" className='w-full rounded-md bg-black bg-opacity-30 border-none' placeholder='This is an example message!' value={message} onChange={(e) => setMessage(e.currentTarget.value)} minLength={1} maxLength={2000}></textarea>
+                <div className='flex justify-between'>
                 <small className='block'>Please enter your message here.</small>
+                <small className='block'>{ message.length }/2000</small>
+                </div>
               </div>
               <div>
                 <button className='bg-green-600 hover:bg-green-700 disabled:bg-gray-600 rounded-md shadow-md py-2 px-4 transition-all duration-300 w-full' type='submit' disabled={isSubmitting}>{ isSubmitting ? "Sending message..." : "Send message" }</button>
