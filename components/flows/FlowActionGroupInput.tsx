@@ -1,8 +1,5 @@
-import React, { useState } from 'react'
-import FlowActionBuildingBlockSendMessage from './buildingBlocks/FlowActionBuildingBlockSendMessage'
-import FlowActionBuildingBlockTypeSelect from './FlowActionBuildingBlockTypeSelect'
+import React from 'react'
 import FlowActionInput from './FlowActionInput'
-import FlowActionOnTypeSelect from './FlowActionOnTypeSelect'
 
 export enum OnType {
   NONE,

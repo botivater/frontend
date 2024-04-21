@@ -30,17 +30,19 @@ const FlowActionInput: React.FC<Props> = ({
   setValue,
   deleteAction,
 }) => {
-  const [onType, setOnType] = useState(value.onType || OnType.NONE)
+  const [onType, setOnType] = useState(value.onType ?? OnType.NONE)
   const [buildingBlockType, setBuildingBlockType] = useState(
-    value.buildingBlockType || BuildingBlockType.NONE
+    value.buildingBlockType ?? BuildingBlockType.NONE
   )
   const [options, setOptions] = useState<FlowActionGroupOptions>(
-    value.options || {}
+    value.options ?? {}
   )
-  const [checkType, setCheckType] = useState(value.checkType || CheckType.NONE)
-  const [checkValue, setCheckValue] = useState(value.checkValue || '')
+  const [checkType, setCheckType] = useState(value.checkType ?? CheckType.NONE)
+  const [checkValue, setCheckValue] = useState(value.checkValue ?? '')
 
   useEffect(() => {
+    console.log(options)
+
     setValue(index, {
       onType,
       buildingBlockType,

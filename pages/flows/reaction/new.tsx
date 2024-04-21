@@ -31,11 +31,11 @@ const FlowsReactionNewPage: NextPage = () => {
   const [messageText, setMessageText] = useState('')
   const [reactionsList, setReactionsList] = useState([''])
   const [actionGroups, setActionGroups] = useState<FlowActionGroup[]>([
-    {
-      onType: OnType.REACTION_ADD,
-      buildingBlockType: BuildingBlockType.SEND_MESSAGE,
-      options: {},
-    },
+    // {
+    //   onType: OnType.REACTION_ADD,
+    //   buildingBlockType: BuildingBlockType.SEND_MESSAGE,
+    //   options: {},
+    // },
   ])
 
   const [submitting, setSubmitting] = useState(false)
@@ -82,8 +82,6 @@ const FlowsReactionNewPage: NextPage = () => {
   if (isLoading) {
     return <Loading />
   }
-
-  console.log(actionGroups)
 
   return (
     <Layout>

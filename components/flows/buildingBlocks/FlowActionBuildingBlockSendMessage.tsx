@@ -19,9 +19,9 @@ const FlowActionBuildingBlockSendMessage: React.FC<Props> = ({
   value,
   setValue,
 }) => {
-  const [toType, setToType] = useState(value.toType || SendMessageTo.SENDER)
-  const [to, setTo] = useState(value.to || '')
-  const [messageFormat, setMessageFormat] = useState(value.messageFormat || '')
+  const [toType, setToType] = useState(value.toType ?? SendMessageTo.SENDER)
+  const [to, setTo] = useState(value.to ?? '')
+  const [messageFormat, setMessageFormat] = useState(value.messageFormat ?? '')
 
   const { guildId } = useContext(AppContext)!
   const {
@@ -64,13 +64,8 @@ const FlowActionBuildingBlockSendMessage: React.FC<Props> = ({
     ) {
       setTo(guildChannelsData[0].id)
     }
-  }, [
-    toType,
-    isGuildMembersLoading,
-    isGuildChannelsLoading,
-    guildMembersData,
-    guildChannelsData,
-  ])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [toType, isGuildMembersLoading, isGuildChannelsLoading])
 
   return (
     <div className="col-span-full grid grid-cols-1 gap-4 sm:grid-cols-2">
