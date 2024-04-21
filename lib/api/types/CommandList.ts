@@ -1,8 +1,8 @@
-import { CommonObject } from "./CommonObject";
+import { CommonObject } from './CommonObject'
 
 export type CommandList = CommonObject & {
-    name: string;
-    description: string;
-    options: string[];
-    guildId: number;
+  name: string
+  description: string
+  options: string[]
+  guildId: number
 }

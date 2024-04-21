@@ -1,3 +1,3 @@
-import { CustomText } from "../CustomText";
+import { CustomText } from '../CustomText'
 
-export type BlockQuoteElement = { type: 'block-quote'; children: CustomText[] };
+export type BlockQuoteElement = { type: 'block-quote'; children: CustomText[] }

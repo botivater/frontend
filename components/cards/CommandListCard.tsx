@@ -1,38 +1,51 @@
-import Link from 'next/link';
-import React from 'react';
-import { useCommandList } from '../../lib/api/CommandList.api';
+import Link from 'next/link'
+import React from 'react'
+import { useCommandList } from '../../lib/api/CommandList.api'
 
 type Props = {
-    commandListId: number;
+  commandListId: number
 }
 
 const CommandListCard: React.FC<Props> = ({ commandListId }) => {
-    const { error, data, isLoading } = useCommandList(commandListId);
+  const { error, data, isLoading } = useCommandList(commandListId)
 
-    if (error) return (
-        <div className={'bg-gray-700 text-red-500 rounded-md shadow-md p-4 flex flex-col justify-start items-start text-lg'}>
-            <p>Error occurred when loading command list with id {commandListId}</p>
-        </div>
-    );
-    
-    if (isLoading) return (
-        <div className='bg-gray-700 rounded-md shadow-md p-4 flex flex-col gap-3 justify-start items-start animate-pulse'>
-            <span className='h-7 w-3/4 bg-black bg-opacity-20 rounded-md'></span>
-            <span className='h-7 w-1/2 bg-black bg-opacity-20 rounded-md'></span>
-            <span className='h-7 w-1/2 bg-black bg-opacity-20 rounded-md'></span>
-        </div>
-    );
-
+  if (error)
     return (
-        <Link href={`/commands/${commandListId}`}>
-            <a className={'bg-gray-700 rounded-md shadow-md p-4 flex flex-col justify-start items-start text-lg hover:scale-105 transform transition-all duration-300 cursor-pointer'}>
-                <h1 className='font-bold'>/{data?.name}</h1>
-                <small className='text-white text-opacity-30'>{data?.description}</small>
-                <small>Total options: <strong>{data?.options.length}</strong></small>
-            </a>
-        </Link>
-
+      <div
+        className={
+          'flex flex-col items-start justify-start rounded-md bg-gray-700 p-4 text-lg text-red-500 shadow-md'
+        }
+      >
+        <p>Error occurred when loading command list with id {commandListId}</p>
+      </div>
     )
+
+  if (isLoading)
+    return (
+      <div className="flex animate-pulse flex-col items-start justify-start gap-3 rounded-md bg-gray-700 p-4 shadow-md">
+        <span className="h-7 w-3/4 rounded-md bg-black bg-opacity-20"></span>
+        <span className="h-7 w-1/2 rounded-md bg-black bg-opacity-20"></span>
+        <span className="h-7 w-1/2 rounded-md bg-black bg-opacity-20"></span>
+      </div>
+    )
+
+  return (
+    <Link href={`/commands/${commandListId}`}>
+      <a
+        className={
+          'flex transform cursor-pointer flex-col items-start justify-start rounded-md bg-gray-700 p-4 text-lg shadow-md transition-all duration-300 hover:scale-105'
+        }
+      >
+        <h1 className="font-bold">/{data?.name}</h1>
+        <small className="text-white text-opacity-30">
+          {data?.description}
+        </small>
+        <small>
+          Total options: <strong>{data?.options.length}</strong>
+        </small>
+      </a>
+    </Link>
+  )
 }
 
-export default CommandListCard;
+export default CommandListCard

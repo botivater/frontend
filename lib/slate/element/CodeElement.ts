@@ -1,3 +1,3 @@
-import { CustomText } from "../CustomText";
+import { CustomText } from '../CustomText'
 
-export type CodeElement = { type: 'code'; children: CustomText[] };
+export type CodeElement = { type: 'code'; children: CustomText[] }

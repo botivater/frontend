@@ -1,7 +1,8 @@
-import { CommonObject } from "./CommonObject";
+import { CommonObject } from './CommonObject'
 
 export type GuildChannel = CommonObject & {
-    snowflake: string;
-    name: string;
-    type: string;
+  guildId: number
+  snowflake: string
+  name: string
+  type: string
 }

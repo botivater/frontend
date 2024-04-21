@@ -1,6 +1,6 @@
-import { CommonObject } from "./CommonObject";
+import { CommonObject } from './CommonObject'
 
 export type CommandAlias = CommonObject & {
-    commandName: string;
-    internalName: string;
+  commandName: string
+  internalName: string
 }

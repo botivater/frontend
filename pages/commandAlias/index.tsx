@@ -12,85 +12,115 @@ import { useToken } from '../../hooks/use-token'
 import { useAllCommandAliases } from '../../lib/api/CommandAlias.api'
 import { loadGuildCommands } from '../../lib/api/DiscordBot'
 
-
 const CommandAliasesPage: NextPage = () => {
-    const { isLoading, user } = useContext(AuthContext)!;
-    const { guildId } = useContext(AppContext)!;
-    const token = useToken();
-    const router = useRouter();
+  const { isLoading, user } = useContext(AuthContext)!
+  const { guildId } = useContext(AppContext)!
+  const token = useToken()
+  const router = useRouter()
 
-    const [isReloading, setReloading] = useState(false);
+  const [isReloading, setReloading] = useState(false)
 
-    const reloadCommands = async (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        e.preventDefault();
-        setReloading(true);
+  const reloadCommands = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault()
+    setReloading(true)
 
-        try {
-            const result = await loadGuildCommands(token, guildId);
+    try {
+      const result = await loadGuildCommands(token, guildId)
 
-            setReloading(false);
+      setReloading(false)
 
-            if (result) alert("Discord Bot reload complete!");
-            else alert("An error occurred while reloading the Discord Bot.");
-        } catch (err) {
-            setReloading(false);
-            console.error(err);
-            alert(err);
-        }
+      if (result) alert('Discord Bot reload complete!')
+      else alert('An error occurred while reloading the Discord Bot.')
+    } catch (err) {
+      setReloading(false)
+      console.error(err)
+      alert(err)
     }
+  }
 
-    const { error: allCommandAliasesError, data: allCommandAliases, isLoading: isAllCommandAliasesLoading } = useAllCommandAliases(guildId);
+  const {
+    error: allCommandAliasesError,
+    data: allCommandAliases,
+    isLoading: isAllCommandAliasesLoading,
+  } = useAllCommandAliases(guildId)
 
-    if (allCommandAliasesError) {
-        console.error(allCommandAliasesError);
-        return <ErrorComponent message={allCommandAliasesError.toString()} />
-    }
+  if (allCommandAliasesError) {
+    console.error(allCommandAliasesError)
+    return <ErrorComponent message={allCommandAliasesError.toString()} />
+  }
 
-    if (isLoading) {
-        return <Loading />
-    }
+  if (isLoading) {
+    return <Loading />
+  }
 
-    return (
-        <Layout>
-            <>
-                <Head>
-                    <title>Command aliases</title>
-                </Head>
-                {user &&
-                    <div className='max-w-6xl mx-auto px-4 flex flex-col gap-4'>
-                        <div>
-                            <h1 className='text-3xl font-bold'>Command aliases</h1>
-                            <p className='text-white text-opacity-30'>Connect names to your commands.</p>
-                        </div>
-                        <h2 className='text-2xl font-bold'>General</h2>
-                        <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'>
-                            <div>
-                                <button className='bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:animate-pulse rounded-md shadow-md py-2 px-4 transition-all duration-300 w-full' disabled={isReloading} onClick={(e) => reloadCommands(e)}>Push changes to Discord</button>
-                                <small className='text-white text-opacity-30 block'>Press this button when you have made changes to the commands.</small>
-                            </div>
-                            <div>
-                                <Link href={"/commandAlias/new"}>
-                                    <a className='bg-green-600 hover:bg-green-700 rounded-md shadow-md py-2 px-4 transition-all duration-300 w-full block text-center'>Create a new command alias</a>
-                                </Link>
-                                <small className='text-white text-opacity-30 block'>Press this button to create a new command alias.</small>
-                            </div>
-                        </div>
-                        <h2 className='text-2xl font-bold'>Command aliases</h2>
-                        <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'>
-                            {!isAllCommandAliasesLoading && allCommandAliases && allCommandAliases.map(commandList => (
-                                <Link href={`/commandAlias/${commandList.id}`} key={commandList.id}>
-                                    <a className={'bg-gray-700 rounded-md shadow-md p-4 flex flex-col justify-start items-start text-lg hover:scale-105 transform transition-all duration-300 cursor-pointer'}>
-                                        <h1 className='font-bold'>/{commandList.commandName}</h1>
-                                        <small className='text-white text-opacity-30'>is coupled to /{commandList.internalName}</small>
-                                    </a>
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-                }
-            </>
-        </Layout>
-    )
+  return (
+    <Layout>
+      <>
+        <Head>
+          <title>Command aliases</title>
+        </Head>
+        {user && (
+          <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4">
+            <div>
+              <h1 className="text-3xl font-bold">Command aliases</h1>
+              <p className="text-white text-opacity-30">
+                Connect names to your commands.
+              </p>
+            </div>
+            <h2 className="text-2xl font-bold">General</h2>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              <div>
+                <button
+                  className="w-full rounded-md bg-blue-600 py-2 px-4 shadow-md transition-all duration-300 hover:bg-blue-700 disabled:animate-pulse disabled:bg-gray-600"
+                  disabled={isReloading}
+                  onClick={(e) => reloadCommands(e)}
+                >
+                  Push changes to Discord
+                </button>
+                <small className="block text-white text-opacity-30">
+                  Press this button when you have made changes to the commands.
+                </small>
+              </div>
+              <div>
+                <Link href={'/commandAlias/new'}>
+                  <a className="block w-full rounded-md bg-green-600 py-2 px-4 text-center shadow-md transition-all duration-300 hover:bg-green-700">
+                    Create a new command alias
+                  </a>
+                </Link>
+                <small className="block text-white text-opacity-30">
+                  Press this button to create a new command alias.
+                </small>
+              </div>
+            </div>
+            <h2 className="text-2xl font-bold">Command aliases</h2>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {!isAllCommandAliasesLoading &&
+                allCommandAliases &&
+                allCommandAliases.map((commandList) => (
+                  <Link
+                    href={`/commandAlias/${commandList.id}`}
+                    key={commandList.id}
+                  >
+                    <a
+                      className={
+                        'flex transform cursor-pointer flex-col items-start justify-start rounded-md bg-gray-700 p-4 text-lg shadow-md transition-all duration-300 hover:scale-105'
+                      }
+                    >
+                      <h1 className="font-bold">/{commandList.commandName}</h1>
+                      <small className="text-white text-opacity-30">
+                        is coupled to /{commandList.internalName}
+                      </small>
+                    </a>
+                  </Link>
+                ))}
+            </div>
+          </div>
+        )}
+      </>
+    </Layout>
+  )
 }
 
-export default CommandAliasesPage;
+export default CommandAliasesPage

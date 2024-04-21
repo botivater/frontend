@@ -1,1 +1,1 @@
-export type IdCreatedAtUpdatedAt = "id" | "createdAt" | "updatedAt"
+export type IdCreatedAtUpdatedAt = 'id' | 'createdAt' | 'updatedAt'

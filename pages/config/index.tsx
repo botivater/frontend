@@ -12,28 +12,51 @@ import Loading from '../../components/loading'
 import { LoadingOverlay } from '../../components/LoadingOverlay'
 import { useToken } from '../../hooks/use-token'
 import { useGuild } from '../../lib/api/Guild.api'
-import { GuildConfigUpdateError, updateGuildConfig, useGuildConfig } from '../../lib/api/GuildConfig.api'
-
+import {
+  GuildConfigUpdateError,
+  updateGuildConfig,
+  useGuildConfig,
+} from '../../lib/api/GuildConfig.api'
 
 const ConfigPage: NextPage = () => {
-  const { isLoading: isAuthLoading, user } = useContext(AuthContext)!;
-  const { guildId } = useContext(AppContext)!;
-  const router = useRouter();
-  const token = useToken();
+  const { isLoading: isAuthLoading, user } = useContext(AuthContext)!
+  const { guildId } = useContext(AppContext)!
+  const router = useRouter()
+  const token = useToken()
 
-  const [isLoading, setLoading] = useState<boolean>(true);
+  const [isLoading, setLoading] = useState<boolean>(true)
 
-  const [systemChannelId, setSystemChannelId] = useState<string>("");
-  const [announcementChannelId, setAnnouncementChannelId] = useState<string | null>(null);
-  const [isPronounCheckEnabled, setPronounCheckEnabled] = useState<boolean>(false);
-  const [isWelcomeMessageEnabled, setWelcomeMessageEnabled] = useState<boolean>(false);
-  const [welcomeMessageConfig, setWelcomeMessageConfig] = useState<{ channelSnowflake: string; format: string; }>({ channelSnowflake: "", format: "" });
-  const [isInactivityCheckEnabled, setInactivityCheckEnabled] = useState<boolean>(false);
-  const [inactivityCheckConfig, setInactivityCheckConfig] = useState<{ inactiveRoleId: string; activeRoleId: string; inactiveUserSeconds: number; }>({ inactiveRoleId: "", activeRoleId: "", inactiveUserSeconds: 7776000 });
-  const [isOpenAIEnabled, setOpenAIEnabled] = useState<boolean>(false);
+  const [systemChannelId, setSystemChannelId] = useState<string>('')
+  const [announcementChannelId, setAnnouncementChannelId] = useState<
+    string | null
+  >(null)
+  const [isPronounCheckEnabled, setPronounCheckEnabled] =
+    useState<boolean>(false)
+  const [isWelcomeMessageEnabled, setWelcomeMessageEnabled] =
+    useState<boolean>(false)
+  const [welcomeMessageConfig, setWelcomeMessageConfig] = useState<{
+    channelSnowflake: string
+    format: string
+  }>({ channelSnowflake: '', format: '' })
+  const [isInactivityCheckEnabled, setInactivityCheckEnabled] =
+    useState<boolean>(false)
+  const [inactivityCheckConfig, setInactivityCheckConfig] = useState<{
+    inactiveRoleId: string
+    activeRoleId: string
+    inactiveUserSeconds: number
+  }>({ inactiveRoleId: '', activeRoleId: '', inactiveUserSeconds: 7776000 })
+  const [isOpenAIEnabled, setOpenAIEnabled] = useState<boolean>(false)
 
-  const { error: guildError, data: guild, isLoading: isGuildLoading } = useGuild(guildId);
-  const { error: guildConfigError, data: guildConfig, isLoading: isGuildConfigLoading } = useGuildConfig(guild?.guildConfigId);
+  const {
+    error: guildError,
+    data: guild,
+    isLoading: isGuildLoading,
+  } = useGuild(guildId)
+  const {
+    error: guildConfigError,
+    data: guildConfig,
+    isLoading: isGuildConfigLoading,
+  } = useGuildConfig(guild?.guildConfigId)
 
   useEffect(() => {
     if (guildConfig) {
@@ -45,27 +68,41 @@ const ConfigPage: NextPage = () => {
         welcomeMessageConfig,
         inactivityCheckEnabled,
         inactivityCheckConfig,
-        isOpenAIEnabled
-      } = guildConfig;
+        isOpenAIEnabled,
+      } = guildConfig
 
-      setSystemChannelId(systemChannelId);
-      setAnnouncementChannelId(announcementChannelId);
+      setSystemChannelId(systemChannelId)
+      setAnnouncementChannelId(announcementChannelId)
       setPronounCheckEnabled(pronounCheckEnabled)
-      setWelcomeMessageEnabled(welcomeMessageEnabled);
-      setWelcomeMessageConfig(welcomeMessageConfig || { channelSnowflake: "", format: "" });
-      setInactivityCheckEnabled(inactivityCheckEnabled);
-      setInactivityCheckConfig(inactivityCheckConfig || { inactiveRoleId: "", activeRoleId: "", inactiveUserSeconds: 7776000 });
-      setOpenAIEnabled(isOpenAIEnabled);
+      setWelcomeMessageEnabled(welcomeMessageEnabled)
+      setWelcomeMessageConfig(
+        welcomeMessageConfig || { channelSnowflake: '', format: '' }
+      )
+      setInactivityCheckEnabled(inactivityCheckEnabled)
+      setInactivityCheckConfig(
+        inactivityCheckConfig || {
+          inactiveRoleId: '',
+          activeRoleId: '',
+          inactiveUserSeconds: 7776000,
+        }
+      )
+      setOpenAIEnabled(isOpenAIEnabled)
 
-      setLoading(false);
+      setLoading(false)
     }
-  }, [guildConfig]);
+  }, [guildConfig])
 
-  const setWelcomeMessageConfigWrapper = useCallback((x: WelcomeMessageConfig) => setWelcomeMessageConfig(x), [setWelcomeMessageConfig]);
-  const setInactivityCheckConfigWrapper = useCallback((x: InactivityCheckConfig) => setInactivityCheckConfig(x), [setInactivityCheckConfig]);
+  const setWelcomeMessageConfigWrapper = useCallback(
+    (x: WelcomeMessageConfig) => setWelcomeMessageConfig(x),
+    [setWelcomeMessageConfig]
+  )
+  const setInactivityCheckConfigWrapper = useCallback(
+    (x: InactivityCheckConfig) => setInactivityCheckConfig(x),
+    [setInactivityCheckConfig]
+  )
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
     const formData = {
       systemChannelId,
@@ -75,45 +112,45 @@ const ConfigPage: NextPage = () => {
       welcomeMessageConfig,
       inactivityCheckEnabled: isInactivityCheckEnabled,
       inactivityCheckConfig,
-      isOpenAIEnabled
-    };
+      isOpenAIEnabled,
+    }
 
-    console.log(formData);
+    console.log(formData)
 
-    if (!guild?.guildConfigId) return;
+    if (!guild?.guildConfigId) return
 
-    setLoading(true);
+    setLoading(true)
 
     try {
       const updatedGuildConfig = await updateGuildConfig({
         token,
         id: guild.guildConfigId,
-        data: formData
-      });
+        data: formData,
+      })
 
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000))
 
-      await router.push('/dashboard');
+      await router.push('/dashboard')
     } catch (err) {
       if (err instanceof GuildConfigUpdateError) {
-        alert(`${err.name}\n${err.message}`);
+        alert(`${err.name}\n${err.message}`)
       }
 
       if (err instanceof Error) {
-        console.error(err);
+        console.error(err)
       }
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
   if (guildError) {
-    console.error(guildError);
+    console.error(guildError)
     return <ErrorComponent message={guildError.toString()} />
   }
 
   if (guildConfigError) {
-    console.error(guildConfigError);
+    console.error(guildConfigError)
     return <ErrorComponent message={guildConfigError.toString()} />
   }
 
@@ -130,72 +167,168 @@ const ConfigPage: NextPage = () => {
 
         {isLoading && <LoadingOverlay />}
 
-        {user &&
-          <div className='max-w-6xl mx-auto px-4 flex flex-col gap-4'>
+        {user && (
+          <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4">
             <div>
-              <h1 className='text-3xl font-bold'>Config</h1>
-              <p className='text-white text-opacity-30'>Configuration and settings.</p>
+              <h1 className="text-3xl font-bold">Config</h1>
+              <p className="text-white text-opacity-30">
+                Configuration and settings.
+              </p>
             </div>
-            <form className='grid grid-cols-1 gap-4' onSubmit={handleSubmit}>
+            <form className="grid grid-cols-1 gap-4" onSubmit={handleSubmit}>
               <div>
-                <h2 className='text-2xl font-bold'>General</h2>
-                <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
+                <h2 className="text-2xl font-bold">General</h2>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                   <div>
-                    <label htmlFor="isPronounCheckEnabled" className='block font-bold'>Pronoun check:</label>
-                    <select name="isPronounCheckEnabled" id="isPronounCheckEnabled" className='w-full bg-black bg-opacity-30 rounded-md border-none' value={isPronounCheckEnabled ? 1 : 0} onChange={(e) => { setPronounCheckEnabled(parseInt(e.target.value) === 1 ? true : false) }}>
-                      <option value={0} className='bg-black bg-opacity-90'>Disabled</option>
-                      <option value={1} className='bg-black bg-opacity-90'>Enabled</option>
+                    <label
+                      htmlFor="isPronounCheckEnabled"
+                      className="block font-bold"
+                    >
+                      Pronoun check:
+                    </label>
+                    <select
+                      name="isPronounCheckEnabled"
+                      id="isPronounCheckEnabled"
+                      className="w-full rounded-md border-none bg-black bg-opacity-30"
+                      value={isPronounCheckEnabled ? 1 : 0}
+                      onChange={(e) => {
+                        setPronounCheckEnabled(
+                          parseInt(e.target.value) === 1 ? true : false
+                        )
+                      }}
+                    >
+                      <option value={0} className="bg-black bg-opacity-90">
+                        Disabled
+                      </option>
+                      <option value={1} className="bg-black bg-opacity-90">
+                        Enabled
+                      </option>
                     </select>
-                    <small className='block'>Enable or disable pronoun checking.</small>
+                    <small className="block">
+                      Enable or disable pronoun checking.
+                    </small>
                   </div>
                   <div>
-                    <label htmlFor="isOpenAIEnabled" className='block font-bold'>OpenAI:</label>
-                    <select name="isOpenAIEnabled" id="isOpenAIEnabled" className='w-full bg-black bg-opacity-30 rounded-md border-none disabled:opacity-70' value={isOpenAIEnabled ? 1 : 0} onChange={(e) => { setOpenAIEnabled(parseInt(e.target.value) === 1 ? true : false) }} disabled>
-                      <option value={0} className='bg-black bg-opacity-90'>Disabled</option>
-                      <option value={1} className='bg-black bg-opacity-90'>Enabled</option>
+                    <label
+                      htmlFor="isOpenAIEnabled"
+                      className="block font-bold"
+                    >
+                      OpenAI:
+                    </label>
+                    <select
+                      name="isOpenAIEnabled"
+                      id="isOpenAIEnabled"
+                      className="w-full rounded-md border-none bg-black bg-opacity-30 disabled:opacity-70"
+                      value={isOpenAIEnabled ? 1 : 0}
+                      onChange={(e) => {
+                        setOpenAIEnabled(
+                          parseInt(e.target.value) === 1 ? true : false
+                        )
+                      }}
+                      disabled
+                    >
+                      <option value={0} className="bg-black bg-opacity-90">
+                        Disabled
+                      </option>
+                      <option value={1} className="bg-black bg-opacity-90">
+                        Enabled
+                      </option>
                     </select>
-                    <small className='block'>Enable or disable OpenAI.</small>
+                    <small className="block">Enable or disable OpenAI.</small>
                   </div>
                 </div>
               </div>
               <div>
-                <h2 className='text-2xl font-bold'>Inactivity checking</h2>
-                <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
-                <div>
-                    <label htmlFor="isInactivityCheckEnabled" className='block font-bold'>Inactivity checking:</label>
-                    <select name="isInactivityCheckEnabled" id="isInactivityCheckEnabled" className='w-full bg-black bg-opacity-30 rounded-md border-none' value={isInactivityCheckEnabled ? 1 : 0} onChange={(e) => { setInactivityCheckEnabled(parseInt(e.target.value) === 1 ? true : false) }}>
-                      <option value={0} className='bg-black bg-opacity-90'>Disabled</option>
-                      <option value={1} className='bg-black bg-opacity-90'>Enabled</option>
+                <h2 className="text-2xl font-bold">Inactivity checking</h2>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                  <div>
+                    <label
+                      htmlFor="isInactivityCheckEnabled"
+                      className="block font-bold"
+                    >
+                      Inactivity checking:
+                    </label>
+                    <select
+                      name="isInactivityCheckEnabled"
+                      id="isInactivityCheckEnabled"
+                      className="w-full rounded-md border-none bg-black bg-opacity-30"
+                      value={isInactivityCheckEnabled ? 1 : 0}
+                      onChange={(e) => {
+                        setInactivityCheckEnabled(
+                          parseInt(e.target.value) === 1 ? true : false
+                        )
+                      }}
+                    >
+                      <option value={0} className="bg-black bg-opacity-90">
+                        Disabled
+                      </option>
+                      <option value={1} className="bg-black bg-opacity-90">
+                        Enabled
+                      </option>
                     </select>
-                    <small className='block'>Enable or disable inactivity checking.</small>
+                    <small className="block">
+                      Enable or disable inactivity checking.
+                    </small>
                   </div>
-                  <InactivityCheckConfig inactivityCheckConfig={inactivityCheckConfig} setInactivityCheckConfig={setInactivityCheckConfigWrapper} />
+                  <InactivityCheckConfig
+                    inactivityCheckConfig={inactivityCheckConfig}
+                    setInactivityCheckConfig={setInactivityCheckConfigWrapper}
+                  />
                 </div>
               </div>
               <div>
-                <h2 className='text-2xl font-bold'>Welcome message</h2>
-                <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
+                <h2 className="text-2xl font-bold">Welcome message</h2>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                   <div>
-                    <label htmlFor="isWelcomeMessageEnabled" className='block font-bold'>Welcome message:</label>
-                    <select name="isWelcomeMessageEnabled" id="isWelcomeMessageEnabled" className='w-full bg-black bg-opacity-30 rounded-md border-none' value={isWelcomeMessageEnabled ? 1 : 0} onChange={(e) => { setWelcomeMessageEnabled(parseInt(e.target.value) === 1 ? true : false) }}>
-                      <option value={0} className='bg-black bg-opacity-90'>Disabled</option>
-                      <option value={1} className='bg-black bg-opacity-90'>Enabled</option>
+                    <label
+                      htmlFor="isWelcomeMessageEnabled"
+                      className="block font-bold"
+                    >
+                      Welcome message:
+                    </label>
+                    <select
+                      name="isWelcomeMessageEnabled"
+                      id="isWelcomeMessageEnabled"
+                      className="w-full rounded-md border-none bg-black bg-opacity-30"
+                      value={isWelcomeMessageEnabled ? 1 : 0}
+                      onChange={(e) => {
+                        setWelcomeMessageEnabled(
+                          parseInt(e.target.value) === 1 ? true : false
+                        )
+                      }}
+                    >
+                      <option value={0} className="bg-black bg-opacity-90">
+                        Disabled
+                      </option>
+                      <option value={1} className="bg-black bg-opacity-90">
+                        Enabled
+                      </option>
                     </select>
-                    <small className='block'>Enable or disable welcome message.</small>
+                    <small className="block">
+                      Enable or disable welcome message.
+                    </small>
                   </div>
-                  <WelcomeMessageConfig welcomeMessageConfig={welcomeMessageConfig} setWelcomeMessageConfig={setWelcomeMessageConfigWrapper} />
+                  <WelcomeMessageConfig
+                    welcomeMessageConfig={welcomeMessageConfig}
+                    setWelcomeMessageConfig={setWelcomeMessageConfigWrapper}
+                  />
                 </div>
               </div>
 
-              <div className='col-span-full flex justify-end'>
-                <button type="submit" className='bg-green-600 hover:bg-green-700 rounded-md shadow-md py-2 px-4 transition-all duration-300 w-full md:w-1/3'>Save</button>
+              <div className="col-span-full flex justify-end">
+                <button
+                  type="submit"
+                  className="w-full rounded-md bg-green-600 py-2 px-4 shadow-md transition-all duration-300 hover:bg-green-700 md:w-1/3"
+                >
+                  Save
+                </button>
               </div>
             </form>
           </div>
-        }
+        )}
       </>
     </Layout>
   )
 }
 
-export default ConfigPage;
+export default ConfigPage
