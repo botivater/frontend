@@ -59,7 +59,8 @@ const FlowActionBuildingBlockSendMessage: React.FC<Props> = ({
     if (
       toType === SendMessageTo.CHANNEL &&
       !isGuildChannelsLoading &&
-      guildChannelsData
+      guildChannelsData &&
+      guildChannelsData.length > 0
     ) {
       setTo(guildChannelsData[0].id)
     }

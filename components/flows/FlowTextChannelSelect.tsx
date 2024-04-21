@@ -15,7 +15,7 @@ const FlowTextChannelSelect: React.FC<Props> = ({ value, setValue }) => {
   const { error, data, isLoading } = useDiscordGuildTextChannels(guildId)
 
   useEffect(() => {
-    if (data && !value) {
+    if (data && data.length > 0 && !value) {
       setValue(data[0].id)
     }
   }, [data, value, setValue])
