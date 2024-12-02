@@ -26,7 +26,7 @@ jobs:
         with:
           # List of Docker imges to use as base name for tags
           images: |
-            ghcr.io/botivator/frontend
+            ghcr.io/botivater/frontend
           # Generate Docker tags based on the following events/attributes
           tags: |
             type=ref,event=branch
