@@ -18,7 +18,7 @@ RUN \
 
 # Rebuild the source code only when needed
 FROM base AS builder
-ENV NEXT_PRIVATE_STANDALONE true
+#ENV NEXT_PRIVATE_STANDALONE true
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -64,7 +64,7 @@ ENV PORT 3000
 # set hostname to localhost
 
 ENV HOSTNAME "0.0.0.0"
-ENV NEXT_PUBLIC_API_ENDPOINT https://botivater-api.friendshipbubble.nl
+#ENV NEXT_PUBLIC_API_ENDPOINT https://botivater-api.friendshipbubble.nl
 
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
